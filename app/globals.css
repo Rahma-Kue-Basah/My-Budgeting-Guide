@@ -5,13 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --surface: #ffffff;
-  --surface-muted: #eef3ee;
-  --grid-line: rgba(15, 23, 42, 0.05);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.205 0 0);
@@ -40,13 +35,13 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-surface: var(--surface);
-  --color-surface-muted: var(--surface-muted);
   --font-sans: var(--font-sans);
   --font-mono: "SFMono-Regular", "IBM Plex Mono", "Menlo", monospace;
   --font-heading: var(--font-sans);
@@ -98,15 +93,10 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background-image:
-    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px),
-    radial-gradient(circle at top left, rgba(16, 185, 129, 0.08), transparent 22%);
-  background-size: 32px 32px, 32px 32px, auto;
 }
 
 ::selection {
-  background: rgba(16, 185, 129, 0.18);
+  background: color-mix(in srgb, var(--muted) 80%, white);
 }
 
 button,
