@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Inter } from "next/font/google";
+import { AppShell } from "@/components/app-shell";
+import { AppSettingsSync } from "@/components/app-settings-sync";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Start from scratch",
-  description: "Minimal Next.js app ready to rebuild.",
+  title: "MBG",
+  description: "Simple workspace layout with a Notion-like sidebar.",
 };
 
 export default function RootLayout({
@@ -17,7 +21,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cn("font-sans", inter.variable)}>
-      <body>{children}</body>
+      <body>
+        <AppSettingsSync />
+        <TooltipProvider>
+          <AppShell>{children}</AppShell>
+          <Toaster position="top-right" />
+        </TooltipProvider>
+      </body>
     </html>
   );
 }
