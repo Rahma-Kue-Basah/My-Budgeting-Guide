@@ -35,12 +35,6 @@ const defaultState: FileWorkspaceState = {
   budgetPlans: [],
 };
 
-type FileWorkspaceBackup = {
-  version: 1;
-  exportedAt: string;
-  state: FileWorkspaceState;
-};
-
 function isMeaningfulTransaction(transaction: ParsedTransaction) {
   return !transaction.description.toUpperCase().includes("SALDO AWAL");
 }
@@ -216,7 +210,6 @@ function normalizeWorkspaceState(value: unknown): FileWorkspaceState {
           typeof mapping?.id === "string" &&
           typeof mapping?.merchantKey === "string" &&
           typeof mapping?.merchantName === "string" &&
-          (mapping?.categoryId === null || mapping?.categoryId === undefined || typeof mapping?.categoryId === "string") &&
           (mapping?.aliases === undefined ||
             (Array.isArray(mapping.aliases) &&
               mapping.aliases.every((alias) => typeof alias === "string")))
@@ -226,7 +219,6 @@ function normalizeWorkspaceState(value: unknown): FileWorkspaceState {
           ...mapping,
           merchantKey: normalizeMerchantKey(mapping.merchantKey),
           merchantName: mapping.merchantName.trim() || mapping.merchantKey,
-          categoryId: mapping.categoryId ?? null,
           aliases: [...new Set((mapping.aliases ?? []).map(normalizeMerchantKey).filter(Boolean))],
         }))
     : [];
@@ -272,42 +264,10 @@ function normalizeWorkspaceState(value: unknown): FileWorkspaceState {
   };
 }
 
-function buildProcessedWorkspaceState(state: FileWorkspaceState): FileWorkspaceState {
-  const processedFileNames = new Set(
-    state.files
-      .filter((file) => file.status === "processed")
-      .map((file) => file.name)
-  );
-
-  const files = state.files.filter((file) => file.status === "processed");
-  const transactions = state.transactions.filter((transaction) =>
-    processedFileNames.has(transaction.sourceFile)
-  );
-  const activities = state.activities.filter((activity) => {
-    if (activity.tone === "success") {
-      return true;
-    }
-
-    return [...processedFileNames].some((fileName) =>
-      activity.title.includes(fileName) || activity.note.includes(fileName)
-    );
-  });
-
-  return normalizeWorkspaceState({
-    files,
-    transactions,
-    activities,
-    categories: state.categories,
-    merchantMappings: state.merchantMappings,
-    budgetPlans: state.budgetPlans,
-  });
-}
-
 export function useFileWorkspace() {
   const [state, setState] = useState<FileWorkspaceState>(defaultState);
   const [isHydrated, setIsHydrated] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [isRestoring, setIsRestoring] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -346,11 +306,6 @@ export function useFileWorkspace() {
       recent,
     };
   }, [state.activities, state.files]);
-
-  const processedBackupState = useMemo(
-    () => buildProcessedWorkspaceState(state),
-    [state]
-  );
 
   async function uploadFiles(files: FileList | File[], selectedBank: string) {
     const list = Array.from(files).filter(
@@ -418,71 +373,6 @@ export function useFileWorkspace() {
     setState(defaultState);
     setError(null);
     window.localStorage.removeItem(FILE_WORKSPACE_STORAGE_KEY);
-  }
-
-  function backupToJson() {
-    const payload: FileWorkspaceBackup = {
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      state: processedBackupState,
-    };
-
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {
-      type: "application/json",
-    });
-    const url = window.URL.createObjectURL(blob);
-    const anchor = window.document.createElement("a");
-    const datePart = new Date().toISOString().slice(0, 10);
-
-    anchor.href = url;
-    anchor.download = `mbg-backup-${datePart}.json`;
-    anchor.click();
-    window.URL.revokeObjectURL(url);
-
-    toast("Backup berhasil dibuat", {
-      description: `${processedBackupState.files.length} file, ${processedBackupState.transactions.length} transaksi, ${processedBackupState.categories.length} kategori, ${processedBackupState.merchantMappings.length} merchant mapping, dan ${processedBackupState.budgetPlans.length} budget plan berhasil diunduh.`,
-    });
-  }
-
-  async function restoreFromJson(file: File) {
-    setIsRestoring(true);
-    setError(null);
-
-    try {
-      const raw = await file.text();
-      const parsed = JSON.parse(raw) as
-        | FileWorkspaceBackup
-        | FileWorkspaceState;
-      const nextState =
-        "state" in parsed ? normalizeWorkspaceState(parsed.state) : normalizeWorkspaceState(parsed);
-
-      const restoredAt = new Date().toISOString();
-
-      setState({
-        ...nextState,
-        activities: mergeActivities([
-          {
-            id: `restore-${Date.now()}`,
-            title: `${file.name} berhasil direstore`,
-            note: `${nextState.files.length} file, ${nextState.transactions.length} transaksi, ${nextState.categories.length} kategori, ${nextState.merchantMappings.length} merchant mapping, dan ${nextState.budgetPlans.length} budget plan dimuat dari backup lokal.`,
-            createdAt: restoredAt,
-            tone: "success",
-          },
-          ...nextState.activities,
-        ]),
-      });
-
-      toast("Backup berhasil dipulihkan", {
-        description: `${nextState.files.length} file, ${nextState.transactions.length} transaksi, ${nextState.categories.length} kategori, ${nextState.merchantMappings.length} merchant mapping, dan ${nextState.budgetPlans.length} budget plan dimuat kembali.`,
-      });
-    } catch {
-      setError("File backup JSON tidak valid atau tidak cocok dengan format workspace.");
-      toast("Restore gagal", {
-        description: "File JSON tidak bisa dibaca sebagai backup workspace MBG.",
-      });
-    } finally {
-      setIsRestoring(false);
-    }
   }
 
   function markFileProcessed(fileId: string) {
@@ -567,7 +457,7 @@ export function useFileWorkspace() {
           title: `${targetFile.name} diparse ulang`,
           note:
             transactions.length > 0
-              ? `${transactions.length} transaksi dibaca ulang. File tetap berada di review queue sampai dicek manual.`
+              ? `${transactions.length} transaksi dibaca ulang. File tetap berada di antrian review sampai dicek manual.`
               : "Hasil parse ulang belum menemukan transaksi yang konsisten. Cek raw text atau upload ulang file.",
           createdAt: new Date().toISOString(),
           tone: "warning" as const,
@@ -668,7 +558,7 @@ export function useFileWorkspace() {
           {
             id: `${transactionId}-edited-${Date.now()}`,
             title: `Transaksi pada ${sourceFileName || "file"} diperbarui`,
-            note: "Perubahan manual disimpan dari review queue.",
+            note: "Perubahan manual disimpan dari halaman import review.",
             createdAt: new Date().toISOString(),
             tone: "warning" as const,
           },
@@ -767,7 +657,7 @@ export function useFileWorkspace() {
         priority:
           (current.categories.length > 0
             ? Math.max(...current.categories.map((category) => category.priority))
-            : 0) + 10,
+            : 0) + 1,
         keywords: normalizeKeywords(payload.keywords),
       };
 
@@ -826,9 +716,10 @@ export function useFileWorkspace() {
 
       return {
         ...current,
-        categories: current.categories.filter((category) => category.id !== categoryId),
-        merchantMappings: current.merchantMappings.filter(
-          (mapping) => mapping.categoryId !== categoryId,
+        categories: reindexCategoryPriorities(
+          sortCategoriesByPriority(
+            current.categories.filter((category) => category.id !== categoryId),
+          ),
         ),
         budgetPlans: current.budgetPlans.map((plan) => ({
           ...plan,
@@ -886,67 +777,6 @@ export function useFileWorkspace() {
     });
   }
 
-  function setMerchantCategory(
-    merchantKey: string,
-    merchantName: string,
-    categoryId: string | null,
-  ) {
-    let categoryName = "";
-
-    setState((current) => {
-      const nextMerchantKey = normalizeMerchantKey(merchantKey);
-      const nextMerchantName = merchantName.trim() || merchantKey;
-
-      if (!categoryId) {
-        return {
-          ...current,
-          merchantMappings: current.merchantMappings.filter(
-            (mapping) => mapping.merchantKey !== nextMerchantKey,
-          ),
-        };
-      }
-
-      categoryName =
-        current.categories.find((category) => category.id === categoryId)?.name ?? "";
-
-      const existing = current.merchantMappings.find(
-        (mapping) => mapping.merchantKey === nextMerchantKey,
-      );
-
-      const nextMappings = existing
-        ? current.merchantMappings.map((mapping) =>
-            mapping.merchantKey === nextMerchantKey
-              ? {
-                  ...mapping,
-                  merchantName: nextMerchantName,
-                  categoryId,
-                }
-              : mapping,
-          )
-        : [
-            ...current.merchantMappings,
-            {
-              id: `merchant-${Date.now()}`,
-              merchantKey: nextMerchantKey,
-              merchantName: nextMerchantName,
-              categoryId,
-              aliases: [],
-            },
-          ];
-
-      return {
-        ...current,
-        merchantMappings: mergeMerchantMappings(nextMappings),
-      };
-    });
-
-    toast("Merchant mapping diperbarui", {
-      description: categoryId
-        ? `${merchantName} dipetakan ke kategori ${categoryName}.`
-        : `${merchantName} dikembalikan ke auto matching.`,
-    });
-  }
-
   function updateMerchantName(merchantKey: string, merchantName: string) {
     const nextMerchantKey = normalizeMerchantKey(merchantKey);
     const nextMerchantName = merchantName.trim();
@@ -972,7 +802,6 @@ export function useFileWorkspace() {
               id: `merchant-${Date.now()}`,
               merchantKey: nextMerchantKey,
               merchantName: nextMerchantName,
-              categoryId: null,
               aliases: [],
             },
           ];
@@ -1019,14 +848,12 @@ export function useFileWorkspace() {
       const nextTarget: MerchantMapping = targetMapping
         ? {
             ...targetMapping,
-            categoryId: targetMapping.categoryId ?? sourceMapping?.categoryId ?? null,
             aliases: mergedAliases,
           }
         : {
             id: `merchant-${Date.now()}`,
             merchantKey: targetKey,
             merchantName: targetName,
-            categoryId: sourceMapping?.categoryId ?? null,
             aliases: mergedAliases,
           };
 
@@ -1129,14 +956,10 @@ export function useFileWorkspace() {
   return {
     state,
     summary,
-    processedBackupState,
     isHydrated,
     isUploading,
-    isRestoring,
     error,
     uploadFiles,
-    backupToJson,
-    restoreFromJson,
     markFileProcessed,
     reparseFile,
     deleteFile,
@@ -1145,7 +968,6 @@ export function useFileWorkspace() {
     addCategory,
     updateCategory,
     setTransactionCategory,
-    setMerchantCategory,
     updateMerchantName,
     mergeMerchantMapping,
     upsertBudgetPlan,

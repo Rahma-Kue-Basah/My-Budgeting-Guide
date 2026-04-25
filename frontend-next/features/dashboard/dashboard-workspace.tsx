@@ -20,10 +20,15 @@ import { matchTransactionCategory } from "@/lib/categories";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { CupertinoSelect } from "@/components/ui/cupertino-select";
 import {
   AddWalletDialog,
   useDashboardWallets,
 } from "@/features/dashboard/dashboard-wallets";
+import {
+  CupertinoTable,
+  CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
+} from "@/components/tables/cupertino-table";
 
 type DashboardTransaction = {
   id: string;
@@ -314,7 +319,7 @@ function DashboardOverview({
       value: "Rp 5.250.000",
       detail: "salary + transfers",
       trend: null,
-      tone: "text-[#1c1c1e]",
+      tone: "text-[#1c1c1e] dark:text-[#f2f2f7]",
     },
     {
       label: "Total Expenses",
@@ -328,7 +333,7 @@ function DashboardOverview({
       value: "Rp 1.260.000",
       detail: "of Rp 2.200.000 budget",
       trend: null,
-      tone: "text-[#1c1c1e]",
+      tone: "text-[#1c1c1e] dark:text-[#f2f2f7]",
     },
     {
       label: "Savings Rate",
@@ -345,12 +350,12 @@ function DashboardOverview({
         {summaryCards.map((card) => (
           <div
             key={card.label}
-            className="rounded-[13px] bg-white px-[18px] py-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
+            className="rounded-[13px] bg-white dark:bg-[#1c1c1e] px-[18px] py-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none"
           >
             <p className="mb-1.5 text-[11px] font-medium text-[#8e8e93]">
               {card.label}
             </p>
-            <p className="truncate text-xl font-bold text-[#1c1c1e]">
+            <p className="truncate text-xl font-bold text-[#1c1c1e] dark:text-[#f2f2f7]">
               {card.value}
             </p>
             <div className="mt-1 flex items-center gap-1.5 text-[11px]">
@@ -366,7 +371,7 @@ function DashboardOverview({
       </section>
 
       <section className="grid gap-3 xl:grid-cols-[minmax(0,1.45fr)_minmax(300px,0.75fr)]">
-        <div className="rounded-[13px] bg-white p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+        <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="mb-4 flex flex-wrap items-center gap-3">
             <div>
               <h2 className="text-[13px] font-semibold">Cash Flow</h2>
@@ -374,11 +379,11 @@ function DashboardOverview({
                 Income vs expenses
               </p>
             </div>
-            <div className="ml-auto flex rounded-[8px] bg-[#f2f2f4] p-0.5">
+            <div className="ml-auto flex rounded-[8px] bg-[#f2f2f4] dark:bg-[#2c2c2e] p-0.5">
               <button className="rounded-[6px] px-3 py-1 text-[11px] font-medium text-[#8e8e93]">
                 Weekly
               </button>
-              <button className="rounded-[6px] bg-white px-3 py-1 text-[11px] font-medium text-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.08)]">
+              <button className="rounded-[6px] bg-white dark:bg-[#3a3a3c] px-3 py-1 text-[11px] font-medium text-[#1c1c1e] dark:text-[#f2f2f7] shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-none">
                 Monthly
               </button>
             </div>
@@ -442,12 +447,12 @@ function DashboardOverview({
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full rounded-[10px] bg-[#f7f7f8]" />
+              <div className="h-full rounded-[10px] bg-[#f7f7f8] dark:bg-[#2c2c2e]" />
             )}
           </div>
         </div>
 
-        <div className="rounded-[13px] bg-white p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+        <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="mb-3">
             <h2 className="text-[13px] font-semibold">Budget Progress</h2>
             <p className="mt-0.5 text-[11px] text-[#8e8e93]">April 2025</p>
@@ -458,11 +463,11 @@ function DashboardOverview({
               <p className="text-[11px] text-[#8e8e93]">of Rp 5.120.000</p>
             </div>
             <div className="text-right text-[11px]">
-              <p className="font-semibold text-[#1c1c1e]">78% used</p>
+              <p className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">78% used</p>
               <p className="text-[#8e8e93]">7 days left</p>
             </div>
           </div>
-          <div className="mb-4 h-2 overflow-hidden rounded-full bg-[#f2f2f4]">
+          <div className="mb-4 h-2 overflow-hidden rounded-full bg-[#f2f2f4] dark:bg-[#2c2c2e]">
             <div className="h-full w-[78%] rounded-full bg-[#007AFF]" />
           </div>
           <div className="space-y-3">
@@ -479,7 +484,7 @@ function DashboardOverview({
                     {category.spent} / {category.limit}
                   </span>
                 </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-[#f2f2f4]">
+                <div className="h-1.5 overflow-hidden rounded-full bg-[#f2f2f4] dark:bg-[#2c2c2e]">
                   <div
                     className="h-full rounded-full"
                     style={{
@@ -495,7 +500,7 @@ function DashboardOverview({
       </section>
 
       <section className="grid gap-3 xl:grid-cols-[0.85fr_0.9fr_1fr]">
-        <div className="rounded-[13px] bg-white p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+        <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <h2 className="text-[13px] font-semibold">Income vs Expense</h2>
           <p className="mt-0.5 text-[11px] text-[#8e8e93]">April 2025</p>
           <p className="mt-4 text-2xl font-bold text-[#30d158]">+Rp 3,11jt</p>
@@ -506,22 +511,22 @@ function DashboardOverview({
           <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
             <div className="rounded-[9px] bg-[#30d158]/10 px-3 py-2">
               <p className="font-semibold text-[#30d158]">Income</p>
-              <p className="text-[#1c1c1e]">64%</p>
+              <p className="text-[#1c1c1e] dark:text-[#f2f2f7]">64%</p>
             </div>
             <div className="rounded-[9px] bg-[#ff453a]/10 px-3 py-2">
               <p className="font-semibold text-[#ff453a]">Expense</p>
-              <p className="text-[#1c1c1e]">36%</p>
+              <p className="text-[#1c1c1e] dark:text-[#f2f2f7]">36%</p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-[13px] bg-white p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+        <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <h2 className="text-[13px] font-semibold">Top Merchants</h2>
           <p className="mt-0.5 text-[11px] text-[#8e8e93]">by total spend</p>
           <div className="mt-3 space-y-2">
             {overviewMerchants.map((merchant) => (
               <div key={merchant.name} className="flex items-center gap-2">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-[9px] bg-[#f2f2f4] text-base">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-[9px] bg-[#f2f2f4] dark:bg-[#3a3a3c] text-base">
                   {merchant.icon}
                 </span>
                 <span className="min-w-0 flex-1 truncate text-xs font-medium">
@@ -545,7 +550,7 @@ function DashboardOverview({
           </div>
         </div>
 
-        <div className="rounded-[13px] bg-white p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+        <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="mb-3 flex items-center justify-between">
             <div>
               <h2 className="text-[13px] font-semibold">Alerts</h2>
@@ -563,7 +568,7 @@ function DashboardOverview({
               >
                 <span
                   className={cn(
-                    "flex size-7 shrink-0 items-center justify-center rounded-[8px] bg-white text-[10px] font-bold",
+                    "flex size-7 shrink-0 items-center justify-center rounded-[8px] bg-white dark:bg-[#2c2c2e] text-[10px] font-bold",
                     alert.type === "info" ? "text-[#007AFF]" : "text-[#ff453a]",
                   )}
                 >
@@ -585,14 +590,14 @@ function DashboardOverview({
       </section>
 
       <section className="grid gap-3 xl:grid-cols-[300px_minmax(0,1fr)]">
-        <div className="rounded-[13px] bg-white p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+        <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <h2 className="text-[13px] font-semibold">Quick Actions</h2>
           <div className="mt-3 grid gap-2">
             {overviewQuickActions.map((action) => (
               <Button
                 key={action.title}
                 variant="outline"
-                className="h-9 justify-start rounded-[9px] border-black/10 bg-[#f2f2f4] px-3 text-xs shadow-none"
+                className="h-9 justify-start rounded-[9px] border-black/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] px-3 text-xs shadow-none"
                 render={<Link href={action.href} />}
               >
                 <CupertinoIcon name={action.icon} className="size-3.5" />
@@ -602,14 +607,14 @@ function DashboardOverview({
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-[13px] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+        <div className="overflow-hidden rounded-[13px] bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="flex flex-wrap items-center gap-2 border-b border-black/5 px-[18px] py-3.5">
             <div>
               <h2 className="text-[13px] font-semibold">Recent Transactions</h2>
             </div>
             <Button
               variant="outline"
-              className="ml-auto h-8 rounded-[8px] border-black/10 bg-[#f2f2f4] px-3 text-xs shadow-none"
+              className="ml-auto h-8 rounded-[8px] border-black/10 dark:border-white/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] dark:bg-[#2c2c2e] px-3 text-xs shadow-none"
             >
               Filter
             </Button>
@@ -621,79 +626,64 @@ function DashboardOverview({
               See all →
             </Button>
           </div>
-          <div className="overflow-x-auto">
-            <div className="min-w-[760px]">
-              <div className="grid grid-cols-[70px_1fr_118px_112px_116px_96px_34px] border-b border-black/[0.04] px-[18px] py-2">
-                {[
-                  "Date",
-                  "Merchant",
-                  "Category",
-                  "Wallet",
-                  "Amount",
-                  "Status",
-                ].map((label) => (
-                  <span
-                    key={label}
-                    className="text-left text-[10px] font-semibold tracking-[0.04em] text-[#8e8e93] uppercase"
-                  >
-                    {label}
+          <CupertinoTable
+            columnsClassName="grid-cols-[70px_minmax(0,1fr)_118px_112px_116px_96px_34px]"
+            minWidthClassName="min-w-[760px]"
+            headers={[
+              { key: "date", label: "Date" },
+              { key: "merchant", label: "Merchant" },
+              { key: "category", label: "Category" },
+              { key: "wallet", label: "Wallet" },
+              { key: "amount", label: "Amount" },
+              { key: "status", label: "Status" },
+              { key: "open", label: "" },
+            ]}
+            hasRows={recentTransactions.length > 0}
+          >
+            {recentTransactions.slice(0, 6).map((transaction) => (
+              <button
+                key={transaction.id}
+                className={cn(
+                  "grid w-full grid-cols-[70px_minmax(0,1fr)_118px_112px_116px_96px_34px] items-center gap-3 px-[18px] text-left transition hover:bg-black/[0.014] dark:hover:bg-white/5",
+                  CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
+                )}
+                onClick={() => onSelectTransaction(transaction)}
+              >
+                <span className="text-[10px] text-[#8e8e93]">
+                  {formatDate(transaction.date).replace(" 2026", "")}
+                </span>
+                <span className="min-w-0 pr-3">
+                  <span className="block truncate text-[11px] font-medium">
+                    {transaction.merchant}
                   </span>
-                ))}
-                <span />
-              </div>
-
-              <div>
-                {recentTransactions.slice(0, 6).map((transaction, index) => (
-                  <button
-                    key={transaction.id}
-                    className="grid w-full grid-cols-[70px_1fr_118px_112px_116px_96px_34px] items-center border-b border-black/[0.04] px-[18px] py-2 text-left transition hover:bg-black/[0.014]"
-                    onClick={() => onSelectTransaction(transaction)}
-                  >
-                    <span className="text-[10px] text-[#8e8e93]">
-                      {formatDate(transaction.date).replace(" 2026", "")}
+                  {transaction.note ? (
+                    <span className="mt-0.5 block truncate text-[10px] text-[#8e8e93]">
+                      {transaction.note}
                     </span>
-                    <span className="min-w-0 pr-3">
-                      <span className="block truncate text-[11px] font-medium">
-                        {transaction.merchant}
-                      </span>
-                      {transaction.note ? (
-                        <span className="mt-0.5 block truncate text-[10px] text-[#8e8e93]">
-                          {transaction.note}
-                        </span>
-                      ) : null}
-                    </span>
-                    <span className="truncate pr-2 text-[10px] text-[#636366]">
-                      {transaction.category}
-                    </span>
-                    <span className="truncate pr-2 text-[10px] text-[#636366]">
-                      {transaction.wallet}
-                    </span>
-                    <span
-                      className={cn(
-                        "text-[11px] font-semibold",
-                        transaction.amount > 0
-                          ? "text-[#30d158]"
-                          : "text-[#1c1c1e]",
-                      )}
-                    >
-                      {transaction.amount > 0 ? "+" : "-"}
-                      {formatCurrency(Math.abs(transaction.amount))}
-                    </span>
-                    <StatusBadge status={transaction.status} compact />
-                    <span className="flex justify-center">
-                      <CupertinoIcon
-                        name="more"
-                        className={cn(
-                          "size-3.5 text-[#8e8e93]",
-                          index >= 0 && "opacity-80",
-                        )}
-                      />
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+                  ) : null}
+                </span>
+                <span className="truncate pr-2 text-[10px] text-[#636366] dark:text-[#8e8e93]">
+                  {transaction.category}
+                </span>
+                <span className="truncate pr-2 text-[10px] text-[#636366] dark:text-[#8e8e93]">
+                  {transaction.wallet}
+                </span>
+                <span
+                  className={cn(
+                    "text-[11px] font-semibold",
+                    transaction.amount > 0 ? "text-[#30d158]" : "text-[#1c1c1e] dark:text-[#f2f2f7]",
+                  )}
+                >
+                  {transaction.amount > 0 ? "+" : "-"}
+                  {formatCurrency(Math.abs(transaction.amount))}
+                </span>
+                <StatusBadge status={transaction.status} compact />
+                <span className="flex justify-center">
+                  <CupertinoIcon name="more" className="size-3.5 text-[#8e8e93]" />
+                </span>
+              </button>
+            ))}
+          </CupertinoTable>
         </div>
       </section>
     </div>
@@ -902,13 +892,13 @@ export function DashboardWorkspace({
     {
       label: "Transactions",
       value: String(totals.count),
-      color: "text-[#1c1c1e]",
+      color: "text-[#1c1c1e] dark:text-[#f2f2f7]",
     },
   ];
 
   return (
-    <main className="min-h-svh bg-[#f2f2f4] text-[#1c1c1e]">
-      <header className="fixed top-[58px] right-0 left-0 z-20 border-b border-black/[0.06] bg-white md:top-0 md:left-[232px] md:w-[calc(100%-232px)]">
+    <main className="min-h-svh bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
+      <header className="fixed top-[58px] right-0 left-0 z-20 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0 md:left-[232px] md:w-[calc(100%-232px)]">
         <div className="flex h-[58px] w-full items-center gap-3 px-3">
           <div className="min-w-0">
             <h1 className="truncate text-xl font-semibold tracking-normal">
@@ -917,25 +907,21 @@ export function DashboardWorkspace({
           </div>
 
           <div className="ml-auto hidden flex-wrap items-center gap-2 sm:flex">
-            <div className="flex h-9 items-center gap-2 rounded-[9px] border border-black/10 bg-[#f2f2f4] px-3">
-              <CupertinoIcon name="wallet" className="size-4 text-[#8e8e93]" />
-              <select
-                value={activeWallet}
-                onChange={(event) => setActiveWallet(event.target.value)}
-                className="h-full min-w-[150px] border-0 bg-transparent text-xs font-medium outline-none"
-              >
-                <option value="all">All wallets</option>
-                {wallets.map((wallet) => (
-                  <option key={wallet.id} value={wallet.name}>
-                    {wallet.name}
-                  </option>
-                ))}
-              </select>
-              <CupertinoIcon
-                name="chevronDown"
-                className="size-3.5 text-[#8e8e93]"
-              />
-            </div>
+            <CupertinoSelect
+              icon="wallet"
+              value={activeWallet}
+              onChange={setActiveWallet}
+              ariaLabel="Select wallet"
+              options={[
+                { value: "all", label: "All wallets", leadingIcon: "wallet", leadingColor: "#007aff" },
+                ...wallets.map((wallet) => ({
+                  value: wallet.name,
+                  label: wallet.name,
+                  leadingLabel: wallet.abbr,
+                  leadingColor: wallet.color,
+                })),
+              ]}
+            />
 
             <Button
               className="h-9 rounded-[9px] bg-[#1c1c1e] px-3 text-white shadow-none hover:bg-black"
@@ -956,7 +942,7 @@ export function DashboardWorkspace({
               {summaryCards.map((card) => (
                 <div
                   key={card.label}
-                  className="rounded-[13px] bg-white px-[18px] py-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
+                  className="rounded-[13px] bg-white dark:bg-[#1c1c1e] px-[18px] py-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none"
                 >
                   <p className="mb-1.5 text-[11px] font-medium text-[#8e8e93]">
                     {card.label}
@@ -969,7 +955,7 @@ export function DashboardWorkspace({
             </section>
 
             <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_316px]">
-              <div className="rounded-[13px] bg-white p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+              <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                 <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center">
                   <div>
                     <h2 className="text-[13px] font-semibold">
@@ -979,7 +965,7 @@ export function DashboardWorkspace({
                       Apr 8 - Apr 22
                     </p>
                   </div>
-                  <div className="flex rounded-[8px] bg-[#f2f2f4] p-0.5 sm:ml-auto">
+                  <div className="flex rounded-[8px] bg-[#f2f2f4] dark:bg-[#2c2c2e] p-0.5 sm:ml-auto">
                     {[
                       ["expense", "Expenses"],
                       ["income", "Income"],
@@ -990,7 +976,7 @@ export function DashboardWorkspace({
                         className={cn(
                           "rounded-[6px] px-3 py-1 text-[11px] font-medium transition",
                           chartMode === key
-                            ? "bg-white text-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.08)]"
+                            ? "bg-white dark:bg-[#3a3a3c] text-[#1c1c1e] dark:text-[#f2f2f7] shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-none"
                             : "text-[#8e8e93]",
                         )}
                         onClick={() => setChartMode(key as ChartMode)}
@@ -1054,12 +1040,12 @@ export function DashboardWorkspace({
                       </LineChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="h-full rounded-[10px] bg-[#f7f7f8]" />
+                    <div className="h-full rounded-[10px] bg-[#f7f7f8] dark:bg-[#2c2c2e]" />
                   )}
                 </div>
               </div>
 
-              <div className="rounded-[13px] bg-white p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+              <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                 <h2 className="text-[13px] font-semibold">Budget Progress</h2>
                 <p className="mt-0.5 text-[11px] text-[#8e8e93]">
                   April category limits
@@ -1076,7 +1062,7 @@ export function DashboardWorkspace({
                         <span className="font-medium">{label}</span>
                         <span className="text-[#8e8e93]">{value}%</span>
                       </div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-[#f2f2f4]">
+                      <div className="h-1.5 overflow-hidden rounded-full bg-[#f2f2f4] dark:bg-[#2c2c2e]">
                         <div
                           className="h-full rounded-full"
                           style={{
@@ -1092,9 +1078,9 @@ export function DashboardWorkspace({
             </section>
 
             {isTransactionsPage ? (
-              <section className="overflow-hidden rounded-[13px] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+              <section className="overflow-hidden rounded-[13px] bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                 <div className="flex flex-wrap items-center gap-2 border-b border-black/5 px-[18px] py-3.5">
-                  <div className="flex rounded-[9px] bg-[#f2f2f4] p-[3px]">
+                  <div className="flex rounded-[9px] bg-[#f2f2f4] dark:bg-[#2c2c2e] p-[3px]">
                     {(["all", "cleared", "pending", "review"] as const).map(
                       (status) => (
                         <button
@@ -1102,7 +1088,7 @@ export function DashboardWorkspace({
                           className={cn(
                             "rounded-[7px] px-2.5 py-1 text-[11px] font-medium capitalize",
                             filterStatus === status
-                              ? "bg-white text-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.08)]"
+                              ? "bg-white dark:bg-[#3a3a3c] text-[#1c1c1e] dark:text-[#f2f2f7] shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-none"
                               : "text-[#8e8e93]",
                           )}
                           onClick={() => setFilterStatus(status)}
@@ -1113,7 +1099,7 @@ export function DashboardWorkspace({
                     )}
                   </div>
 
-                  <div className="ml-auto flex min-w-[210px] items-center gap-2 rounded-[8px] border border-black/10 bg-[#f2f2f4] px-2.5 py-1.5">
+                  <div className="ml-auto flex min-w-[210px] items-center gap-2 rounded-[8px] border border-black/10 dark:border-white/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] dark:bg-[#2c2c2e] px-2.5 py-1.5">
                     <CupertinoIcon
                       name="search"
                       className="size-3.5 text-[#8e8e93]"
@@ -1132,7 +1118,7 @@ export function DashboardWorkspace({
                   </Button>
                   <Button
                     variant="outline"
-                    className="h-8 rounded-[8px] border-black/10 bg-[#f2f2f4] px-3 shadow-none"
+                    className="h-8 rounded-[8px] border-black/10 dark:border-white/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] dark:bg-[#2c2c2e] px-3 shadow-none"
                     render={<Link href="/file" />}
                   >
                     <CupertinoIcon name="upload" className="size-3.5" />
@@ -1140,94 +1126,158 @@ export function DashboardWorkspace({
                   </Button>
                 </div>
 
-                <div className="overflow-x-auto">
-                  <div className="min-w-[840px]">
-                    <div className="grid grid-cols-[78px_1fr_130px_120px_120px_110px_40px] border-b border-black/[0.04] px-[18px] py-2">
-                      {[
-                        ["date", "Date"],
-                        ["merchant", "Merchant"],
-                        ["category", "Category"],
-                        ["wallet", "Wallet"],
-                        ["amount", "Amount"],
-                        ["status", "Status"],
-                      ].map(([key, label]) => (
+                <CupertinoTable
+                  columnsClassName="grid-cols-[78px_minmax(0,1fr)_130px_120px_120px_110px_40px]"
+                  minWidthClassName="min-w-[840px]"
+                  bodyClassName="max-h-[calc(100vh-420px)] min-h-[260px] overflow-y-auto"
+                  headers={[
+                    {
+                      key: "date",
+                      label: (
                         <button
-                          key={key}
-                          className="flex items-center gap-1 text-left text-[10px] font-semibold tracking-[0.04em] text-[#8e8e93] uppercase"
-                          onClick={() => toggleSort(key as SortColumn)}
+                          type="button"
+                          className="flex items-center gap-1 text-left"
+                          onClick={() => toggleSort("date")}
                         >
-                          {label}
-                          {sortColumn === key ? (
-                            <span>
-                              {sortDirection === "asc" ? "up" : "down"}
-                            </span>
+                          Date
+                          {sortColumn === "date" ? (
+                            <span>{sortDirection === "asc" ? "up" : "down"}</span>
                           ) : null}
                         </button>
-                      ))}
-                      <span />
-                    </div>
-
-                    <div className="max-h-[calc(100vh-420px)] min-h-[260px] overflow-y-auto">
-                      {filteredTransactions.length === 0 ? (
-                        <div className="px-5 py-14 text-center text-sm text-[#8e8e93]">
-                          No transactions found
-                        </div>
-                      ) : null}
-                      {filteredTransactions.map((transaction, index) => (
+                      ),
+                    },
+                    {
+                      key: "merchant",
+                      label: (
                         <button
-                          key={transaction.id}
-                          className="grid w-full grid-cols-[78px_1fr_130px_120px_120px_110px_40px] items-center border-b border-black/[0.04] px-[18px] py-2.5 text-left transition hover:bg-black/[0.014]"
-                          onClick={() => setSelectedTx(transaction)}
+                          type="button"
+                          className="flex items-center gap-1 text-left"
+                          onClick={() => toggleSort("merchant")}
                         >
-                          <span className="text-[11px] text-[#8e8e93]">
-                            {formatDate(transaction.date).replace(" 2026", "")}
-                          </span>
-                          <span className="min-w-0 pr-3">
-                            <span className="block truncate text-xs font-medium">
-                              {transaction.merchant}
-                            </span>
-                            {transaction.note ? (
-                              <span className="mt-0.5 block truncate text-[10px] text-[#8e8e93]">
-                                {transaction.note}
-                              </span>
-                            ) : null}
-                          </span>
-                          <span className="truncate pr-2 text-[11px] text-[#636366]">
-                            {transaction.category}
-                          </span>
-                          <span className="truncate pr-2 text-[11px] text-[#636366]">
-                            {transaction.wallet}
-                          </span>
-                          <span
-                            className={cn(
-                              "text-xs font-semibold",
-                              transaction.amount > 0
-                                ? "text-[#30d158]"
-                                : "text-[#1c1c1e]",
-                            )}
-                          >
-                            {transaction.amount > 0 ? "+" : "-"}
-                            {formatCurrency(Math.abs(transaction.amount))}
-                          </span>
-                          <StatusBadge status={transaction.status} />
-                          <span className="flex justify-center">
-                            <CupertinoIcon
-                              name="more"
-                              className={cn(
-                                "size-4 text-[#8e8e93]",
-                                index >= 0 && "opacity-80",
-                              )}
-                            />
-                          </span>
+                          Merchant
+                          {sortColumn === "merchant" ? (
+                            <span>{sortDirection === "asc" ? "up" : "down"}</span>
+                          ) : null}
                         </button>
-                      ))}
+                      ),
+                    },
+                    {
+                      key: "category",
+                      label: (
+                        <button
+                          type="button"
+                          className="flex items-center gap-1 text-left"
+                          onClick={() => toggleSort("category")}
+                        >
+                          Category
+                          {sortColumn === "category" ? (
+                            <span>{sortDirection === "asc" ? "up" : "down"}</span>
+                          ) : null}
+                        </button>
+                      ),
+                    },
+                    {
+                      key: "wallet",
+                      label: (
+                        <button
+                          type="button"
+                          className="flex items-center gap-1 text-left"
+                          onClick={() => toggleSort("wallet")}
+                        >
+                          Wallet
+                          {sortColumn === "wallet" ? (
+                            <span>{sortDirection === "asc" ? "up" : "down"}</span>
+                          ) : null}
+                        </button>
+                      ),
+                    },
+                    {
+                      key: "amount",
+                      label: (
+                        <button
+                          type="button"
+                          className="flex items-center gap-1 text-left"
+                          onClick={() => toggleSort("amount")}
+                        >
+                          Amount
+                          {sortColumn === "amount" ? (
+                            <span>{sortDirection === "asc" ? "up" : "down"}</span>
+                          ) : null}
+                        </button>
+                      ),
+                    },
+                    {
+                      key: "status",
+                      label: (
+                        <button
+                          type="button"
+                          className="flex items-center gap-1 text-left"
+                          onClick={() => toggleSort("status")}
+                        >
+                          Status
+                          {sortColumn === "status" ? (
+                            <span>{sortDirection === "asc" ? "up" : "down"}</span>
+                          ) : null}
+                        </button>
+                      ),
+                    },
+                    { key: "open", label: "" },
+                  ]}
+                  hasRows={filteredTransactions.length > 0}
+                  emptyState={
+                    <div className="px-5 py-14 text-center text-sm text-[#8e8e93]">
+                      No transactions found
                     </div>
-                  </div>
-                </div>
+                  }
+                >
+                  {filteredTransactions.map((transaction) => (
+                    <button
+                      key={transaction.id}
+                      className={cn(
+                        "grid w-full grid-cols-[78px_minmax(0,1fr)_130px_120px_120px_110px_40px] items-center gap-3 px-[18px] text-left transition hover:bg-black/[0.014] dark:hover:bg-white/5",
+                        CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
+                      )}
+                      onClick={() => setSelectedTx(transaction)}
+                    >
+                      <span className="text-[11px] text-[#8e8e93]">
+                        {formatDate(transaction.date).replace(" 2026", "")}
+                      </span>
+                      <span className="min-w-0 pr-3">
+                        <span className="block truncate text-xs font-medium">
+                          {transaction.merchant}
+                        </span>
+                        {transaction.note ? (
+                          <span className="mt-0.5 block truncate text-[10px] text-[#8e8e93]">
+                            {transaction.note}
+                          </span>
+                        ) : null}
+                      </span>
+                      <span className="truncate pr-2 text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                        {transaction.category}
+                      </span>
+                      <span className="truncate pr-2 text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                        {transaction.wallet}
+                      </span>
+                      <span
+                        className={cn(
+                          "text-xs font-semibold",
+                          transaction.amount > 0 ? "text-[#30d158]" : "text-[#1c1c1e] dark:text-[#f2f2f7]",
+                        )}
+                      >
+                        {transaction.amount > 0 ? "+" : "-"}
+                        {formatCurrency(Math.abs(transaction.amount))}
+                      </span>
+                      <StatusBadge status={transaction.status} />
+                      <span className="flex justify-center">
+                        <CupertinoIcon name="more" className="size-4 text-[#8e8e93]" />
+                      </span>
+                    </button>
+                  ))}
+                </CupertinoTable>
               </section>
             ) : (
               <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_316px]">
-                <div className="rounded-[13px] bg-white p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+                <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <div>
                       <h2 className="text-[13px] font-semibold">
@@ -1239,7 +1289,7 @@ export function DashboardWorkspace({
                     </div>
                     <Button
                       variant="outline"
-                      className="h-8 rounded-[8px] border-black/10 bg-[#f2f2f4] px-3 shadow-none"
+                      className="h-8 rounded-[8px] border-black/10 dark:border-white/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] dark:bg-[#2c2c2e] px-3 shadow-none"
                       render={<Link href="/transactions" />}
                     >
                       View all
@@ -1252,10 +1302,10 @@ export function DashboardWorkspace({
                         className="flex w-full items-center gap-3 py-2.5 text-left"
                         onClick={() => setSelectedTx(transaction)}
                       >
-                        <div className="flex size-8 shrink-0 items-center justify-center rounded-[9px] bg-[#f2f2f4]">
+                        <div className="flex size-8 shrink-0 items-center justify-center rounded-[9px] bg-[#f2f2f4] dark:bg-[#2c2c2e]">
                           <CupertinoIcon
                             name={transaction.amount > 0 ? "download" : "upload"}
-                            className="size-3.5 text-[#636366]"
+                            className="size-3.5 text-[#636366] dark:text-[#8e8e93]"
                           />
                         </div>
                         <div className="min-w-0 flex-1">
@@ -1272,7 +1322,7 @@ export function DashboardWorkspace({
                               "text-xs font-semibold",
                               transaction.amount > 0
                                 ? "text-[#30d158]"
-                                : "text-[#1c1c1e]",
+                                : "text-[#1c1c1e] dark:text-[#f2f2f7]",
                             )}
                           >
                             {transaction.amount > 0 ? "+" : "-"}
@@ -1287,7 +1337,7 @@ export function DashboardWorkspace({
                   </div>
                 </div>
 
-                <div className="rounded-[13px] bg-white p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
+                <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                   <h2 className="text-[13px] font-semibold">Wallet Mix</h2>
                   <p className="mt-0.5 text-[11px] text-[#8e8e93]">
                     Active balance sources
@@ -1296,7 +1346,7 @@ export function DashboardWorkspace({
                     {wallets.slice(0, 5).map((wallet) => (
                       <div
                         key={wallet.id}
-                        className="flex items-center gap-2 rounded-[10px] bg-[#f2f2f4] px-2.5 py-2"
+                        className="flex items-center gap-2 rounded-[10px] bg-[#f2f2f4] dark:bg-[#2c2c2e] px-2.5 py-2"
                       >
                         <span
                           className="size-3 rounded-full"
@@ -1331,7 +1381,7 @@ export function DashboardWorkspace({
           onClick={() => setSelectedTx(null)}
         >
           <div
-            className="max-h-[90vh] w-full max-w-[460px] overflow-y-auto rounded-[20px] bg-[#f2f2f4] shadow-[0_32px_100px_rgba(0,0,0,0.2)]"
+            className="max-h-[90vh] w-full max-w-[460px] overflow-y-auto rounded-[20px] bg-[#f2f2f4] dark:bg-[#1c1c1e] shadow-[0_32px_100px_rgba(0,0,0,0.2)] dark:shadow-[0_32px_100px_rgba(0,0,0,0.6)]"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="relative flex items-center justify-center px-5 pt-[18px] pb-3">
@@ -1342,18 +1392,18 @@ export function DashboardWorkspace({
               >
                 <CupertinoIcon
                   name="close"
-                  className="size-3.5 text-[#636366]"
+                  className="size-3.5 text-[#636366] dark:text-[#8e8e93]"
                 />
               </button>
             </div>
 
             <div className="flex flex-col gap-2.5 px-4 pb-5">
-              <div className="rounded-[12px] bg-white px-4 py-3">
-                <p className="mb-1.5 text-[11px] text-[#636366]">Amount</p>
+              <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-3">
+                <p className="mb-1.5 text-[11px] text-[#636366] dark:text-[#8e8e93]">Amount</p>
                 <p
                   className={cn(
                     "text-[26px] font-bold",
-                    selectedTx.amount > 0 ? "text-[#30d158]" : "text-[#1c1c1e]",
+                    selectedTx.amount > 0 ? "text-[#30d158]" : "text-[#1c1c1e] dark:text-[#f2f2f7]",
                   )}
                 >
                   {selectedTx.amount > 0 ? "+" : "-"}
@@ -1361,27 +1411,27 @@ export function DashboardWorkspace({
                 </p>
               </div>
 
-              <div className="rounded-[12px] bg-white px-4 py-3">
-                <p className="mb-1.5 text-[11px] text-[#636366]">Your note</p>
-                <p className="text-[13px] text-[#1c1c1e]">
+              <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-3">
+                <p className="mb-1.5 text-[11px] text-[#636366] dark:text-[#8e8e93]">Your note</p>
+                <p className="text-[13px] text-[#1c1c1e] dark:text-[#f2f2f7]">
                   {selectedTx.note || "Add note"}
                 </p>
               </div>
 
-              <div className="rounded-[12px] bg-white px-4 py-3.5">
+              <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-3.5">
                 <div className="mb-3.5 grid gap-3 sm:grid-cols-3">
                   <div className="flex items-center gap-2">
                     <div className="flex size-8 items-center justify-center rounded-[8px] bg-black/5">
                       <CupertinoIcon
                         name="wallet"
-                        className="size-4 text-[#636366]"
+                        className="size-4 text-[#636366] dark:text-[#8e8e93]"
                       />
                     </div>
                     <div className="min-w-0">
                       <p className="truncate text-[13px] font-semibold">
                         {selectedTx.category}
                       </p>
-                      <p className="truncate text-[11px] text-[#636366]">
+                      <p className="truncate text-[11px] text-[#636366] dark:text-[#8e8e93]">
                         {selectedTx.merchant}
                       </p>
                     </div>
@@ -1394,21 +1444,21 @@ export function DashboardWorkspace({
                       <p className="truncate text-xs font-medium">
                         Alex Rahmad
                       </p>
-                      <p className="text-[10px] text-[#636366]">Created by</p>
+                      <p className="text-[10px] text-[#636366] dark:text-[#8e8e93]">Created by</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="flex size-6 items-center justify-center rounded-[7px] bg-black/5">
                       <CupertinoIcon
                         name="calendar"
-                        className="size-3.5 text-[#636366]"
+                        className="size-3.5 text-[#636366] dark:text-[#8e8e93]"
                       />
                     </div>
                     <div>
                       <p className="text-xs font-medium">
                         {formatDate(selectedTx.date).replace(" 2026", "")}
                       </p>
-                      <p className="text-[10px] text-[#636366]">at 08.00</p>
+                      <p className="text-[10px] text-[#636366] dark:text-[#8e8e93]">at 08.00</p>
                     </div>
                   </div>
                 </div>
@@ -1424,12 +1474,12 @@ export function DashboardWorkspace({
                   <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">
                     {selectedTx.wallet}
                   </span>
-                  <span className="inline-flex items-center rounded-full border border-black/10 px-2.5 py-1 text-[11px] font-medium text-[#636366]">
+                  <span className="inline-flex items-center rounded-full border border-black/10 px-2.5 py-1 text-[11px] font-medium text-[#636366] dark:text-[#8e8e93]">
                     # No tags
                   </span>
                 </div>
 
-                <button className="flex items-center gap-2 rounded-[10px] border border-black/10 bg-[#f2f2f4] px-3.5 py-2.5">
+                <button className="flex items-center gap-2 rounded-[10px] border border-black/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] px-3.5 py-2.5">
                   <span className="flex size-[22px] items-center justify-center rounded-[6px] bg-[#1c1c1e]">
                     <CupertinoIcon name="paperclip" className="size-3 text-white" />
                   </span>
@@ -1437,8 +1487,8 @@ export function DashboardWorkspace({
                 </button>
               </div>
 
-              <div className="rounded-[12px] bg-white px-4 py-3.5">
-                <p className="mb-3 text-[11px] text-[#636366]">
+              <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-3.5">
+                <p className="mb-3 text-[11px] text-[#636366] dark:text-[#8e8e93]">
                   Total {selectedTx.amount > 0 ? "income" : "expense"}{" "}
                   {formatCurrency(Math.abs(selectedTx.amount))} for last 12
                   months
@@ -1472,17 +1522,17 @@ export function DashboardWorkspace({
                       </BarChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="h-full rounded-[10px] bg-[#f7f7f8]" />
+                    <div className="h-full rounded-[10px] bg-[#f7f7f8] dark:bg-[#2c2c2e]" />
                   )}
                 </div>
               </div>
 
               <div className="flex justify-end gap-2">
-                <button className="flex size-[38px] items-center justify-center rounded-[10px] border border-black/10 bg-white">
-                  <CupertinoIcon name="upload" className="size-4 text-[#636366]" />
+                <button className="flex size-[38px] items-center justify-center rounded-[10px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e]">
+                  <CupertinoIcon name="upload" className="size-4 text-[#636366] dark:text-[#8e8e93]" />
                 </button>
-                <button className="relative flex size-[38px] items-center justify-center rounded-[10px] border border-black/10 bg-white">
-                  <CupertinoIcon name="download" className="size-4 text-[#636366]" />
+                <button className="relative flex size-[38px] items-center justify-center rounded-[10px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e]">
+                  <CupertinoIcon name="download" className="size-4 text-[#636366] dark:text-[#8e8e93]" />
                   <span className="absolute -top-1.5 -right-1.5 rounded-[3px] bg-[#007aff] px-1 text-[7px] font-bold text-white">
                     CSV
                   </span>

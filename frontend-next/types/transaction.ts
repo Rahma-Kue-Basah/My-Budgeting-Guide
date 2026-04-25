@@ -20,7 +20,6 @@ export type MerchantMapping = {
   id: string;
   merchantKey: string;
   merchantName: string;
-  categoryId: string | null;
   aliases: string[];
 };
 

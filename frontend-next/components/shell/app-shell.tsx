@@ -19,10 +19,10 @@ export function AppShell({ children }: AppShellProps) {
         <div className="flex flex-1 flex-col">
           <div className="sticky top-0 z-20 h-[58px] border-b border-white/70 bg-background/80 px-4 backdrop-blur md:hidden">
             <div className="flex h-full items-center gap-3">
-              <SidebarTrigger className="size-9 rounded-full border border-white/70 bg-white/80" />
+              <SidebarTrigger className="size-9 rounded-full border border-white/70 bg-white/80 dark:border-white/10 dark:bg-white/8" />
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-foreground">
-                  MBG
+                  Expensave
                 </p>
                 <p className="truncate text-[11px] text-muted-foreground">
                   My Budgeting Guide

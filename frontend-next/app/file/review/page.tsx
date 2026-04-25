@@ -1,5 +1,5 @@
-import { FileReviewWorkspace } from "@/features/file/file-workspace";
+import { redirect } from "next/navigation";
 
 export default function FileReviewPage() {
-  return <FileReviewWorkspace />;
+  redirect("/file");
 }

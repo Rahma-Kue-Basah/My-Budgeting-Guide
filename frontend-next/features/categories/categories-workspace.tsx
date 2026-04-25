@@ -3,639 +3,346 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import {
-  ChevronDown,
-  GitBranch,
-  Shapes,
-  Tags,
-  WalletCards,
-} from "lucide-react";
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ResponsiveContainer,
+  Tooltip as RechartsTooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
+import { CupertinoIcon } from "@/components/icons/cupertino-icon";
 import {
-  CATEGORY_COLOR_STYLES,
-  matchTransactionCategory,
-} from "@/lib/categories";
-import { matchTransactionMerchantMapping } from "@/lib/merchants";
-import { formatCurrency, formatDate } from "@/lib/formatters";
+  CupertinoTable,
+  CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
+} from "@/components/tables/cupertino-table";
+import { Button } from "@/components/ui/button";
+import { CupertinoChip } from "@/components/ui/cupertino-chip";
 import { useFileWorkspace } from "@/hooks/use-file-workspace";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import type { ParsedTransaction, WorkspaceCategory } from "@/types/transaction";
+  CHART_AXIS_TICK,
+  CHART_GRID_STROKE,
+  CHART_TOOLTIP_STYLE,
+  getCategoryChartColor,
+} from "@/lib/charts";
+import { matchTransactionCategory } from "@/lib/categories";
+import { formatCompactNumber, formatCurrency } from "@/lib/formatters";
+import type { CategoryColor } from "@/types/transaction";
 
-type ClassificationSource = "manual" | "merchant" | "keyword" | "uncategorized";
-
-type ReviewRow = {
-  transaction: ParsedTransaction;
-  category: WorkspaceCategory | null;
-  source: ClassificationSource;
+type CategoryAggregateRow = {
+  id: string;
+  name: string;
+  color: CategoryColor | null;
+  transactionCount: number;
+  income: number;
+  expense: number;
+  total: number;
 };
 
-function ClassificationSourceBadge({
-  source,
+function CategoryChip({
+  label,
+  color,
 }: {
-  source: ClassificationSource;
+  label: string;
+  color: CategoryColor | null;
 }) {
-  if (source === "manual") {
-    return (
-      <Badge
-        variant="outline"
-        className="border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-900/70 dark:bg-indigo-950/40 dark:text-indigo-300"
-      >
-        Manual
-      </Badge>
-    );
+  if (!color) {
+    return <CupertinoChip tone="neutral">{label}</CupertinoChip>;
   }
 
-  if (source === "merchant") {
-    return (
-      <Badge
-        variant="outline"
-        className="border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/70 dark:bg-emerald-950/40 dark:text-emerald-300"
-      >
-        Merchant
-      </Badge>
-    );
-  }
-
-  if (source === "keyword") {
-    return (
-      <Badge
-        variant="outline"
-        className="border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/70 dark:bg-amber-950/40 dark:text-amber-300"
-      >
-        Keyword
-      </Badge>
-    );
-  }
-
-  return (
-    <Badge
-      variant="outline"
-      className="border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900/70 dark:bg-rose-950/40 dark:text-rose-300"
-    >
-      Uncategorized
-    </Badge>
-  );
+  return <CupertinoChip tone={color}>{label}</CupertinoChip>;
 }
 
-function CategoryPicker({
-  category,
-  categories,
-  onChange,
+function SummaryCard({
+  title,
+  value,
+  description,
+  icon,
 }: {
-  category: WorkspaceCategory | null;
-  categories: WorkspaceCategory[];
-  onChange: (categoryId: string | null) => void;
+  title: string;
+  value: string | number;
+  description: string;
+  icon: "tag" | "pie" | "alert" | "receipt";
 }) {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-2.5 py-1.5 text-xs outline-none transition-colors hover:bg-muted/60"
-          />
-        }
-      >
-        {category ? (
-          <Badge
-            variant="outline"
-            className={CATEGORY_COLOR_STYLES[category.color].badge}
-          >
-            {category.name}
-          </Badge>
-        ) : (
-          <span className="text-xs text-muted-foreground">Uncategorized</span>
-        )}
-        <ChevronDown className="size-3.5 text-muted-foreground" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="start"
-        className="max-h-80 w-52 overflow-y-auto bg-popover"
-      >
-        <DropdownMenuItem onClick={() => onChange(null)}>
-          Uncategorized
-        </DropdownMenuItem>
-        {categories.map((item) => (
-          <DropdownMenuItem key={item.id} onClick={() => onChange(item.id)}>
-            {item.name}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <p className="text-[11px] font-medium tracking-[0.02em] text-[#8e8e93]">
+            {title}
+          </p>
+          <p className="text-[24px] font-semibold tracking-[-0.03em] text-[#1c1c1e] dark:text-[#f2f2f7]">
+            {value}
+          </p>
+        </div>
+        <span className="flex size-9 items-center justify-center rounded-[10px] bg-[#f2f2f4] dark:bg-[#3a3a3c]">
+          <CupertinoIcon name={icon} className="size-4 text-[#636366] dark:text-[#8e8e93]" />
+        </span>
+      </div>
+      <p className="mt-3 text-[11px] leading-5 text-[#8e8e93]">{description}</p>
+    </div>
   );
 }
 
 export function CategoriesWorkspace() {
-  const { state, isHydrated, setTransactionCategory } = useFileWorkspace();
+  const { state, isHydrated } = useFileWorkspace();
 
-  const processedFiles = useMemo(
-    () => state.files.filter((file) => file.status === "processed"),
-    [state.files],
-  );
+  const categoryRows = useMemo<CategoryAggregateRow[]>(() => {
+    const baseRows = state.categories.map((category) => ({
+      id: category.id,
+      name: category.name,
+      color: category.color,
+      transactionCount: 0,
+      income: 0,
+      expense: 0,
+      total: 0,
+    }));
 
-  const processedFileNames = useMemo(
-    () => new Set(processedFiles.map((file) => file.name)),
-    [processedFiles],
-  );
+    const uncategorizedRow: CategoryAggregateRow = {
+      id: "uncategorized",
+      name: "Uncategorized",
+      color: null,
+      transactionCount: 0,
+      income: 0,
+      expense: 0,
+      total: 0,
+    };
 
-  const reviewRows = useMemo<ReviewRow[]>(() => {
-    return state.transactions
-      .filter((transaction) => processedFileNames.has(transaction.sourceFile))
-      .sort((a, b) => b.date.localeCompare(a.date))
-      .map((transaction) => {
-        const category = matchTransactionCategory(
-          transaction,
-          state.categories,
-          state.merchantMappings,
-        );
+    const rowMap = new Map<string, CategoryAggregateRow>(
+      baseRows.map((row) => [row.id, row]),
+    );
+    rowMap.set(uncategorizedRow.id, uncategorizedRow);
 
-        const source: ClassificationSource = transaction.categoryId
-          ? "manual"
-          : matchTransactionMerchantMapping(transaction, state.merchantMappings)
-            ? "merchant"
-            : category
-              ? "keyword"
-              : "uncategorized";
+    for (const transaction of state.transactions) {
+      const matched = matchTransactionCategory(
+        transaction,
+        state.categories,
+        state.merchantMappings,
+      );
+      const row = rowMap.get(matched?.id ?? "uncategorized");
 
-        return {
-          transaction,
-          category,
-          source,
-        };
-      });
-  }, [
-    processedFileNames,
-    state.categories,
-    state.merchantMappings,
-    state.transactions,
-  ]);
+      if (!row) {
+        continue;
+      }
+
+      row.transactionCount += 1;
+      if (transaction.type === "credit") {
+        row.income += transaction.amount;
+      } else {
+        row.expense += transaction.amount;
+      }
+      row.total += transaction.amount;
+    }
+
+    return [...rowMap.values()]
+      .filter((row) => row.transactionCount > 0)
+      .sort((a, b) => b.expense - a.expense || b.transactionCount - a.transactionCount);
+  }, [state.categories, state.merchantMappings, state.transactions]);
 
   const summary = useMemo(() => {
-    const categorizedCount = reviewRows.filter((row) => row.category).length;
-    const uncategorizedRows = reviewRows.filter((row) => !row.category);
-    const needsAttentionRows = reviewRows.filter(
-      (row) => row.source === "uncategorized" || row.source === "keyword",
-    );
-    const manualOverrides = reviewRows.filter(
-      (row) => row.source === "manual",
-    ).length;
-    const uncategorizedAmount = uncategorizedRows.reduce(
-      (sum, row) =>
-        row.transaction.type === "debit" ? sum + row.transaction.amount : sum,
+    const uncategorized = categoryRows.find((row) => row.id === "uncategorized");
+    const categorizedRows = categoryRows.filter((row) => row.id !== "uncategorized");
+    const totalTransactions = categoryRows.reduce(
+      (sum, row) => sum + row.transactionCount,
       0,
     );
 
     return {
-      totalTransactions: reviewRows.length,
-      coverage:
-        reviewRows.length > 0
-          ? Math.round((categorizedCount / reviewRows.length) * 100)
-          : 0,
-      needsAttention: needsAttentionRows.length,
-      manualOverrides,
-      uncategorizedAmount,
+      totalCategories: categorizedRows.length,
+      totalTransactions,
+      uncategorizedCount: uncategorized?.transactionCount ?? 0,
+      uncategorizedExpense: uncategorized?.expense ?? 0,
     };
-  }, [reviewRows]);
+  }, [categoryRows]);
 
-  const sourceBreakdown = useMemo(
-    () => ({
-      manual: reviewRows.filter((row) => row.source === "manual").length,
-      merchant: reviewRows.filter((row) => row.source === "merchant").length,
-      keyword: reviewRows.filter((row) => row.source === "keyword").length,
-      uncategorized: reviewRows.filter((row) => row.source === "uncategorized")
-        .length,
-    }),
-    [reviewRows],
-  );
-
-  const needsAttentionRows = useMemo(
+  const chartData = useMemo(
     () =>
-      reviewRows
-        .filter(
-          (row) => row.source === "uncategorized" || row.source === "keyword",
-        )
-        .sort((a, b) => {
-          if (a.source !== b.source) {
-            return a.source === "uncategorized" ? -1 : 1;
-          }
-
-          return b.transaction.amount - a.transaction.amount;
-        })
-        .slice(0, 12),
-    [reviewRows],
-  );
-
-  const recentReviewRows = useMemo(() => reviewRows.slice(0, 16), [reviewRows]);
-
-  const uncategorizedPreview = useMemo(
-    () =>
-      reviewRows.filter((row) => row.source === "uncategorized").slice(0, 8),
-    [reviewRows],
+      categoryRows
+        .filter((row) => row.expense > 0)
+        .slice(0, 8)
+        .map((row) => ({
+          name: row.name,
+          amount: row.expense,
+          fill: row.color ? getCategoryChartColor(row.color) : "#8e8e93",
+        })),
+    [categoryRows],
   );
 
   return (
-    <main className="flex-1">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 md:px-6 md:py-8">
-        <section className="space-y-4">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink render={<Link href="/" />}>
-                  Dashboard
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Category Review</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+    <main className="min-h-svh flex-1 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
+      <section className="sticky top-[58px] z-10 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0">
+        <div className="flex w-full items-center gap-3 px-3 py-2.5">
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#1c1c1e] dark:text-[#f2f2f7]">
+            Categories
+          </h1>
 
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-                Category Review
-              </h1>
-              <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
-                Halaman ini khusus untuk review hasil klasifikasi transaksi
-                processed. Bukan tempat mengelola kategori, melainkan tempat
-                mengecek hasil auto-classification dan melakukan koreksi cepat.
+          <div className="ml-auto flex flex-wrap items-center gap-2">
+            <Button
+              className="h-9 rounded-[9px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] px-3 text-[#1c1c1e] dark:text-[#f2f2f7] shadow-none hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+              render={<Link href="/rules" />}
+            >
+              Rules
+            </Button>
+            <Button
+              className="h-9 rounded-[9px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] px-3 text-[#1c1c1e] dark:text-[#f2f2f7] shadow-none hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+              render={<Link href="/analytics" />}
+            >
+              Analytics
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <div className="flex w-full flex-col gap-3 px-3 py-3">
+        <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <SummaryCard
+            title="Active categories"
+            value={summary.totalCategories}
+            description="Jumlah kategori yang saat ini benar-benar terpakai oleh transaksi di workspace."
+            icon="tag"
+          />
+          <SummaryCard
+            title="Categorized transactions"
+            value={summary.totalTransactions - summary.uncategorizedCount}
+            description="Jumlah transaksi yang sudah berhasil masuk ke salah satu kategori."
+            icon="pie"
+          />
+          <SummaryCard
+            title="Uncategorized"
+            value={summary.uncategorizedCount}
+            description="Jumlah transaksi yang belum masuk ke kategori mana pun."
+            icon="alert"
+          />
+          <SummaryCard
+            title="Uncategorized expense"
+            value={formatCurrency(summary.uncategorizedExpense)}
+            description="Total pengeluaran yang masih belum masuk kategori dan perlu dibenahi di rules."
+            icon="receipt"
+          />
+        </section>
+
+        <div className="grid gap-3 xl:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)]">
+          <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+            <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
+              <div className="space-y-1">
+                <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                  Category table
+                </h2>
+                <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+                  Ringkasan seluruh kategori berdasarkan jumlah transaksi, income,
+                  expense, dan total nominal di workspace.
+                </p>
+              </div>
+              <span className="inline-flex h-5 items-center justify-center rounded-full border border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] px-2 py-0.5 text-[10px] font-medium whitespace-nowrap text-[#636366] dark:text-[#8e8e93]">
+                {isHydrated ? `${categoryRows.length} rows` : "Loading"}
+              </span>
+            </div>
+
+            <CupertinoTable
+              columnsClassName="grid-cols-[minmax(0,1.2fr)_90px_130px_130px_130px]"
+              minWidthClassName="min-w-[860px]"
+              headers={[
+                { key: "category", label: "Category" },
+                { key: "transactions", label: "Transactions" },
+                { key: "income", label: "Income" },
+                { key: "expense", label: "Expense" },
+                { key: "total", label: "Total" },
+              ]}
+              hasRows={isHydrated && categoryRows.length > 0}
+              emptyState={
+                <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+                  {!isHydrated
+                    ? "Memuat kategori workspace..."
+                    : "Belum ada transaksi yang bisa diringkas per kategori."}
+                </div>
+              }
+            >
+              {categoryRows.map((row) => (
+                <div
+                  key={row.id}
+                  className={`grid grid-cols-[minmax(0,1.2fr)_90px_130px_130px_130px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                >
+                  <div className="min-w-0">
+                    <CategoryChip label={row.name} color={row.color} />
+                  </div>
+                  <span className="text-sm font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    {row.transactionCount}
+                  </span>
+                  <span className="text-sm text-[#1f8f43]">
+                    {row.income > 0 ? formatCurrency(row.income) : "-"}
+                  </span>
+                  <span className="text-sm text-[#ff453a]">
+                    {row.expense > 0 ? formatCurrency(row.expense) : "-"}
+                  </span>
+                  <span className="text-sm font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    {formatCurrency(row.total)}
+                  </span>
+                </div>
+              ))}
+            </CupertinoTable>
+          </section>
+
+          <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+            <div className="space-y-1">
+              <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                Category expense chart
+              </h2>
+              <p className="text-[11px] leading-5 text-[#8e8e93]">
+                Distribusi expense per kategori untuk membantu melihat kategori yang paling dominan.
               </p>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <Button variant="outline" render={<Link href="/merchants" />}>
-                Open merchants
-              </Button>
-              <Button variant="outline" render={<Link href="/rules" />}>
-                Open rules
-              </Button>
+
+            <div className="mt-4 h-[360px]">
+              {chartData.length === 0 ? (
+                <div className="flex h-full items-center justify-center rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] text-sm text-[#8e8e93]">
+                  Belum ada data expense per kategori.
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={chartData}
+                    layout="vertical"
+                    margin={{ top: 4, right: 8, bottom: 4, left: 8 }}
+                  >
+                    <CartesianGrid
+                      horizontal={false}
+                      stroke={CHART_GRID_STROKE}
+                      strokeDasharray="3 3"
+                    />
+                    <XAxis
+                      type="number"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={CHART_AXIS_TICK}
+                      tickFormatter={(value) => formatCompactNumber(Number(value))}
+                    />
+                    <YAxis
+                      type="category"
+                      dataKey="name"
+                      width={88}
+                      axisLine={false}
+                      tickLine={false}
+                      tick={CHART_AXIS_TICK}
+                    />
+                    <RechartsTooltip
+                      cursor={{ fill: "rgba(0,0,0,0.03)" }}
+                      contentStyle={CHART_TOOLTIP_STYLE}
+                      formatter={(value) =>
+                        typeof value === "number" ? formatCurrency(value) : "-"
+                      }
+                    />
+                    <Bar dataKey="amount" radius={[0, 8, 8, 0]} barSize={22}>
+                      {chartData.map((entry) => (
+                        <Cell key={entry.name} fill={entry.fill} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </div>
-          </div>
-        </section>
-
-        <Separator />
-
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <Card className="border-indigo-200/80 bg-indigo-400/40">
-            <CardHeader>
-              <CardDescription>Coverage</CardDescription>
-              <CardTitle className="text-2xl">{summary.coverage}%</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="border-amber-200/80 bg-amber-400/40">
-            <CardHeader>
-              <CardDescription>Needs attention</CardDescription>
-              <CardTitle className="text-2xl">
-                {summary.needsAttention}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="border-rose-200/80 bg-rose-400/40">
-            <CardHeader>
-              <CardDescription>Uncategorized debit</CardDescription>
-              <CardTitle className="text-2xl">
-                {formatCurrency(summary.uncategorizedAmount)}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="border-emerald-200/80 bg-emerald-400/40">
-            <CardHeader>
-              <CardDescription>Manual overrides</CardDescription>
-              <CardTitle className="text-2xl">
-                {summary.manualOverrides}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-        </section>
-
-        <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(320px,0.9fr)]">
-          <div className="space-y-6">
-            <Card className="border-border bg-card">
-              <CardHeader>
-                <CardTitle>Needs review first</CardTitle>
-                <CardDescription>
-                  Prioritaskan transaksi yang masih uncategorized atau baru
-                  cocok lewat keyword umum.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Tanggal</TableHead>
-                      <TableHead>Deskripsi</TableHead>
-                      <TableHead>Source</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Nominal</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {!isHydrated || needsAttentionRows.length === 0 ? (
-                      <TableRow>
-                        <TableCell
-                          colSpan={5}
-                          className="py-10 text-center text-muted-foreground"
-                        >
-                          {!isHydrated
-                            ? "Memuat review klasifikasi..."
-                            : "Tidak ada transaksi yang perlu diprioritaskan untuk review."}
-                        </TableCell>
-                      </TableRow>
-                    ) : null}
-                    {needsAttentionRows.map(
-                      ({ transaction, category, source }) => (
-                        <TableRow key={transaction.id}>
-                          <TableCell>{formatDate(transaction.date)}</TableCell>
-                          <TableCell className="max-w-[360px] truncate">
-                            {transaction.description}
-                          </TableCell>
-                          <TableCell>
-                            <ClassificationSourceBadge source={source} />
-                          </TableCell>
-                          <TableCell>
-                            <CategoryPicker
-                              category={category}
-                              categories={state.categories}
-                              onChange={(categoryId) =>
-                                setTransactionCategory(
-                                  transaction.id,
-                                  categoryId,
-                                )
-                              }
-                            />
-                          </TableCell>
-                          <TableCell>
-                            {formatCurrency(transaction.amount)}
-                          </TableCell>
-                        </TableRow>
-                      ),
-                    )}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-
-            <Card className="border-border bg-card">
-              <CardHeader>
-                <CardTitle>Recent classification review</CardTitle>
-                <CardDescription>
-                  Riwayat terbaru hasil klasifikasi, tetap dengan aksi koreksi
-                  cepat per transaksi.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Tanggal</TableHead>
-                      <TableHead>Deskripsi</TableHead>
-                      <TableHead>Source</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Nominal</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {!isHydrated || recentReviewRows.length === 0 ? (
-                      <TableRow>
-                        <TableCell
-                          colSpan={5}
-                          className="py-10 text-center text-muted-foreground"
-                        >
-                          {!isHydrated
-                            ? "Memuat transaksi processed..."
-                            : "Belum ada transaksi processed untuk direview."}
-                        </TableCell>
-                      </TableRow>
-                    ) : null}
-                    {recentReviewRows.map(
-                      ({ transaction, category, source }) => (
-                        <TableRow key={transaction.id}>
-                          <TableCell>{formatDate(transaction.date)}</TableCell>
-                          <TableCell className="max-w-[360px] truncate">
-                            {transaction.description}
-                          </TableCell>
-                          <TableCell>
-                            <ClassificationSourceBadge source={source} />
-                          </TableCell>
-                          <TableCell>
-                            <CategoryPicker
-                              category={category}
-                              categories={state.categories}
-                              onChange={(categoryId) =>
-                                setTransactionCategory(
-                                  transaction.id,
-                                  categoryId,
-                                )
-                              }
-                            />
-                          </TableCell>
-                          <TableCell>
-                            {formatCurrency(transaction.amount)}
-                          </TableCell>
-                        </TableRow>
-                      ),
-                    )}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="space-y-6">
-            <Card className="border-border bg-card">
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <GitBranch className="size-4 text-muted-foreground" />
-                  <CardTitle>Classification source</CardTitle>
-                </div>
-                <CardDescription>
-                  Halaman ini menjelaskan kategori datang dari mana.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="rounded-lg border border-indigo-200/80 bg-indigo-50/60 p-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-medium text-foreground">
-                      Manual
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {sourceBreakdown.manual} transaksi
-                    </p>
-                  </div>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Ditentukan langsung oleh user dari halaman review ini.
-                  </p>
-                </div>
-                <div className="rounded-lg border border-emerald-200/80 bg-emerald-50/60 p-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-medium text-foreground">
-                      Merchant mapping
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {sourceBreakdown.merchant} transaksi
-                    </p>
-                  </div>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Dipetakan dari merchant ke kategori di halaman Merchants.
-                  </p>
-                </div>
-                <div className="rounded-lg border border-amber-200/80 bg-amber-50/60 p-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-medium text-foreground">
-                      Keyword rule
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {sourceBreakdown.keyword} transaksi
-                    </p>
-                  </div>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Hasil fallback dari keyword rule kategori.
-                  </p>
-                </div>
-                <div className="rounded-lg border border-rose-200/80 bg-rose-50/60 p-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-medium text-foreground">
-                      Uncategorized
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {sourceBreakdown.uncategorized} transaksi
-                    </p>
-                  </div>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Belum cocok ke merchant mapping maupun keyword rule.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-border bg-card">
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <WalletCards className="size-4 text-muted-foreground" />
-                  <CardTitle>Uncategorized preview</CardTitle>
-                </div>
-                <CardDescription>
-                  Potongan transaksi yang masih belum punya kategori.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {uncategorizedPreview.length === 0 ? (
-                  <div className="rounded-lg border border-border bg-muted/20 px-4 py-10 text-center text-sm text-muted-foreground">
-                    Semua transaksi processed sudah punya kategori.
-                  </div>
-                ) : (
-                  uncategorizedPreview.map(({ transaction }) => (
-                    <div
-                      key={transaction.id}
-                      className="rounded-lg border border-border bg-muted/20 px-3 py-3"
-                    >
-                      <p className="text-sm font-medium text-foreground">
-                        {transaction.description}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {formatDate(transaction.date)}
-                      </p>
-                      <p className="mt-2 text-sm font-medium text-foreground">
-                        {formatCurrency(transaction.amount)}
-                      </p>
-                    </div>
-                  ))
-                )}
-              </CardContent>
-            </Card>
-
-            <Card className="border-border bg-card">
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Shapes className="size-4 text-muted-foreground" />
-                  <CardTitle>Workflow</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm text-muted-foreground">
-                <p>
-                  Gunakan halaman ini untuk{" "}
-                  <span className="font-medium text-foreground">review</span>,
-                  bukan untuk mendefinisikan kategori baru.
-                </p>
-                <p>
-                  Buka{" "}
-                  <span className="font-medium text-foreground">Rules</span>{" "}
-                  kalau perlu tambah kategori atau ubah keyword umum.
-                </p>
-                <p>
-                  Buka{" "}
-                  <span className="font-medium text-foreground">Merchants</span>{" "}
-                  kalau merchant tertentu harus selalu masuk ke kategori yang
-                  sama.
-                </p>
-                <p>
-                  Setelah itu, gunakan halaman ini untuk koreksi edge case per
-                  transaksi sebelum data dipakai di report.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-border bg-card">
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Tags className="size-4 text-muted-foreground" />
-                  <CardTitle>Scope</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm text-muted-foreground">
-                <p>
-                  <span className="font-medium text-foreground">
-                    Category Review
-                  </span>
-                  : review hasil klasifikasi dan koreksi cepat.
-                </p>
-                <p>
-                  <span className="font-medium text-foreground">Rules</span>:
-                  kelola kategori dan keyword.
-                </p>
-                <p>
-                  <span className="font-medium text-foreground">Merchants</span>
-                  : kelola merchant mapping.
-                </p>
-                <p>
-                  <span className="font-medium text-foreground">
-                    Category Insights
-                  </span>
-                  : lihat agregasi dan performa kategori.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+          </section>
         </div>
       </div>
     </main>

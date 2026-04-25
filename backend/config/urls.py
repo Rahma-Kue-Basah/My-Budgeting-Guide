@@ -9,7 +9,7 @@ router = DefaultRouter()
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('api/auth/', include('expensapp_auth.urls')),
+    path('api/auth/', include('expensave_auth.urls')),
 
 
     path('api/docs/', SpectacularAPIView.as_view(), name='schema'),

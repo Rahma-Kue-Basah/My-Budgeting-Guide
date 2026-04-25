@@ -1,65 +1,30 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Fragment, useMemo, useState } from "react";
-import {
-  ArrowDownCircle,
-  ArrowUpCircle,
-  CalendarClock,
-  ExternalLink,
-  History,
-  Repeat2,
-  Search,
-} from "lucide-react";
+import { ExternalLink, History } from "lucide-react";
 
-import { FilterCard } from "@/components/filters/filter-card";
-import { FilterDropdown } from "@/components/filters/filter-dropdown";
-import { CATEGORY_COLOR_STYLES } from "@/lib/categories";
+import { CupertinoIcon } from "@/components/icons/cupertino-icon";
 import {
-  detectRecurringPatterns,
-  type DetectedRecurringPattern,
-  type RecurringConfidence,
-} from "@/lib/recurring";
-import { formatCurrency, formatDate } from "@/lib/formatters";
-import {
-  buildProcessedTransactions,
-  buildRepeatedTransactionPatterns,
-} from "@/lib/transaction-review";
-import { useFileWorkspace } from "@/hooks/use-file-workspace";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  CupertinoTable,
+  CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
+} from "@/components/tables/cupertino-table";
+import { CupertinoChip } from "@/components/ui/cupertino-chip";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useFileWorkspace } from "@/hooks/use-file-workspace";
+import { CATEGORY_COLOR_STYLES, matchTransactionCategory } from "@/lib/categories";
+import {
+  detectRecurringPatterns,
+  type DetectedRecurringPattern,
+  type RecurringConfidence,
+} from "@/lib/recurring";
+import { formatCurrency, formatDate } from "@/lib/formatters";
+import { buildRepeatedTransactionPatterns } from "@/lib/transaction-review";
 import { cn } from "@/lib/utils";
 import type { TransactionType } from "@/types/transaction";
 
@@ -78,62 +43,63 @@ function buildTransactionsHref(
   return query ? `/transactions?${query}` : "/transactions";
 }
 
-function TypeBadge({ type }: { type: TransactionType }) {
-  if (type === "credit") {
-    return (
-      <Badge
-        variant="outline"
-        className="border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-900/70 dark:bg-sky-950/40 dark:text-sky-300"
-      >
-        Credit
-      </Badge>
-    );
-  }
-
+function SummaryCard({
+  title,
+  value,
+  description,
+  icon,
+}: {
+  title: string;
+  value: string | number;
+  description: string;
+  icon: "repeat" | "calendar" | "upload" | "download";
+}) {
   return (
-    <Badge
-      variant="outline"
-      className="border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900/70 dark:bg-rose-950/40 dark:text-rose-300"
-    >
-      Debit
-    </Badge>
+    <div className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <p className="text-[11px] font-medium tracking-[0.02em] text-[#8e8e93]">
+            {title}
+          </p>
+          <p className="text-[24px] font-semibold tracking-[-0.03em] text-[#1c1c1e] dark:text-[#f2f2f7]">
+            {value}
+          </p>
+        </div>
+        <span className="flex size-9 items-center justify-center rounded-[10px] bg-[#f2f2f4] dark:bg-[#3a3a3c]">
+          <CupertinoIcon name={icon} className="size-4 text-[#636366] dark:text-[#8e8e93]" />
+        </span>
+      </div>
+      <p className="mt-3 text-[11px] leading-5 text-[#8e8e93]">{description}</p>
+    </div>
   );
 }
 
-function ConfidenceBadge({
+function TypeChip({ type }: { type: TransactionType }) {
+  return <CupertinoChip tone={type === "credit" ? "sky" : "rose"}>{type === "credit" ? "Credit" : "Debit"}</CupertinoChip>;
+}
+
+function ConfidenceChip({
   confidence,
   label,
 }: {
   confidence: RecurringConfidence;
   label: string;
 }) {
-  const className =
+  const tone =
     confidence === "high"
-      ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/70 dark:bg-emerald-950/40 dark:text-emerald-300"
+      ? "status-success"
       : confidence === "medium"
-        ? "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/70 dark:bg-amber-950/40 dark:text-amber-300"
-        : "border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-800 dark:bg-slate-900/40 dark:text-slate-300";
+        ? "amber"
+        : "neutral";
 
-  return (
-    <Badge variant="outline" className={className}>
-      {label}
-    </Badge>
-  );
+  return <CupertinoChip tone={tone}>{label}</CupertinoChip>;
 }
 
-function DueBadge({ daysUntilNext }: { daysUntilNext: number }) {
-  const className =
-    daysUntilNext < 0
-      ? "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900/70 dark:bg-rose-950/40 dark:text-rose-300"
-      : daysUntilNext <= 3
-        ? "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/70 dark:bg-amber-950/40 dark:text-amber-300"
-        : "border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-900/70 dark:bg-sky-950/40 dark:text-sky-300";
+function DueChip({ daysUntilNext }: { daysUntilNext: number }) {
+  const tone =
+    daysUntilNext < 0 ? "rose" : daysUntilNext <= 3 ? "amber" : "sky";
 
-  return (
-    <Badge variant="outline" className={className}>
-      {formatDueText(daysUntilNext)}
-    </Badge>
-  );
+  return <CupertinoChip tone={tone}>{formatDueText(daysUntilNext)}</CupertinoChip>;
 }
 
 function formatDueText(daysUntilNext: number) {
@@ -166,74 +132,69 @@ function PatternHistoryInline({
   pattern: DetectedRecurringPattern;
 }) {
   return (
-    <div className="space-y-5 p-2">
+    <div className="space-y-3 bg-[#f7f7f8] dark:bg-[#2c2c2e] p-3">
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-xl border border-border bg-background px-3 py-3">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-            Occurrences
-          </p>
-          <p className="mt-2 text-xl font-semibold text-foreground">
+        <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-3 py-3">
+          <p className="text-[11px] font-medium text-[#8e8e93]">Occurrences</p>
+          <p className="mt-2 text-[20px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
             {pattern.count}
           </p>
         </div>
-        <div className="rounded-xl border border-border bg-background px-3 py-3">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-            Average interval
-          </p>
-          <p className="mt-2 text-xl font-semibold text-foreground">
+        <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-3 py-3">
+          <p className="text-[11px] font-medium text-[#8e8e93]">Average interval</p>
+          <p className="mt-2 text-[20px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
             {formatInterval(pattern.averageIntervalDays)}
           </p>
         </div>
-        <div className="rounded-xl border border-border bg-background px-3 py-3">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-            Match rate
-          </p>
-          <p className="mt-2 text-xl font-semibold text-foreground">
+        <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-3 py-3">
+          <p className="text-[11px] font-medium text-[#8e8e93]">Match rate</p>
+          <p className="mt-2 text-[20px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
             {Math.round(pattern.matchRate * 100)}%
           </p>
         </div>
-        <div className="rounded-xl border border-border bg-background px-3 py-3">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-            Monthly effect
-          </p>
-          <p className="mt-2 text-xl font-semibold text-foreground">
+        <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-3 py-3">
+          <p className="text-[11px] font-medium text-[#8e8e93]">Monthly effect</p>
+          <p className="mt-2 text-[20px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
             {formatCurrency(Math.round(pattern.monthlyEstimate))}
           </p>
         </div>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Tanggal</TableHead>
-            <TableHead>Gap</TableHead>
-            <TableHead>Nominal</TableHead>
-            <TableHead>Bank</TableHead>
-            <TableHead>Source file</TableHead>
-            <TableHead>Deskripsi</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+      <div className="overflow-hidden rounded-[12px] border border-black/[0.05] dark:border-white/8 bg-white">
+        <CupertinoTable
+          columnsClassName="grid-cols-[110px_90px_130px_110px_170px_minmax(260px,1fr)]"
+          minWidthClassName="min-w-[980px]"
+          headers={[
+            { key: "date", label: "Tanggal" },
+            { key: "gap", label: "Gap" },
+            { key: "amount", label: "Nominal" },
+            { key: "source", label: "Source" },
+            { key: "file", label: "Source file" },
+            { key: "description", label: "Deskripsi" },
+          ]}
+          hasRows={pattern.transactions.length > 0}
+        >
           {pattern.transactions.map((transaction) => (
-            <TableRow key={transaction.id}>
-              <TableCell>{formatDate(transaction.date)}</TableCell>
-              <TableCell>
+            <div
+              key={transaction.id}
+              className={`grid grid-cols-[110px_90px_130px_110px_170px_minmax(260px,1fr)] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+            >
+              <span>{formatDate(transaction.date)}</span>
+              <span>
                 {transaction.intervalFromPrevious === null
                   ? "-"
                   : `${transaction.intervalFromPrevious} hari`}
-              </TableCell>
-              <TableCell>{formatCurrency(transaction.amount)}</TableCell>
-              <TableCell>{transaction.bank}</TableCell>
-              <TableCell className="max-w-[180px] truncate">
-                {transaction.sourceFile}
-              </TableCell>
-              <TableCell className="max-w-[320px] truncate">
-                {transaction.description}
-              </TableCell>
-            </TableRow>
+              </span>
+              <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                {formatCurrency(transaction.amount)}
+              </span>
+              <span>{transaction.bank}</span>
+              <span className="truncate">{transaction.sourceFile}</span>
+              <span className="truncate text-[#1c1c1e] dark:text-[#f2f2f7]">{transaction.description}</span>
+            </div>
           ))}
-        </TableBody>
-      </Table>
+        </CupertinoTable>
+      </div>
     </div>
   );
 }
@@ -241,98 +202,32 @@ function PatternHistoryInline({
 export function RecurringWorkspace() {
   const router = useRouter();
   const { state, isHydrated } = useFileWorkspace();
-  const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState<"all" | TransactionType>("all");
-  const [bankFilter, setBankFilter] = useState("all");
-  const [categoryFilter, setCategoryFilter] = useState("all");
-  const [cadenceFilter, setCadenceFilter] = useState("all");
-  const [confidenceFilter, setConfidenceFilter] = useState("all");
   const [selectedPatternId, setSelectedPatternId] = useState<string | null>(null);
 
   const patterns = useMemo(() => detectRecurringPatterns(state), [state]);
-  const processedTransactions = useMemo(
-    () =>
-      buildProcessedTransactions(
-        state.files,
-        state.transactions,
-        state.categories,
-        state.merchantMappings,
-      ),
-    [state.categories, state.files, state.merchantMappings, state.transactions],
-  );
-  const filteredProcessedTransactions = useMemo(() => {
-    const query = search.trim().toLowerCase();
+  const processedTransactions = useMemo(() => {
+    const fileMap = new Map(state.files.map((file) => [file.name, file]));
 
-    return processedTransactions.filter((transaction) => {
-      const matchesSearch =
-        !query ||
-        `${transaction.description} ${transaction.bank} ${transaction.category?.name ?? ""}`
-          .toLowerCase()
-          .includes(query);
-
-      const matchesType =
-        typeFilter === "all" || transaction.type === typeFilter;
-      const matchesBank =
-        bankFilter === "all" || transaction.bank === bankFilter;
-      const matchesCategory =
-        categoryFilter === "all"
-          ? true
-          : categoryFilter === "uncategorized"
-            ? transaction.category === null
-            : transaction.category?.id === categoryFilter;
-
-      return matchesSearch && matchesType && matchesBank && matchesCategory;
-    });
-  }, [bankFilter, categoryFilter, processedTransactions, search, typeFilter]);
+    return state.transactions
+      .map((transaction) => ({
+        ...transaction,
+        bank: fileMap.get(transaction.sourceFile)?.bank ?? "Manual",
+        statementPeriod: fileMap.get(transaction.sourceFile)?.statementPeriod ?? null,
+        category: matchTransactionCategory(
+          transaction,
+          state.categories,
+          state.merchantMappings,
+        ),
+      }))
+      .sort((a, b) => b.date.localeCompare(a.date));
+  }, [state.categories, state.files, state.merchantMappings, state.transactions]);
 
   const repeatedPatterns = useMemo(
-    () => buildRepeatedTransactionPatterns(filteredProcessedTransactions),
-    [filteredProcessedTransactions],
+    () => buildRepeatedTransactionPatterns(processedTransactions),
+    [processedTransactions],
   );
 
-  const filteredPatterns = useMemo(() => {
-    const query = search.trim().toLowerCase();
-
-    return patterns.filter((pattern) => {
-      const matchesSearch =
-        !query ||
-        `${pattern.merchantName} ${pattern.descriptionSample} ${pattern.categoryName ?? ""}`
-          .toLowerCase()
-          .includes(query);
-
-      const matchesType =
-        typeFilter === "all" || pattern.type === typeFilter;
-      const matchesBank =
-        bankFilter === "all" || pattern.banks.includes(bankFilter);
-      const matchesCategory =
-        categoryFilter === "all"
-          ? true
-          : categoryFilter === "uncategorized"
-            ? pattern.categoryId === null
-            : pattern.categoryId === categoryFilter;
-      const matchesCadence =
-        cadenceFilter === "all" || pattern.cadence === cadenceFilter;
-      const matchesConfidence =
-        confidenceFilter === "all" || pattern.confidence === confidenceFilter;
-
-      return (
-        matchesSearch &&
-        matchesType &&
-        matchesBank &&
-        matchesCategory &&
-        matchesCadence &&
-        matchesConfidence
-      );
-    });
-  }, [
-    bankFilter,
-    cadenceFilter,
-    categoryFilter,
-    confidenceFilter,
-    patterns,
-    search,
-    typeFilter,
-  ]);
+  const filteredPatterns = patterns;
 
   const activePatternId = useMemo(() => {
     if (
@@ -372,81 +267,6 @@ export function RecurringWorkspace() {
     };
   }, [filteredPatterns]);
 
-  const typeFilterOptions = [
-    { value: "all", label: "Semua tipe" },
-    { value: "debit", label: "Debit" },
-    { value: "credit", label: "Credit" },
-  ];
-
-  const cadenceFilterOptions = [
-    { value: "all", label: "Semua cadence" },
-    { value: "weekly", label: "Mingguan" },
-    { value: "biweekly", label: "2 mingguan" },
-    { value: "monthly", label: "Bulanan" },
-    { value: "quarterly", label: "Kuartalan" },
-  ];
-
-  const confidenceFilterOptions = [
-    { value: "all", label: "Semua confidence" },
-    { value: "high", label: "High confidence" },
-    { value: "medium", label: "Medium confidence" },
-    { value: "low", label: "Low confidence" },
-  ];
-
-  const bankFilterOptions = useMemo(
-    () => [
-      { value: "all", label: "Semua bank" },
-      ...[...new Set(processedTransactions.map((transaction) => transaction.bank))]
-        .sort((a, b) => a.localeCompare(b))
-        .map((bank) => ({
-          value: bank,
-          label: bank,
-        })),
-    ],
-    [processedTransactions],
-  );
-
-  const categoryFilterOptions = useMemo(() => {
-    const categoryMap = new Map<string, string>();
-    let hasUncategorized = false;
-
-    for (const transaction of processedTransactions) {
-      if (transaction.category) {
-        categoryMap.set(transaction.category.id, transaction.category.name);
-      } else {
-        hasUncategorized = true;
-      }
-    }
-
-    const options = [
-      { value: "all", label: "Semua kategori" },
-      ...[...categoryMap.entries()]
-        .sort((a, b) => a[1].localeCompare(b[1]))
-        .map(([value, label]) => ({
-          value,
-          label,
-        })),
-    ];
-
-    if (hasUncategorized) {
-      options.push({
-        value: "uncategorized",
-        label: "Uncategorized",
-      });
-    }
-
-    return options;
-  }, [processedTransactions]);
-
-  function resetFilters() {
-    setSearch("");
-    setTypeFilter("all");
-    setBankFilter("all");
-    setCategoryFilter("all");
-    setCadenceFilter("all");
-    setConfidenceFilter("all");
-  }
-
   function openPatternTransactions(pattern: DetectedRecurringPattern) {
     router.push(
       buildTransactionsHref({
@@ -475,347 +295,202 @@ export function RecurringWorkspace() {
     {
       title: "Recurring patterns",
       value: String(summary.total),
-      note: "Pattern terdeteksi dari file processed",
-      icon: Repeat2,
-      className: "border-indigo-200/80 bg-indigo-400/40",
-      iconClassName: "bg-indigo-100 text-indigo-500 ring-indigo-200/80",
+      description: "Pattern terdeteksi dari seluruh transaksi workspace.",
+      icon: "repeat" as const,
     },
     {
       title: "Due soon",
       value: String(summary.dueSoon),
-      note: "Jatuh tempo dalam 7 hari",
-      icon: CalendarClock,
-      className: "border-amber-200/80 bg-amber-400/40",
-      iconClassName: "bg-amber-100 text-amber-500 ring-amber-200/80",
+      description: "Pattern yang diperkirakan jatuh tempo dalam 7 hari.",
+      icon: "calendar" as const,
     },
     {
       title: "Monthly debit estimate",
       value: formatCurrency(Math.round(summary.debitEstimate)),
-      note: "Perkiraan recurring expense per bulan",
-      icon: ArrowDownCircle,
-      className: "border-rose-200/80 bg-rose-400/40",
-      iconClassName: "bg-rose-100 text-rose-500 ring-rose-200/80",
+      description: "Perkiraan recurring expense per bulan.",
+      icon: "upload" as const,
     },
     {
       title: "Monthly credit estimate",
       value: formatCurrency(Math.round(summary.creditEstimate)),
-      note: "Perkiraan recurring income per bulan",
-      icon: ArrowUpCircle,
-      className: "border-emerald-200/80 bg-emerald-400/40",
-      iconClassName: "bg-emerald-100 text-emerald-500 ring-emerald-200/80",
+      description: "Perkiraan recurring income per bulan.",
+      icon: "download" as const,
     },
   ];
 
   return (
     <TooltipProvider>
-      <main className="flex-1">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 md:px-6 md:py-8">
-        <section className="space-y-4">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink render={<Link href="/" />}>
-                  Dashboard
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Recurring</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-
-          <div className="space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-              Recurring detection
+      <main className="min-h-svh flex-1 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
+        <section className="sticky top-[58px] z-10 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0">
+          <div className="flex w-full items-center gap-3 px-3 py-2.5">
+            <h1 className="text-[22px] font-semibold tracking-tight text-[#1c1c1e] dark:text-[#f2f2f7]">
+              Recurring
             </h1>
-            <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
-              Deteksi otomatis transaksi yang terlihat berulang berdasarkan
-              merchant, kestabilan nominal, dan pola jarak tanggal dari file yang
-              sudah berstatus processed.
-            </p>
           </div>
         </section>
 
-        <Separator />
+        <div className="flex w-full flex-col gap-3 px-3 py-3">
+          <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {summaryCards.map((card) => (
+              <SummaryCard
+                key={card.title}
+                title={card.title}
+                value={card.value}
+                description={card.description}
+                icon={card.icon}
+              />
+            ))}
+          </section>
 
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {summaryCards.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <Card key={item.title} className={item.className}>
-                <CardHeader>
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <CardDescription>{item.title}</CardDescription>
-                      <CardTitle className="mt-1 text-2xl">
-                        {item.value}
-                      </CardTitle>
-                    </div>
-                    <div
-                      className={cn(
-                        "flex size-10 items-center justify-center rounded-xl ring-1",
-                        item.iconClassName,
-                      )}
-                    >
-                      <Icon className="size-4" />
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="text-xs text-muted-foreground">
-                  {item.note}
-                </CardContent>
-              </Card>
-            );
-          })}
-        </section>
-
-        <FilterCard>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
-                Search
-              </label>
-              <div className="relative">
-                <Search className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Cari merchant, deskripsi, atau kategori"
-                  className="border-border bg-background pl-8"
-                  value={search}
-                  onChange={(event) => setSearch(event.target.value)}
-                />
+          <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+            <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
+              <div className="space-y-1">
+                <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                  Detected patterns
+                </h2>
+                <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+                  Klik row untuk membuka transaksi serupa di halaman Transactions atau tampilkan history di bawah row.
+                </p>
               </div>
+              <CupertinoChip tone="neutral">
+                {isHydrated ? `${filteredPatterns.length} patterns` : "Loading"}
+              </CupertinoChip>
             </div>
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
-                Transaction type
-              </label>
-              <FilterDropdown
-                value={typeFilter}
-                placeholder="Semua tipe"
-                options={typeFilterOptions}
-                onChange={(value) =>
-                  setTypeFilter(value as "all" | TransactionType)
-                }
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
-                Bank
-              </label>
-              <FilterDropdown
-                value={bankFilter}
-                placeholder="Semua bank"
-                options={bankFilterOptions}
-                onChange={setBankFilter}
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
-                Category
-              </label>
-              <FilterDropdown
-                value={categoryFilter}
-                placeholder="Semua kategori"
-                options={categoryFilterOptions}
-                onChange={setCategoryFilter}
-              />
-            </div>
-          </div>
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
-                Cadence
-              </label>
-              <FilterDropdown
-                value={cadenceFilter}
-                placeholder="Semua cadence"
-                options={cadenceFilterOptions}
-                onChange={setCadenceFilter}
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
-                Confidence
-              </label>
-              <FilterDropdown
-                value={confidenceFilter}
-                placeholder="Semua confidence"
-                options={confidenceFilterOptions}
-                onChange={setConfidenceFilter}
-              />
-            </div>
-            <div className="flex items-end">
-              <Button variant="outline" onClick={resetFilters}>
-                Reset filters
-              </Button>
-            </div>
-          </div>
-        </FilterCard>
-
-        <div className="space-y-6">
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle>Detected patterns</CardTitle>
-              <CardDescription>
-                Klik row untuk membuka histori transaksi tepat di bawah pattern
-                yang dipilih.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Merchant</TableHead>
-                    <TableHead>Cadence</TableHead>
-                    <TableHead>Typical amount</TableHead>
-                    <TableHead>Count</TableHead>
-                    <TableHead>Next expected</TableHead>
-                    <TableHead>Confidence</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {!isHydrated || filteredPatterns.length === 0 ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={7}
-                        className="py-10 text-center text-muted-foreground"
-                      >
-                        {!isHydrated
-                          ? "Memuat recurring patterns..."
-                          : "Belum ada recurring pattern yang memenuhi threshold deteksi."}
-                      </TableCell>
-                    </TableRow>
-                  ) : null}
-                  {filteredPatterns.map((pattern) => (
-                    <Fragment key={pattern.id}>
-                      <TableRow
-                        className={cn(
-                          "cursor-pointer transition-colors hover:bg-muted/40",
-                          pattern.id === activePatternId &&
-                            "bg-indigo-50/70 dark:bg-indigo-950/20",
-                        )}
-                        onClick={() => openPatternTransactions(pattern)}
-                      >
-                        <TableCell className="space-y-2">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="font-medium text-foreground">
-                              {pattern.merchantName}
-                            </span>
-                            <TypeBadge type={pattern.type} />
-                            {pattern.categoryName ? (
-                              <Badge
-                                variant="outline"
-                                className={
-                                  pattern.categoryColor
-                                    ? CATEGORY_COLOR_STYLES[pattern.categoryColor]
-                                        .badge
-                                    : undefined
-                                }
-                              >
-                                {pattern.categoryName}
-                              </Badge>
-                            ) : null}
-                          </div>
-                          <p className="max-w-[340px] truncate text-xs text-muted-foreground">
-                            {pattern.descriptionSample}
-                          </p>
-                        </TableCell>
-                        <TableCell>{pattern.cadenceLabel}</TableCell>
-                        <TableCell>
-                          {formatCurrency(pattern.typicalAmount)}
-                        </TableCell>
-                        <TableCell>{pattern.count}</TableCell>
-                        <TableCell className="space-y-1">
-                          <p>{formatDate(pattern.nextExpected)}</p>
-                          <DueBadge daysUntilNext={pattern.daysUntilNext} />
-                        </TableCell>
-                        <TableCell>
-                          <ConfidenceBadge
-                            confidence={pattern.confidence}
-                            label={pattern.confidenceLabel}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Tooltip>
-                              <TooltipTrigger
-                                render={
-                                  <Button
-                                    type="button"
-                                    size="icon-sm"
-                                    variant="outline"
-                                  />
-                                }
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  setSelectedPatternId((current) =>
-                                    current === pattern.id ? null : pattern.id,
-                                  );
-                                }}
-                              >
-                                <History className="size-3.5" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                {pattern.id === activePatternId
-                                  ? "Hide history"
-                                  : "Show history"}
-                              </TooltipContent>
-                            </Tooltip>
-                            <Tooltip>
-                              <TooltipTrigger
-                                render={
-                                  <Button
-                                    type="button"
-                                    size="icon-sm"
-                                    variant="outline"
-                                  />
-                                }
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  openPatternTransactions(pattern);
-                                }}
-                              >
-                                <ExternalLink className="size-3.5" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                Open in Transactions
-                              </TooltipContent>
-                            </Tooltip>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                      {pattern.id === activePatternId ? (
-                        <TableRow className="hover:bg-transparent">
-                          <TableCell
-                            colSpan={7}
-                            className="bg-muted/20 p-0 whitespace-normal"
+            <CupertinoTable
+              columnsClassName="grid-cols-[minmax(320px,1.6fr)_120px_150px_72px_170px_150px_96px]"
+              minWidthClassName="min-w-[1240px]"
+              headers={[
+                { key: "merchant", label: "Merchant" },
+                { key: "cadence", label: "Cadence" },
+                { key: "amount", label: "Typical amount" },
+                { key: "count", label: "Count" },
+                { key: "next", label: "Next expected" },
+                { key: "confidence", label: "Confidence" },
+                { key: "actions", label: "Actions", className: "text-right" },
+              ]}
+              hasRows={isHydrated && filteredPatterns.length > 0}
+              emptyState={
+                <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+                  {!isHydrated
+                    ? "Memuat recurring patterns..."
+                    : "Belum ada recurring pattern yang memenuhi threshold deteksi."}
+                </div>
+              }
+            >
+              {filteredPatterns.map((pattern) => (
+                <Fragment key={pattern.id}>
+                  <button
+                    type="button"
+                    className={cn(
+                      `grid w-full grid-cols-[minmax(320px,1.6fr)_120px_150px_72px_170px_150px_96px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] text-left transition hover:bg-black/[0.014] dark:hover:bg-white/5 ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`,
+                      pattern.id === activePatternId ? "bg-[#007aff]/[0.05]" : "",
+                    )}
+                    onClick={() => openPatternTransactions(pattern)}
+                  >
+                    <div className="min-w-0 space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="truncate text-[11px] font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">
+                          {pattern.merchantName}
+                        </span>
+                        <TypeChip type={pattern.type} />
+                        {pattern.categoryName ? (
+                          <span
+                            className={cn(
+                              "inline-flex h-6 items-center rounded-full border px-2 text-[11px] font-medium",
+                              pattern.categoryColor
+                                ? CATEGORY_COLOR_STYLES[pattern.categoryColor].badge
+                                : "border-black/10 dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] text-[#636366] dark:text-[#8e8e93]",
+                            )}
                           >
-                            <PatternHistoryInline pattern={pattern} />
-                          </TableCell>
-                        </TableRow>
-                      ) : null}
-                    </Fragment>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+                            {pattern.categoryName}
+                          </span>
+                        ) : null}
+                      </div>
+                      <p className="truncate text-[11px] text-[#8e8e93]">
+                        {pattern.descriptionSample}
+                      </p>
+                    </div>
+                    <span className="truncate">{pattern.cadenceLabel}</span>
+                    <span className="truncate font-semibold text-[#1c1c1e] dark:text-[#f2f2f7] tabular-nums">
+                      {formatCurrency(pattern.typicalAmount)}
+                    </span>
+                    <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7] tabular-nums">{pattern.count}</span>
+                    <div className="min-w-0 space-y-1">
+                      <p className="truncate">{formatDate(pattern.nextExpected)}</p>
+                      <DueChip daysUntilNext={pattern.daysUntilNext} />
+                    </div>
+                    <span className="min-w-0">
+                      <ConfidenceChip
+                        confidence={pattern.confidence}
+                        label={pattern.confidenceLabel}
+                      />
+                    </span>
+                    <div className="flex min-w-[68px] items-center justify-end gap-1.5 justify-self-end">
+                      <Tooltip>
+                        <TooltipTrigger
+                          render={
+                            <button
+                              type="button"
+                              className="flex size-7 items-center justify-center rounded-[7px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] text-[#636366] dark:text-[#8e8e93] transition-colors hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+                            />
+                          }
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setSelectedPatternId((current) =>
+                              current === pattern.id ? null : pattern.id,
+                            );
+                          }}
+                        >
+                          <History className="size-[13px]" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {pattern.id === activePatternId ? "Hide history" : "Show history"}
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger
+                          render={
+                            <button
+                              type="button"
+                              className="flex size-7 items-center justify-center rounded-[7px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] text-[#636366] dark:text-[#8e8e93] transition-colors hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+                            />
+                          }
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            openPatternTransactions(pattern);
+                          }}
+                        >
+                          <ExternalLink className="size-[13px]" />
+                        </TooltipTrigger>
+                        <TooltipContent>Open in Transactions</TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </button>
 
-          <div className="grid items-start gap-6 xl:grid-cols-1">
-            <Card className="border-border bg-card">
-              <CardHeader>
-                <CardTitle>Upcoming recurring</CardTitle>
-                <CardDescription>
+                  {pattern.id === activePatternId ? (
+                    <div className="border-t border-black/[0.04]">
+                      <PatternHistoryInline pattern={pattern} />
+                    </div>
+                  ) : null}
+                </Fragment>
+              ))}
+            </CupertinoTable>
+          </section>
+
+          <div className="grid gap-3 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+            <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+              <div className="space-y-1">
+                <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                  Upcoming recurring
+                </h2>
+                <p className="text-[11px] leading-5 text-[#8e8e93]">
                   Pattern yang diperkirakan jatuh tempo dalam waktu dekat.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
+                </p>
+              </div>
+              <div className="mt-4 space-y-3">
                 {upcomingPatterns.length === 0 ? (
-                  <div className="rounded-lg border border-border bg-muted/20 px-4 py-10 text-center text-sm text-muted-foreground">
+                  <div className="rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-4 py-10 text-center text-sm text-[#8e8e93]">
                     Belum ada pattern recurring yang dekat dengan due date.
                   </div>
                 ) : (
@@ -824,22 +499,22 @@ export function RecurringWorkspace() {
                       key={pattern.id}
                       type="button"
                       onClick={() => openPatternTransactions(pattern)}
-                      className="flex w-full flex-col items-start gap-2 rounded-lg border border-border bg-muted/20 px-3 py-3 text-left transition-colors hover:bg-muted/40"
+                      className="flex w-full flex-col items-start gap-2 rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-3 py-3 text-left transition hover:bg-[#ededf0] dark:hover:bg-[#3a3a3c]"
                     >
                       <div className="flex w-full items-start justify-between gap-3">
-                        <div>
-                          <p className="text-sm font-medium text-foreground">
+                        <div className="min-w-0">
+                          <p className="truncate text-[11px] font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">
                             {pattern.merchantName}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="mt-0.5 truncate text-[11px] text-[#8e8e93]">
                             {pattern.cadenceLabel} · {formatCurrency(pattern.typicalAmount)}
                           </p>
                         </div>
-                        <DueBadge daysUntilNext={pattern.daysUntilNext} />
+                        <DueChip daysUntilNext={pattern.daysUntilNext} />
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
-                        <TypeBadge type={pattern.type} />
-                        <ConfidenceBadge
+                        <TypeChip type={pattern.type} />
+                        <ConfidenceChip
                           confidence={pattern.confidence}
                           label={pattern.confidenceLabel}
                         />
@@ -847,89 +522,86 @@ export function RecurringWorkspace() {
                     </button>
                   ))
                 )}
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </section>
 
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle>Repeated exact transactions</CardTitle>
-              <CardDescription>
-                Deskripsi dan nominal identik yang muncul berulang. Bagian ini
-                melengkapi recurring detection, tapi tidak memakai heuristik
-                cadence.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Deskripsi</TableHead>
-                    <TableHead>Tipe</TableHead>
-                    <TableHead>Nominal</TableHead>
-                    <TableHead>Count</TableHead>
-                    <TableHead>Last seen</TableHead>
-                    <TableHead>Files</TableHead>
-                    <TableHead>Open</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {!isHydrated || repeatedPatterns.length === 0 ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={7}
-                        className="py-10 text-center text-muted-foreground"
-                      >
-                        {!isHydrated
-                          ? "Memuat repeated transactions..."
-                          : "Belum ada transaksi exact match yang berulang."}
-                      </TableCell>
-                    </TableRow>
-                  ) : null}
-                  {repeatedPatterns.map((item) => (
-                    <TableRow
-                      key={`${item.type}-${item.amount}-${item.description}`}
-                      className="cursor-pointer transition-colors hover:bg-muted/40"
-                      onClick={() => openRepeatedTransactions(item)}
-                    >
-                      <TableCell className="max-w-[360px] truncate">
-                        {item.description}
-                      </TableCell>
-                      <TableCell className="capitalize">{item.type}</TableCell>
-                      <TableCell>{formatCurrency(item.amount)}</TableCell>
-                      <TableCell>{item.count}</TableCell>
-                      <TableCell>{formatDate(item.lastDate)}</TableCell>
-                      <TableCell>{item.sourceFiles.length}</TableCell>
-                      <TableCell>
-                        <Tooltip>
-                          <TooltipTrigger
-                            render={
-                              <Button
-                                type="button"
-                                size="icon-sm"
-                                variant="outline"
-                              />
-                            }
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              openRepeatedTransactions(item);
-                            }}
-                          >
-                            <ExternalLink className="size-3.5" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            Open in Transactions
-                          </TooltipContent>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+            <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+              <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
+                <div className="space-y-1">
+                  <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    Repeated exact transactions
+                  </h2>
+                  <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+                    Deskripsi dan nominal identik yang muncul berulang tanpa heuristik cadence.
+                  </p>
+                </div>
+                <CupertinoChip tone="neutral">
+                  {isHydrated ? `${repeatedPatterns.length} matches` : "Loading"}
+                </CupertinoChip>
+              </div>
+              <CupertinoTable
+                columnsClassName="grid-cols-[minmax(320px,1.5fr)_80px_130px_80px_110px_70px_70px]"
+                minWidthClassName="min-w-[980px]"
+                headers={[
+                  { key: "description", label: "Deskripsi" },
+                  { key: "type", label: "Tipe" },
+                  { key: "amount", label: "Nominal" },
+                  { key: "count", label: "Count" },
+                  { key: "last", label: "Last seen" },
+                  { key: "files", label: "Files" },
+                  { key: "open", label: "Open", className: "text-right" },
+                ]}
+                hasRows={isHydrated && repeatedPatterns.length > 0}
+                emptyState={
+                  <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+                    {!isHydrated
+                      ? "Memuat repeated transactions..."
+                      : "Belum ada transaksi exact match yang berulang."}
+                  </div>
+                }
+              >
+                {repeatedPatterns.map((item) => (
+                  <button
+                    key={`${item.type}-${item.amount}-${item.description}`}
+                    type="button"
+                    className={`grid w-full grid-cols-[minmax(320px,1.5fr)_80px_130px_80px_110px_70px_70px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] text-left transition hover:bg-black/[0.014] dark:hover:bg-white/5 ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                    onClick={() => openRepeatedTransactions(item)}
+                  >
+                    <span className="truncate text-[11px] text-[#1c1c1e] dark:text-[#f2f2f7]">
+                      {item.description}
+                    </span>
+                    <span className="capitalize">{item.type}</span>
+                    <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                      {formatCurrency(item.amount)}
+                    </span>
+                    <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">{item.count}</span>
+                    <span>{formatDate(item.lastDate)}</span>
+                    <span>{item.sourceFiles.length}</span>
+                    <span className="flex justify-end">
+                      <Tooltip>
+                        <TooltipTrigger
+                          render={
+                            <button
+                              type="button"
+                              className="flex size-7 items-center justify-center rounded-[7px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] text-[#636366] dark:text-[#8e8e93] transition-colors hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+                            />
+                          }
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            openRepeatedTransactions(item);
+                          }}
+                        >
+                          <ExternalLink className="size-[13px]" />
+                        </TooltipTrigger>
+                        <TooltipContent>Open in Transactions</TooltipContent>
+                      </Tooltip>
+                    </span>
+                  </button>
+                ))}
+              </CupertinoTable>
+            </section>
+          </div>
         </div>
-      </div>
       </main>
     </TooltipProvider>
   );

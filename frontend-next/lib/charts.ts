@@ -1,14 +1,15 @@
 import type { CSSProperties } from "react";
 
+import { CATEGORY_COLOR_HEX } from "@/lib/color-palette";
 import type { CategoryColor } from "@/types/transaction";
 
 export const CHART_COLOR_PALETTE = {
-  violet: "rgb(167 139 250)",
-  amber: "rgb(251 191 36)",
-  rose: "rgb(251 113 133)",
-  emerald: "rgb(52 211 153)",
-  sky: "rgb(56 189 248)",
-  indigo: "rgb(129 140 248)",
+  violet: CATEGORY_COLOR_HEX.violet,
+  amber: CATEGORY_COLOR_HEX.amber,
+  rose: CATEGORY_COLOR_HEX.rose,
+  emerald: CATEGORY_COLOR_HEX.emerald,
+  sky: CATEGORY_COLOR_HEX.sky,
+  indigo: CATEGORY_COLOR_HEX.indigo,
 } as const;
 
 export const CATEGORY_CHART_COLORS: Record<CategoryColor, string> = {

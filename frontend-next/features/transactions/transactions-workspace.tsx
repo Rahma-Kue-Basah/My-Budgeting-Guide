@@ -1,45 +1,20 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
 
-import { FilterCard } from "@/components/filters/filter-card";
-import { FilterDropdown } from "@/components/filters/filter-dropdown";
+import { CupertinoIcon } from "@/components/icons/cupertino-icon";
 import {
-  CATEGORY_COLOR_STYLES,
-  matchTransactionCategory,
-} from "@/lib/categories";
-import { useFileWorkspace } from "@/hooks/use-file-workspace";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Badge } from "@/components/ui/badge";
+  CupertinoTable,
+  CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
+} from "@/components/tables/cupertino-table";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { formatCurrency, formatDate } from "@/lib/formatters";
+import { CupertinoChip } from "@/components/ui/cupertino-chip";
+import { CupertinoSelect } from "@/components/ui/cupertino-select";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { useFileWorkspace } from "@/hooks/use-file-workspace";
+import { matchTransactionCategory } from "@/lib/categories";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import type {
   ParsedTransaction,
   TransactionType,
@@ -50,6 +25,8 @@ type EnrichedTransaction = ParsedTransaction & {
   bank: string;
   statementPeriod: string | null;
   category: WorkspaceCategory | null;
+  sourceLabel: string;
+  sourceKind: "import" | "manual";
 };
 
 type TransactionFilterState = {
@@ -64,25 +41,54 @@ type TransactionFilterState = {
   transactionId: string;
 };
 
-function TypeBadge({ type }: { type: TransactionType }) {
-  if (type === "credit") {
-    return (
-      <Badge
-        variant="outline"
-        className="border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-900/70 dark:bg-sky-950/40 dark:text-sky-300"
-      >
-        Credit
-      </Badge>
-    );
+function SummaryCard({
+  title,
+  value,
+  description,
+  icon,
+}: {
+  title: string;
+  value: string | number;
+  description: string;
+  icon: "database" | "download" | "upload";
+}) {
+  return (
+    <div className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <p className="text-[11px] font-medium tracking-[0.02em] text-[#8e8e93]">
+            {title}
+          </p>
+          <p className="text-[24px] font-semibold tracking-[-0.03em] text-[#1c1c1e] dark:text-[#f2f2f7]">
+            {value}
+          </p>
+        </div>
+        <span className="flex size-9 items-center justify-center rounded-[10px] bg-[#f2f2f4] dark:bg-[#3a3a3c]">
+          <CupertinoIcon name={icon} className="size-4 text-[#636366] dark:text-[#8e8e93]" />
+        </span>
+      </div>
+      <p className="mt-3 text-[11px] leading-5 text-[#8e8e93]">{description}</p>
+    </div>
+  );
+}
+
+function CategoryChip({
+  category,
+}: {
+  category: WorkspaceCategory | null;
+}) {
+  if (!category) {
+    return <span className="text-[11px] text-[#8e8e93]">Uncategorized</span>;
   }
 
+  return <CupertinoChip tone={category.color}>{category.name}</CupertinoChip>;
+}
+
+function TypeChip({ type }: { type: TransactionType }) {
   return (
-    <Badge
-      variant="outline"
-      className="border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900/70 dark:bg-rose-950/40 dark:text-rose-300"
-    >
-      Debit
-    </Badge>
+    <CupertinoChip tone={type === "credit" ? "sky" : "rose"}>
+      {type === "credit" ? "Credit" : "Debit"}
+    </CupertinoChip>
   );
 }
 
@@ -136,28 +142,22 @@ function TransactionsWorkspaceContent({
     initialFilters.transactionId,
   );
 
-  const processedFiles = useMemo(
-    () => state.files.filter((file) => file.status === "processed"),
-    [state.files],
-  );
   const fileMap = useMemo(
-    () => new Map(processedFiles.map((file) => [file.name, file])),
-    [processedFiles],
+    () => new Map(state.files.map((file) => [file.name, file])),
+    [state.files],
   );
 
   const transactions = useMemo<EnrichedTransaction[]>(() => {
     return state.transactions
       .map((transaction) => {
-        const file = fileMap.get(transaction.sourceFile);
-
-        if (!file) {
-          return null;
-        }
+        const file = fileMap.get(transaction.sourceFile) ?? null;
 
         return {
           ...transaction,
-          bank: file.bank,
-          statementPeriod: file.statementPeriod ?? null,
+          bank: file?.bank ?? "Manual",
+          statementPeriod: file?.statementPeriod ?? null,
+          sourceLabel: file ? transaction.sourceFile : "Manual entry",
+          sourceKind: file ? ("import" as const) : ("manual" as const),
           category: matchTransactionCategory(
             transaction,
             state.categories,
@@ -165,15 +165,12 @@ function TransactionsWorkspaceContent({
           ),
         };
       })
-      .filter((transaction): transaction is EnrichedTransaction =>
-        Boolean(transaction),
-      )
       .sort((a, b) => b.date.localeCompare(a.date));
   }, [fileMap, state.categories, state.merchantMappings, state.transactions]);
 
   const bankOptions = useMemo(() => {
-    return [...new Set(processedFiles.map((file) => file.bank))].sort();
-  }, [processedFiles]);
+    return [...new Set(transactions.map((transaction) => transaction.bank))].sort();
+  }, [transactions]);
 
   const typeOptions = [
     { value: "all", label: "Semua tipe" },
@@ -182,8 +179,13 @@ function TransactionsWorkspaceContent({
   ];
 
   const bankFilterOptions = [
-    { value: "all", label: "Semua bank" },
-    ...bankOptions.map((bank) => ({ value: bank, label: bank })),
+    { value: "all", label: "Semua source" },
+    ...bankOptions.map((bank) => ({
+      value: bank,
+      label: bank,
+      leadingLabel: bank.slice(0, 2).toUpperCase(),
+      leadingColor: bank === "Manual" ? "#1c1c1e" : "#1155cc",
+    })),
   ];
 
   const categoryFilterOptions = useMemo(
@@ -211,7 +213,7 @@ function TransactionsWorkspaceContent({
 
       if (
         query &&
-        !`${transaction.description} ${transaction.sourceFile} ${transaction.bank}`
+        !`${transaction.description} ${transaction.sourceLabel} ${transaction.bank}`
           .toLowerCase()
           .includes(query)
       ) {
@@ -301,245 +303,220 @@ function TransactionsWorkspaceContent({
   }
 
   return (
-    <main className="flex-1">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 md:px-6 md:py-8">
-        <section className="space-y-4">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink render={<Link href="/" />}>
-                  Dashboard
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Transactions</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+    <main className="min-h-svh flex-1 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
+      <section className="sticky top-[58px] z-10 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0">
+        <div className="flex w-full items-center gap-3 px-3 py-2.5">
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#1c1c1e] dark:text-[#f2f2f7]">
+            Transactions
+          </h1>
+        </div>
+      </section>
 
-          <div className="space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-              Transactions
-            </h1>
-            <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
-              Tabel gabungan transaksi dari file yang sudah berstatus processed,
-              lengkap dengan filter untuk meninjau data lintas file dan bank.
-            </p>
+      <div className="flex w-full flex-col gap-3 px-3 py-3">
+        <section className="grid gap-3 md:grid-cols-3">
+          <SummaryCard
+            title="Total transactions"
+            value={filteredSummary.total}
+            description="Jumlah transaksi yang cocok dengan filter saat ini, termasuk import dan manual entry."
+            icon="database"
+          />
+          <SummaryCard
+            title="Total credit"
+            value={formatCurrency(filteredSummary.creditTotal)}
+            description="Akumulasi transaksi credit dari hasil filter saat ini."
+            icon="download"
+          />
+          <SummaryCard
+            title="Total debit"
+            value={formatCurrency(filteredSummary.debitTotal)}
+            description="Akumulasi transaksi debit dari hasil filter saat ini."
+            icon="upload"
+          />
+        </section>
+
+        <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <label className="space-y-2">
+              <span className="text-[11px] font-medium text-[#8e8e93]">Search</span>
+              <div className="relative">
+                <CupertinoIcon
+                  name="search"
+                  className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-[#8e8e93]"
+                />
+                <Input
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Cari deskripsi, source, atau bank"
+                  className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] pl-9 shadow-none focus-visible:ring-[#007aff]/30"
+                />
+              </div>
+            </label>
+            <label className="space-y-2">
+              <span className="text-[11px] font-medium text-[#8e8e93]">Type</span>
+              <CupertinoSelect
+                icon="repeat"
+                value={typeFilter}
+                onChange={(value) => setTypeFilter(value as "all" | TransactionType)}
+                options={typeOptions}
+                minWidthClassName="w-full"
+                ariaLabel="Filter transaction type"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="text-[11px] font-medium text-[#8e8e93]">Source</span>
+              <CupertinoSelect
+                icon="wallet"
+                value={bankFilter}
+                onChange={setBankFilter}
+                options={bankFilterOptions}
+                minWidthClassName="w-full"
+                ariaLabel="Filter transaction source"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="text-[11px] font-medium text-[#8e8e93]">Category</span>
+              <CupertinoSelect
+                icon="tag"
+                value={categoryFilter}
+                onChange={setCategoryFilter}
+                options={categoryFilterOptions}
+                minWidthClassName="w-full"
+                ariaLabel="Filter transaction category"
+              />
+            </label>
+          </div>
+
+          <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <label className="space-y-2">
+              <span className="text-[11px] font-medium text-[#8e8e93]">Date from</span>
+              <Input
+                type="date"
+                value={dateFrom}
+                onChange={(event) => setDateFrom(event.target.value)}
+                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="text-[11px] font-medium text-[#8e8e93]">Date to</span>
+              <Input
+                type="date"
+                value={dateTo}
+                onChange={(event) => setDateTo(event.target.value)}
+                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="text-[11px] font-medium text-[#8e8e93]">Minimum amount</span>
+              <Input
+                inputMode="numeric"
+                placeholder="Nominal minimum"
+                value={amountMin}
+                onChange={(event) => setAmountMin(event.target.value)}
+                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="text-[11px] font-medium text-[#8e8e93]">Maximum amount</span>
+              <Input
+                inputMode="numeric"
+                placeholder="Nominal maksimum"
+                value={amountMax}
+                onChange={(event) => setAmountMax(event.target.value)}
+                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+              />
+            </label>
+          </div>
+
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {transactionIdFilter ? (
+              <span className="inline-flex h-5 items-center justify-center rounded-full border border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] px-2 py-0.5 text-[10px] font-medium whitespace-nowrap text-[#636366] dark:text-[#8e8e93]">
+                Focused transaction
+              </span>
+            ) : null}
+            <Button
+              variant="outline"
+              className="h-9 rounded-[9px] border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] px-3 text-[#1c1c1e] dark:text-[#f2f2f7] shadow-none hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+              onClick={resetFilters}
+            >
+              Reset filters
+            </Button>
           </div>
         </section>
 
-        <Separator />
+        <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+          <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
+            <div className="space-y-1">
+              <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                Transaction table
+              </h2>
+              <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+                Menampilkan seluruh transaksi workspace dari semua sumber yang aktif.
+              </p>
+            </div>
+            <span className="inline-flex h-5 items-center justify-center rounded-full border border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] px-2 py-0.5 text-[10px] font-medium whitespace-nowrap text-[#636366] dark:text-[#8e8e93]">
+              {isHydrated ? `${filteredTransactions.length} rows` : "Loading"}
+            </span>
+          </div>
 
-        <section className="grid gap-4 md:grid-cols-3">
-          <Card className="border-indigo-200/80 bg-indigo-400/40 dark:border-indigo-900/70 dark:bg-indigo-400/40">
-            <CardHeader>
-              <CardDescription>Total transactions</CardDescription>
-              <CardTitle className="text-2xl">
-                {filteredSummary.total}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="border-emerald-200/80 bg-emerald-400/40 dark:border-emerald-900/70 dark:bg-emerald-400/40">
-            <CardHeader>
-              <CardDescription>Total credit</CardDescription>
-              <CardTitle className="text-2xl">
-                {formatCurrency(filteredSummary.creditTotal)}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="border-rose-200/80 bg-rose-400/40 dark:border-rose-900/70 ">
-            <CardHeader>
-              <CardDescription>Total debit</CardDescription>
-              <CardTitle className="text-2xl">
-                {formatCurrency(filteredSummary.debitTotal)}
-              </CardTitle>
-            </CardHeader>
-          </Card>
+          <CupertinoTable
+            columnsClassName="grid-cols-[110px_minmax(0,1.35fr)_150px_90px_120px_120px_100px_160px]"
+            minWidthClassName="min-w-[1120px]"
+            headers={[
+              { key: "date", label: "Tanggal" },
+              { key: "description", label: "Deskripsi" },
+              { key: "category", label: "Category" },
+              { key: "type", label: "Type" },
+              { key: "amount", label: "Nominal" },
+              { key: "balance", label: "Saldo" },
+              { key: "source", label: "Source" },
+              { key: "origin", label: "Origin" },
+            ]}
+            hasRows={isHydrated && filteredTransactions.length > 0}
+            emptyState={
+              <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+                {!isHydrated
+                  ? "Memuat transaksi workspace..."
+                  : "Belum ada transaksi yang cocok dengan filter saat ini."}
+              </div>
+            }
+          >
+            {filteredTransactions.map((transaction) => (
+              <div
+                key={transaction.id}
+                className={`grid grid-cols-[110px_minmax(0,1.35fr)_150px_90px_120px_120px_100px_160px] items-center gap-3 px-[18px] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+              >
+                <span className="text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                  {formatDate(transaction.date)}
+                </span>
+                <span className="truncate text-sm text-[#1c1c1e] dark:text-[#f2f2f7]">
+                  {transaction.description}
+                </span>
+                <span>
+                  <CategoryChip category={transaction.category} />
+                </span>
+                <span>
+                  <TypeChip type={transaction.type} />
+                </span>
+                <span className="text-sm font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                  {formatCurrency(transaction.amount)}
+                </span>
+                <span className="text-sm text-[#636366] dark:text-[#8e8e93]">
+                  {formatCurrency(transaction.balance)}
+                </span>
+                <span>
+                  <CupertinoChip
+                    tone={transaction.sourceKind === "manual" ? "neutral" : "bank"}
+                  >
+                    {transaction.bank}
+                  </CupertinoChip>
+                </span>
+                <span className="truncate text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                  {transaction.sourceLabel}
+                </span>
+              </div>
+            ))}
+          </CupertinoTable>
         </section>
-
-        <FilterCard>
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">
-                  Search
-                </label>
-                <div className="relative">
-                  <Search className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    value={search}
-                    onChange={(event) => setSearch(event.target.value)}
-                    placeholder="Cari deskripsi, file asal, atau bank"
-                    className="border-border bg-background pl-8"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">
-                  Transaction type
-                </label>
-                <FilterDropdown
-                  value={typeFilter}
-                  placeholder="Semua tipe"
-                  options={typeOptions}
-                  onChange={(value) =>
-                    setTypeFilter(value as "all" | TransactionType)
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">
-                  Bank
-                </label>
-                <FilterDropdown
-                  value={bankFilter}
-                  placeholder="Semua bank"
-                  options={bankFilterOptions}
-                  onChange={setBankFilter}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">
-                  Category
-                </label>
-                <FilterDropdown
-                  value={categoryFilter}
-                  placeholder="Semua kategori"
-                  options={categoryFilterOptions}
-                  onChange={setCategoryFilter}
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">
-                  Date from
-                </label>
-                <Input
-                  type="date"
-                  value={dateFrom}
-                  onChange={(event) => setDateFrom(event.target.value)}
-                  className="border-border bg-background"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">
-                  Date to
-                </label>
-                <Input
-                  type="date"
-                  value={dateTo}
-                  onChange={(event) => setDateTo(event.target.value)}
-                  className="border-border bg-background"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">
-                  Minimum amount
-                </label>
-                <Input
-                  inputMode="numeric"
-                  placeholder="Nominal minimum"
-                  value={amountMin}
-                  onChange={(event) => setAmountMin(event.target.value)}
-                  className="border-border bg-background"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">
-                  Maximum amount
-                </label>
-                <Input
-                  inputMode="numeric"
-                  placeholder="Nominal maksimum"
-                  value={amountMax}
-                  onChange={(event) => setAmountMax(event.target.value)}
-                  className="border-border bg-background"
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              {transactionIdFilter ? (
-                <Badge variant="outline">Focused transaction</Badge>
-              ) : null}
-              <Button variant="outline" onClick={resetFilters}>
-                Reset filters
-              </Button>
-            </div>
-        </FilterCard>
-
-        <Card className="border-border bg-card">
-          <CardHeader>
-            <CardTitle>Combined transactions table</CardTitle>
-            <CardDescription>
-              Menampilkan data transaksi dari semua file yang tersimpan di
-              workspace.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Tanggal</TableHead>
-                  <TableHead>Deskripsi</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Tipe</TableHead>
-                  <TableHead>Nominal</TableHead>
-                  <TableHead>Saldo</TableHead>
-                  <TableHead>Bank</TableHead>
-                  <TableHead>File asal</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {!isHydrated || filteredTransactions.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="py-10 text-center text-muted-foreground"
-                    >
-                      {!isHydrated
-                        ? "Memuat transaksi workspace..."
-                        : "Belum ada transaksi yang cocok dengan filter saat ini."}
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-                {filteredTransactions.map((transaction) => (
-                  <TableRow key={transaction.id}>
-                    <TableCell>{formatDate(transaction.date)}</TableCell>
-                    <TableCell className="max-w-[360px] truncate">
-                      {transaction.description}
-                    </TableCell>
-                    <TableCell>
-                      {transaction.category ? (
-                        <Badge
-                          variant="outline"
-                          className={
-                            CATEGORY_COLOR_STYLES[transaction.category.color].badge
-                          }
-                        >
-                          {transaction.category.name}
-                        </Badge>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <TypeBadge type={transaction.type} />
-                    </TableCell>
-                    <TableCell>{formatCurrency(transaction.amount)}</TableCell>
-                    <TableCell>{formatCurrency(transaction.balance)}</TableCell>
-                    <TableCell>{transaction.bank}</TableCell>
-                    <TableCell className="max-w-[240px] truncate">
-                      {transaction.sourceFile}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
       </div>
     </main>
   );

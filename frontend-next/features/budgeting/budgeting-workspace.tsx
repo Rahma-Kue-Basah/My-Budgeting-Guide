@@ -2,45 +2,16 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import {
-  CalendarDays,
-  PiggyBank,
-  Plus,
-  Target,
-  Trash2,
-  TrendingDown,
-  TrendingUp,
-} from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 
-import { FilterDropdown } from "@/components/filters/filter-dropdown";
-import { useFileWorkspace } from "@/hooks/use-file-workspace";
+import { CupertinoActionButton } from "@/components/ui/cupertino-action-button";
+import { CupertinoIcon } from "@/components/icons/cupertino-icon";
 import {
-  CATEGORY_COLOR_STYLES,
-  sortCategoriesByPriority,
-} from "@/lib/categories";
-import {
-  buildBudgetSuggestion,
-  getCurrentMonthValue,
-} from "@/lib/budgeting";
-import { formatCurrency, formatMonthLabel } from "@/lib/formatters";
-import { buildProcessedTransactions } from "@/lib/transaction-review";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  CupertinoTable,
+  CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
+} from "@/components/tables/cupertino-table";
+import { CupertinoChip } from "@/components/ui/cupertino-chip";
+import { CupertinoSelect } from "@/components/ui/cupertino-select";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,15 +19,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
+import { useFileWorkspace } from "@/hooks/use-file-workspace";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  CATEGORY_COLOR_STYLES,
+  matchTransactionCategory,
+  sortCategoriesByPriority,
+} from "@/lib/categories";
+import {
+  buildBudgetSuggestion,
+  getCurrentMonthValue,
+} from "@/lib/budgeting";
+import { formatCurrency, formatMonthLabel } from "@/lib/formatters";
 import type { BudgetPlan, WorkspaceCategory } from "@/types/transaction";
 
 const LOOKBACK_OPTIONS = [
@@ -127,6 +100,37 @@ function buildPlannerRows(
           Math.max(a.plannedAmount, a.recommendedAmount) ||
         a.categoryName.localeCompare(b.categoryName),
     );
+}
+
+function SummaryCard({
+  title,
+  value,
+  description,
+  icon,
+}: {
+  title: string;
+  value: string;
+  description: string;
+  icon: "wallet" | "barChart" | "piggy" | "calendar";
+}) {
+  return (
+    <div className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <p className="text-[11px] font-medium tracking-[0.02em] text-[#8e8e93]">
+            {title}
+          </p>
+          <p className="text-[24px] font-semibold tracking-[-0.03em] text-[#1c1c1e] dark:text-[#f2f2f7]">
+            {value}
+          </p>
+        </div>
+        <span className="flex size-9 items-center justify-center rounded-[10px] bg-[#f2f2f4] dark:bg-[#3a3a3c]">
+          <CupertinoIcon name={icon} className="size-4 text-[#636366] dark:text-[#8e8e93]" />
+        </span>
+      </div>
+      <p className="mt-3 text-[11px] leading-5 text-[#8e8e93]">{description}</p>
+    </div>
+  );
 }
 
 function BudgetPlanner({
@@ -296,115 +300,99 @@ function BudgetPlanner({
   }
 
   return (
-    <Card className="border-border bg-card">
-      <CardHeader>
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="space-y-1">
-            <CardTitle>Plan editor</CardTitle>
-            <CardDescription>
-              Isi dulu pengeluaran wajib, lalu gunakan suggestion untuk membantu membagi sisa target expense ke kategori lain.
-            </CardDescription>
-          </div>
-          <Badge variant="outline">
-            {existingPlan ? "Plan tersimpan" : "Belum disimpan"}
-          </Badge>
+    <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+      <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
+        <div className="space-y-1">
+          <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Plan editor</h2>
+          <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+            Isi dulu pengeluaran wajib, lalu gunakan suggestion untuk membantu membagi sisa target expense ke kategori lain.
+          </p>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-2">
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-muted-foreground">
-              Salary target
-            </label>
+        <CupertinoChip tone={existingPlan ? "status-success" : "neutral"}>
+          {existingPlan ? "Plan tersimpan" : "Belum disimpan"}
+        </CupertinoChip>
+      </div>
+
+      <div className="space-y-5 px-[18px] pb-[18px]">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <label className="space-y-2">
+            <span className="text-[11px] font-medium text-[#8e8e93]">Salary target</span>
             <Input
               inputMode="numeric"
               value={incomeTarget}
               onChange={(event) => setIncomeTarget(event.target.value)}
-              className="border-border bg-background"
+              className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
             />
-          </div>
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-muted-foreground">
-              Expense target
-            </label>
+          </label>
+          <label className="space-y-2">
+            <span className="text-[11px] font-medium text-[#8e8e93]">Expense target</span>
             <Input
               inputMode="numeric"
               value={expenseTarget}
               onChange={(event) => setExpenseTarget(event.target.value)}
-              className="border-border bg-background"
+              className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
             />
-          </div>
+          </label>
         </div>
 
-        <p className="text-xs text-muted-foreground">
-          `Savings target` diambil dari category `Savings` di tabel allocation,
-          bukan dari input terpisah.
+        <p className="text-[11px] text-[#8e8e93]">
+          Savings target diambil dari category Savings di tabel allocation, bukan dari input terpisah.
         </p>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <Card className="border-emerald-200/80 bg-emerald-400/35">
-            <CardHeader>
-              <CardDescription>Planned expenses</CardDescription>
-              <CardTitle className="text-2xl">
-                {formatCurrency(plannedExpenseTotal)}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="border-sky-200/80 bg-sky-400/35">
-            <CardHeader>
-              <CardDescription>Expense gap</CardDescription>
-              <CardTitle className="text-2xl">
-                {formatCurrency(expenseGap)}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="border-cyan-200/80 bg-cyan-400/35">
-            <CardHeader>
-              <CardDescription>Savings from category</CardDescription>
-              <CardTitle className="text-2xl">
-                {formatCurrency(savingsTargetNumber)}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card
-            className={
-              remainingCashflow >= 0
-                ? "border-violet-200/80 bg-violet-400/35"
-                : "border-rose-200/80 bg-rose-400/35"
-            }
-          >
-            <CardHeader>
-              <CardDescription>Remaining cashflow</CardDescription>
-              <CardTitle className="text-2xl">
-                {formatCurrency(remainingCashflow)}
-              </CardTitle>
-            </CardHeader>
-          </Card>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-3 py-3">
+            <p className="text-[11px] font-medium text-[#8e8e93]">Planned expenses</p>
+            <p className="mt-2 text-[20px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+              {formatCurrency(plannedExpenseTotal)}
+            </p>
+          </div>
+          <div className="rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-3 py-3">
+            <p className="text-[11px] font-medium text-[#8e8e93]">Expense gap</p>
+            <p className="mt-2 text-[20px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+              {formatCurrency(expenseGap)}
+            </p>
+          </div>
+          <div className="rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-3 py-3">
+            <p className="text-[11px] font-medium text-[#8e8e93]">Savings from category</p>
+            <p className="mt-2 text-[20px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+              {formatCurrency(savingsTargetNumber)}
+            </p>
+          </div>
+          <div className="rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-3 py-3">
+            <p className="text-[11px] font-medium text-[#8e8e93]">Remaining cashflow</p>
+            <p
+              className={`mt-2 text-[20px] font-semibold ${remainingCashflow >= 0 ? "text-[#1f8f43]" : "text-[#ff453a]"}`}
+            >
+              {formatCurrency(remainingCashflow)}
+            </p>
+          </div>
         </div>
 
         <div className="space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <p className="text-sm font-medium text-foreground">
+            <div className="space-y-0.5">
+              <p className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
                 Required expenses first
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-[11px] leading-5 text-[#8e8e93]">
                 Isi dulu pengeluaran wajib seperti kos, bill, transport rutin, atau cicilan. Setelah itu baru pakai suggestion untuk sisa budget.
               </p>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger
-                render={<Button variant="outline" size="sm" />}
+                render={
+                  <CupertinoActionButton tone="white" className="gap-1.5" />
+                }
               >
-                Add required category
-                <Plus className="size-4" />
+                <Plus className="size-3.5" />
+                Add category
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
-                className="w-56 bg-popover"
+                className="w-56 rounded-[10px] border border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#2c2c2e] p-1 shadow-[0_12px_28px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_28px_rgba(0,0,0,0.4)] ring-0"
               >
                 {availableRows.length === 0 ? (
-                  <DropdownMenuItem disabled>
+                  <DropdownMenuItem disabled className="text-[11px] text-[#8e8e93]">
                     Semua kategori sudah dipilih
                   </DropdownMenuItem>
                 ) : null}
@@ -412,6 +400,7 @@ function BudgetPlanner({
                   <DropdownMenuItem
                     key={row.categoryId}
                     onClick={() => addCategory(row.categoryId)}
+                    className="rounded-[8px] px-2 py-1.5 text-[13px] text-[#1c1c1e] dark:text-[#f2f2f7] focus:bg-black/3 dark:focus:bg-white/8"
                   >
                     {row.categoryName}
                   </DropdownMenuItem>
@@ -420,164 +409,166 @@ function BudgetPlanner({
             </DropdownMenu>
           </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Category</TableHead>
-                <TableHead>Suggested</TableHead>
-                <TableHead>Last reference month</TableHead>
-                <TableHead>Planned</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {selectedRows.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={4}
-                    className="py-10 text-center text-muted-foreground"
-                  >
-                    Belum ada pengeluaran wajib di plan ini. Tambahkan dulu category yang memang harus dibayar tiap bulan.
-                  </TableCell>
-                </TableRow>
-              ) : null}
+          <div className="overflow-hidden rounded-[12px] border border-black/[0.05] dark:border-white/8">
+            <CupertinoTable
+              columnsClassName="grid-cols-[minmax(200px,1.5fr)_140px_160px_180px]"
+              minWidthClassName="min-w-[760px]"
+              headers={[
+                { key: "category", label: "Category" },
+                { key: "suggested", label: "Suggested" },
+                { key: "lastRef", label: "Last reference month" },
+                { key: "planned", label: "Planned" },
+              ]}
+              hasRows={selectedRows.length > 0}
+              emptyState={
+                <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+                  Belum ada pengeluaran wajib di plan ini. Tambahkan dulu category yang memang harus dibayar tiap bulan.
+                </div>
+              }
+            >
               {selectedRows.map((row) => (
-                <TableRow key={row.categoryId}>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Badge
-                        variant="outline"
-                        className={CATEGORY_COLOR_STYLES[row.color].badge}
-                      >
-                        {row.categoryName}
-                      </Badge>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={`Remove ${row.categoryName}`}
-                        onClick={() => removeCategory(row.categoryId)}
-                      >
-                        <Trash2 className="size-4 text-rose-600" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                  <TableCell>{formatCurrency(row.recommendedAmount)}</TableCell>
-                  <TableCell>{formatCurrency(row.lastMonthExpense)}</TableCell>
-                  <TableCell className="w-[180px]">
-                    <Input
-                      inputMode="numeric"
-                      value={categoryInputs[row.categoryId] ?? "0"}
-                      onChange={(event) =>
-                        setCategoryInputs((current) => ({
-                          ...current,
-                          [row.categoryId]: event.target.value,
-                        }))
-                      }
-                      className="border-border bg-background"
-                    />
-                  </TableCell>
-                </TableRow>
+                <div
+                  key={row.categoryId}
+                  className={`grid grid-cols-[minmax(200px,1.5fr)_140px_160px_180px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`inline-flex h-6 items-center rounded-full border px-2 text-[11px] font-medium ${CATEGORY_COLOR_STYLES[row.color].badge}`}
+                    >
+                      {row.categoryName}
+                    </span>
+                    <button
+                      type="button"
+                      aria-label={`Remove ${row.categoryName}`}
+                      onClick={() => removeCategory(row.categoryId)}
+                      className="flex size-6 items-center justify-center rounded-[6px] text-[#ff453a] transition-colors hover:bg-[#ff453a]/10"
+                    >
+                      <Trash2 className="size-3.5" />
+                    </button>
+                  </div>
+                  <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7] tabular-nums">
+                    {formatCurrency(row.recommendedAmount)}
+                  </span>
+                  <span className="tabular-nums">{formatCurrency(row.lastMonthExpense)}</span>
+                  <Input
+                    inputMode="numeric"
+                    value={categoryInputs[row.categoryId] ?? "0"}
+                    onChange={(event) =>
+                      setCategoryInputs((current) => ({
+                        ...current,
+                        [row.categoryId]: event.target.value,
+                      }))
+                    }
+                    className="h-8 rounded-[8px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] text-[11px] shadow-none focus-visible:ring-[#007aff]/30"
+                  />
+                </div>
               ))}
-            </TableBody>
-          </Table>
+            </CupertinoTable>
+          </div>
         </div>
 
-        <div className="space-y-3 rounded-xl border border-border bg-muted/10 p-4">
+        <div className="space-y-3 rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] p-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-foreground">
-                Suggest the rest
-              </p>
-              <p className="text-xs text-muted-foreground">
+            <div className="space-y-0.5">
+              <p className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Suggest the rest</p>
+              <p className="text-[11px] leading-5 text-[#8e8e93]">
                 Setelah pengeluaran wajib diisi, MBG bantu menyarankan category lain untuk sisa target expense yang belum teralokasi.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline">
-                Remaining expense budget {formatCurrency(remainingExpenseBudget)}
-              </Badge>
-              <Button
-                variant="outline"
-                size="sm"
+              <CupertinoChip tone="neutral">
+                Remaining {formatCurrency(remainingExpenseBudget)}
+              </CupertinoChip>
+              <CupertinoActionButton
+                tone="white"
                 onClick={applyRemainingSuggestions}
                 disabled={!canSuggestRemaining || remainingSuggestionRows.length === 0}
               >
                 Auto-fill remainder
-              </Button>
+              </CupertinoActionButton>
             </div>
           </div>
 
           {expenseTargetNumber <= 0 ? (
-            <p className="text-sm text-muted-foreground">
-              Isi `Expense target` dulu supaya MBG tahu sisa budget yang perlu dibantu.
+            <p className="text-[11px] text-[#8e8e93]">
+              Isi Expense target dulu supaya MBG tahu sisa budget yang perlu dibantu.
             </p>
           ) : null}
           {expenseTargetNumber > 0 && selectedRows.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-[11px] text-[#8e8e93]">
               Tambahkan minimal satu pengeluaran wajib dulu sebelum melihat suggestion.
             </p>
           ) : null}
           {expenseTargetNumber > 0 && selectedRows.length > 0 && remainingExpenseBudget <= 0 ? (
-            <p className="text-sm text-muted-foreground">
-              Tidak ada sisa target expense untuk disarankan. Kurangi plan wajib atau naikkan `Expense target`.
+            <p className="text-[11px] text-[#8e8e93]">
+              Tidak ada sisa target expense untuk disarankan. Kurangi plan wajib atau naikkan Expense target.
             </p>
           ) : null}
           {canSuggestRemaining && remainingSuggestionRows.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-[11px] text-[#8e8e93]">
               Belum ada histori category lain yang cukup untuk dijadikan suggestion.
             </p>
           ) : null}
 
           {canSuggestRemaining && remainingSuggestionRows.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Historical avg</TableHead>
-                  <TableHead>Suggested for remainder</TableHead>
-                  <TableHead></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <div className="overflow-hidden rounded-[12px] border border-black/[0.05] dark:border-white/8 bg-white">
+              <CupertinoTable
+                columnsClassName="grid-cols-[minmax(180px,1.5fr)_140px_160px_120px]"
+                minWidthClassName="min-w-[680px]"
+                headers={[
+                  { key: "category", label: "Category" },
+                  { key: "avg", label: "Historical avg" },
+                  { key: "suggested", label: "Suggested for remainder" },
+                  { key: "add", label: "Add", className: "text-right" },
+                ]}
+                hasRows={remainingSuggestionRows.length > 0}
+              >
                 {remainingSuggestionRows.map((row) => (
-                  <TableRow key={`${row.categoryId}-suggestion`}>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={CATEGORY_COLOR_STYLES[row.color].badge}
-                      >
-                        {row.categoryName}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{formatCurrency(row.recommendedAmount)}</TableCell>
-                    <TableCell>{formatCurrency(row.suggestedPlanAmount)}</TableCell>
-                    <TableCell className="w-[140px]">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          addCategory(row.categoryId, row.suggestedPlanAmount)
-                        }
+                  <div
+                    key={`${row.categoryId}-suggestion`}
+                    className={`grid grid-cols-[minmax(180px,1.5fr)_140px_160px_120px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                  >
+                    <span
+                      className={`inline-flex h-6 items-center rounded-full border px-2 text-[11px] font-medium ${CATEGORY_COLOR_STYLES[row.color].badge}`}
+                    >
+                      {row.categoryName}
+                    </span>
+                    <span className="tabular-nums">{formatCurrency(row.recommendedAmount)}</span>
+                    <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7] tabular-nums">
+                      {formatCurrency(row.suggestedPlanAmount)}
+                    </span>
+                    <div className="flex justify-end">
+                      <CupertinoActionButton
+                        tone="white"
+                        className="h-7 px-2 text-[11px]"
+                        onClick={() => addCategory(row.categoryId, row.suggestedPlanAmount)}
                       >
                         Add
-                      </Button>
-                    </TableCell>
-                  </TableRow>
+                      </CupertinoActionButton>
+                    </div>
+                  </div>
                 ))}
-              </TableBody>
-            </Table>
+              </CupertinoTable>
+            </div>
           ) : null}
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Button onClick={savePlan}>Save plan</Button>
+          <CupertinoActionButton tone="dark" onClick={savePlan}>
+            Save plan
+          </CupertinoActionButton>
           {existingPlan ? (
-            <Button variant="outline" onClick={() => onDelete(month)}>
+            <CupertinoActionButton
+              tone="white"
+              className="text-[#ff453a] hover:bg-[#ff453a]/10"
+              onClick={() => onDelete(month)}
+            >
               Delete saved plan
-            </Button>
+            </CupertinoActionButton>
           ) : null}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }
 
@@ -592,13 +583,22 @@ export function BudgetingWorkspace() {
   const [lookbackMonths, setLookbackMonths] = useState("3");
 
   const processedTransactions = useMemo(
-    () =>
-      buildProcessedTransactions(
-        state.files,
-        state.transactions,
-        state.categories,
-        state.merchantMappings,
-      ),
+    () => {
+      const fileMap = new Map(state.files.map((file) => [file.name, file]));
+
+      return state.transactions
+        .map((transaction) => ({
+          ...transaction,
+          bank: fileMap.get(transaction.sourceFile)?.bank ?? "Manual",
+          statementPeriod: fileMap.get(transaction.sourceFile)?.statementPeriod ?? null,
+          category: matchTransactionCategory(
+            transaction,
+            state.categories,
+            state.merchantMappings,
+          ),
+        }))
+        .sort((a, b) => b.date.localeCompare(a.date));
+    },
     [state.categories, state.files, state.merchantMappings, state.transactions],
   );
 
@@ -631,177 +631,127 @@ export function BudgetingWorkspace() {
     {
       title: "Average salary",
       value: formatCurrency(suggestion.baselineSalary),
-      note:
+      description:
         suggestion.baselineSalary > 0
           ? `Rata-rata kategori Salary dari ${suggestion.historyMonths.length || 0} bulan referensi`
           : "Belum ada histori kategori Salary",
-      icon: TrendingUp,
-      className: "border-emerald-200/80 bg-emerald-400/35",
-      iconClassName: "bg-emerald-100 text-emerald-500 ring-emerald-200/80",
+      icon: "wallet" as const,
     },
     {
       title: "Average expense",
       value: formatCurrency(suggestion.baselineExpense),
-      note: "Rata-rata pengeluaran bulanan",
-      icon: TrendingDown,
-      className: "border-rose-200/80 bg-rose-400/35",
-      iconClassName: "bg-rose-100 text-rose-500 ring-rose-200/80",
+      description: "Rata-rata pengeluaran bulanan",
+      icon: "barChart" as const,
     },
     {
       title: "Suggested savings",
       value: formatCurrency(suggestion.baselineSavings),
-      note: `${suggestion.savingsRate}% dari salary baseline`,
-      icon: PiggyBank,
-      className: "border-sky-200/80 bg-sky-400/35",
-      iconClassName: "bg-sky-100 text-sky-500 ring-sky-200/80",
+      description: `${suggestion.savingsRate}% dari salary baseline`,
+      icon: "piggy" as const,
     },
     {
       title: "Selected month",
       value: formatMonthLabel(targetMonth),
-      note: existingPlan ? "Plan sudah tersimpan" : "Belum ada plan tersimpan",
-      icon: Target,
-      className: "border-violet-200/80 bg-violet-400/35",
-      iconClassName: "bg-violet-100 text-violet-500 ring-violet-200/80",
+      description: existingPlan ? "Plan sudah tersimpan" : "Belum ada plan tersimpan",
+      icon: "calendar" as const,
     },
   ];
 
   return (
-    <main className="flex-1">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 md:px-6 md:py-8">
-        <section className="space-y-4">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink render={<Link href="/" />}>
-                  Dashboard
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Budgeting</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+    <main className="min-h-svh flex-1 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
+      <section className="sticky top-[58px] z-10 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0">
+        <div className="flex w-full items-center gap-3 px-3 py-2.5">
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#1c1c1e] dark:text-[#f2f2f7]">
+            Budgeting
+          </h1>
+        </div>
+      </section>
 
-          <div className="space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-              Budgeting
-            </h1>
-            <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
-              Buat plan bulanan berdasarkan histori pemasukan dan pengeluaran
-              processed. Baseline pemasukan diambil dari kategori Salary, lalu
-              user bisa sesuaikan target salary, expense, savings, dan alokasi
-              per kategori.
-            </p>
-          </div>
-        </section>
-
-        <Separator />
-
+      <div className="flex w-full flex-col gap-3 px-3 py-3">
         {!isHydrated || processedTransactions.length === 0 ? (
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle>Belum ada histori untuk budgeting</CardTitle>
-              <CardDescription>
-                Budgeting baru bisa dibuat setelah ada file berstatus processed.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-wrap items-center gap-2">
-              <Button variant="outline" render={<Link href="/file" />}>
+          <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+            <div className="space-y-1">
+              <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                Belum ada histori untuk budgeting
+              </h2>
+              <p className="text-[11px] leading-5 text-[#8e8e93]">
+                Budgeting baru bisa dibuat setelah ada transaksi di workspace.
+              </p>
+            </div>
+            <div className="mt-4">
+              <Link
+                href="/file"
+                className="inline-flex h-9 items-center justify-center gap-2 rounded-[9px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] px-3 text-sm font-medium text-[#1c1c1e] dark:text-[#f2f2f7] transition-colors hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+              >
                 Buka File
-              </Button>
-              <Button variant="outline" render={<Link href="/file/review" />}>
-                Buka Review Queue
-              </Button>
-            </CardContent>
-          </Card>
+              </Link>
+            </div>
+          </section>
         ) : (
           <>
-            <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              {summaryCards.map((item) => {
-                const Icon = item.icon;
-
-                return (
-                  <Card key={item.title} className={item.className}>
-                    <CardHeader>
-                      <div className="flex items-center justify-between gap-3">
-                        <div>
-                          <CardDescription>{item.title}</CardDescription>
-                          <CardTitle className="mt-1 text-2xl">
-                            {item.value}
-                          </CardTitle>
-                        </div>
-                        <div
-                          className={`flex size-10 items-center justify-center rounded-xl ring-1 ${item.iconClassName}`}
-                        >
-                          <Icon className="size-4" />
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="text-xs text-muted-foreground">
-                      {item.note}
-                    </CardContent>
-                  </Card>
-                );
-              })}
+            <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+              {summaryCards.map((card) => (
+                <SummaryCard
+                  key={card.title}
+                  title={card.title}
+                  value={card.value}
+                  description={card.description}
+                  icon={card.icon}
+                />
+              ))}
             </section>
 
-            <Card className="border-border bg-card">
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <CalendarDays className="size-4 text-muted-foreground" />
-                  <CardTitle>Planning setup</CardTitle>
-                </div>
-                <CardDescription>
+            <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+              <div className="space-y-1">
+                <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                  Planning setup
+                </h2>
+                <p className="text-[11px] leading-5 text-[#8e8e93]">
                   Pilih bulan target dan jumlah histori yang dipakai sebagai baseline.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                  <div className="space-y-2">
-                    <label className="text-xs font-medium text-muted-foreground">
-                      Target month
-                    </label>
-                    <Input
-                      type="month"
-                      value={targetMonth}
-                      onChange={(event) =>
-                        setTargetMonth(event.target.value || getCurrentMonthValue())
-                      }
-                      className="border-border bg-background"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-medium text-muted-foreground">
-                      Baseline window
-                    </label>
-                    <FilterDropdown
-                      value={lookbackMonths}
-                      placeholder="3 bulan terakhir"
-                      options={LOOKBACK_OPTIONS}
-                      onChange={setLookbackMonths}
-                    />
-                  </div>
-                </div>
+                </p>
+              </div>
 
-                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                  <Badge variant="outline">
-                    Referensi:{" "}
-                    {suggestion.historyMonths.length > 0
-                      ? suggestion.historyMonths
-                          .map((month) => formatMonthLabel(month))
-                          .join(", ")
-                      : "Belum ada histori referensi"}
-                  </Badge>
-                  {suggestion.uncategorizedAverageExpense > 0 ? (
-                    <Badge variant="outline">
-                      Avg uncategorized expense{" "}
-                      {formatCurrency(suggestion.uncategorizedAverageExpense)}
-                    </Badge>
-                  ) : null}
-                </div>
-              </CardContent>
-            </Card>
+              <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                <label className="space-y-2">
+                  <span className="text-[11px] font-medium text-[#8e8e93]">Target month</span>
+                  <Input
+                    type="month"
+                    value={targetMonth}
+                    onChange={(event) =>
+                      setTargetMonth(event.target.value || getCurrentMonthValue())
+                    }
+                    className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+                  />
+                </label>
+                <label className="space-y-2">
+                  <span className="text-[11px] font-medium text-[#8e8e93]">Baseline window</span>
+                  <CupertinoSelect
+                    value={lookbackMonths}
+                    icon="calendar"
+                    options={LOOKBACK_OPTIONS}
+                    onChange={setLookbackMonths}
+                    minWidthClassName="w-full"
+                    ariaLabel="Baseline window"
+                  />
+                </label>
+              </div>
+
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <CupertinoChip tone="neutral">
+                  Referensi:{" "}
+                  {suggestion.historyMonths.length > 0
+                    ? suggestion.historyMonths
+                        .map((month) => formatMonthLabel(month))
+                        .join(", ")
+                    : "Belum ada histori referensi"}
+                </CupertinoChip>
+                {suggestion.uncategorizedAverageExpense > 0 ? (
+                  <CupertinoChip tone="neutral">
+                    Avg uncategorized {formatCurrency(suggestion.uncategorizedAverageExpense)}
+                  </CupertinoChip>
+                ) : null}
+              </div>
+            </section>
 
             <BudgetPlanner
               key={`${targetMonth}-${lookbackMonths}-${existingPlan?.updatedAt ?? "new"}`}
@@ -812,38 +762,61 @@ export function BudgetingWorkspace() {
               onDelete={deleteBudgetPlan}
             />
 
-            <Card className="border-border bg-card">
-              <CardHeader>
-                <CardTitle>Monthly baseline history</CardTitle>
-                <CardDescription>
-                  Ringkasan salary dan expense dari histori yang dipakai untuk menyusun plan.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Month</TableHead>
-                      <TableHead>Salary</TableHead>
-                      <TableHead>Expense</TableHead>
-                      <TableHead>Net</TableHead>
-                      <TableHead>Transactions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {suggestion.monthlySummaries.slice(0, 6).map((row) => (
-                      <TableRow key={row.month}>
-                        <TableCell>{formatMonthLabel(row.month)}</TableCell>
-                        <TableCell>{formatCurrency(row.salaryIncome)}</TableCell>
-                        <TableCell>{formatCurrency(row.expense)}</TableCell>
-                        <TableCell>{formatCurrency(row.net)}</TableCell>
-                        <TableCell>{row.transactionCount}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+            <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+              <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
+                <div className="space-y-1">
+                  <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    Monthly baseline history
+                  </h2>
+                  <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+                    Ringkasan salary dan expense dari histori yang dipakai untuk menyusun plan.
+                  </p>
+                </div>
+                <CupertinoChip tone="neutral">
+                  {suggestion.monthlySummaries.length} bulan
+                </CupertinoChip>
+              </div>
+              <CupertinoTable
+                columnsClassName="grid-cols-[140px_150px_150px_150px_120px]"
+                minWidthClassName="min-w-[760px]"
+                headers={[
+                  { key: "month", label: "Month" },
+                  { key: "salary", label: "Salary" },
+                  { key: "expense", label: "Expense" },
+                  { key: "net", label: "Net" },
+                  { key: "transactions", label: "Transactions" },
+                ]}
+                hasRows={suggestion.monthlySummaries.length > 0}
+                emptyState={
+                  <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+                    Belum ada histori bulanan untuk ditampilkan.
+                  </div>
+                }
+              >
+                {suggestion.monthlySummaries.slice(0, 6).map((row) => (
+                  <div
+                    key={row.month}
+                    className={`grid grid-cols-[140px_150px_150px_150px_120px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                  >
+                    <span className="font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">
+                      {formatMonthLabel(row.month)}
+                    </span>
+                    <span className="text-[#1f8f43] tabular-nums">
+                      {formatCurrency(row.salaryIncome)}
+                    </span>
+                    <span className="text-[#ff453a] tabular-nums">
+                      {formatCurrency(row.expense)}
+                    </span>
+                    <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7] tabular-nums">
+                      {formatCurrency(row.net)}
+                    </span>
+                    <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                      {row.transactionCount}
+                    </span>
+                  </div>
+                ))}
+              </CupertinoTable>
+            </section>
           </>
         )}
       </div>

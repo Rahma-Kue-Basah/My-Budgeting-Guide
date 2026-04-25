@@ -2,60 +2,27 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ArrowDown, ArrowUp, Pencil, Plus, Tags, Trash2 } from "lucide-react";
 
+import { CupertinoIcon } from "@/components/icons/cupertino-icon";
+import {
+  CupertinoTable,
+  CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
+} from "@/components/tables/cupertino-table";
+import { Button } from "@/components/ui/button";
+import { CupertinoActionButton } from "@/components/ui/cupertino-action-button";
+import { CupertinoChip } from "@/components/ui/cupertino-chip";
+import { CupertinoConfirmDialog } from "@/components/ui/cupertino-confirm-dialog";
+import { CupertinoModal } from "@/components/ui/cupertino-modal";
+import { CupertinoTableRowActions } from "@/components/ui/cupertino-table-row-actions";
+import { Input } from "@/components/ui/input";
+import { useFileWorkspace } from "@/hooks/use-file-workspace";
 import {
   CATEGORY_COLOR_OPTIONS,
-  CATEGORY_COLOR_STYLES,
   matchTransactionCategory,
 } from "@/lib/categories";
-import { useFileWorkspace } from "@/hooks/use-file-workspace";
+import { CATEGORY_COLOR_HEX } from "@/lib/color-palette";
+import { cn } from "@/lib/utils";
 import type { CategoryColor, WorkspaceCategory } from "@/types/transaction";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
 type CategoryFormState = {
   name: string;
@@ -68,6 +35,47 @@ const defaultFormState: CategoryFormState = {
   color: "indigo",
   keywords: "",
 };
+
+function CategoryChip({
+  label,
+  color,
+}: {
+  label: string;
+  color: CategoryColor;
+}) {
+  return <CupertinoChip tone={color}>{label}</CupertinoChip>;
+}
+
+function SummaryCard({
+  title,
+  value,
+  description,
+  icon,
+}: {
+  title: string;
+  value: string | number;
+  description: string;
+  icon: "tag" | "list" | "alert";
+}) {
+  return (
+    <div className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <p className="text-[11px] font-medium tracking-[0.02em] text-[#8e8e93]">
+            {title}
+          </p>
+          <p className="text-[24px] font-semibold tracking-[-0.03em] text-[#1c1c1e] dark:text-[#f2f2f7]">
+            {value}
+          </p>
+        </div>
+        <span className="flex size-9 items-center justify-center rounded-[10px] bg-[#f2f2f4] dark:bg-[#3a3a3c]">
+          <CupertinoIcon name={icon} className="size-4 text-[#636366] dark:text-[#8e8e93]" />
+        </span>
+      </div>
+      <p className="mt-3 text-[11px] leading-5 text-[#8e8e93]">{description}</p>
+    </div>
+  );
+}
 
 export function RulesWorkspace() {
   const {
@@ -96,12 +104,37 @@ export function RulesWorkspace() {
               transaction,
               state.categories,
               state.merchantMappings,
-            )?.id ===
-            category.id,
+            )?.id === category.id,
         ).length;
+
         return [category.id, count];
       }),
     );
+  }, [state.categories, state.merchantMappings, state.transactions]);
+
+  const summary = useMemo(() => {
+    const totalKeywords = state.categories.reduce(
+      (count, category) => count + category.keywords.length,
+      0,
+    );
+    const matchedTransactions = state.transactions.filter((transaction) =>
+      Boolean(
+        matchTransactionCategory(
+          transaction,
+          state.categories,
+          state.merchantMappings,
+        ),
+      ),
+    ).length;
+
+    return {
+      totalRules: state.categories.length,
+      totalKeywords,
+      uncategorizedTransactions: Math.max(
+        state.transactions.length - matchedTransactions,
+        0,
+      ),
+    };
   }, [state.categories, state.merchantMappings, state.transactions]);
 
   function openCreateDialog() {
@@ -118,6 +151,12 @@ export function RulesWorkspace() {
       keywords: category.keywords.join(", "),
     });
     setDialogOpen(true);
+  }
+
+  function closeDialog() {
+    setDialogOpen(false);
+    setEditingCategory(null);
+    setFormState(defaultFormState);
   }
 
   function handleSubmit() {
@@ -137,178 +176,172 @@ export function RulesWorkspace() {
       addCategory(payload);
     }
 
-    setDialogOpen(false);
-    setEditingCategory(null);
-    setFormState(defaultFormState);
+    closeDialog();
   }
 
   return (
-    <main className="flex-1">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 md:px-6 md:py-8">
-        <section className="space-y-4">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink render={<Link href="/" />}>
-                  Dashboard
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Rules</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+    <main className="min-h-svh flex-1 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
+      <section className="sticky top-[58px] z-10 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0">
+        <div className="flex w-full items-center gap-3 px-3 py-2.5">
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#1c1c1e] dark:text-[#f2f2f7]">
+            Rules
+          </h1>
 
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-                Rules
-              </h1>
-              <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
-                Tempat khusus untuk mengelola keyword auto-classification per
-                kategori.
-              </p>
-            </div>
-            <Button onClick={openCreateDialog} className="gap-2">
-              <Plus className="size-4" />
-              Add rule
+          <div className="ml-auto flex flex-wrap items-center gap-2">
+            <Button
+              className="h-9 rounded-[9px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] px-3 text-[#1c1c1e] dark:text-[#f2f2f7] shadow-none hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+              render={<Link href="/transactions" />}
+            >
+              Transactions
             </Button>
+            <CupertinoActionButton onClick={openCreateDialog}>
+              <CupertinoIcon name="plus" className="size-3.5" />
+              Add rule
+            </CupertinoActionButton>
           </div>
+        </div>
+      </section>
+
+      <div className="flex w-full flex-col gap-3 px-3 py-3">
+        <section className="grid gap-3 md:grid-cols-3">
+          <SummaryCard
+            title="Total rules"
+            value={summary.totalRules}
+            description="Jumlah kategori aktif yang memakai keyword matching di workspace."
+            icon="tag"
+          />
+          <SummaryCard
+            title="Tracked keywords"
+            value={summary.totalKeywords}
+            description="Total keyword lintas semua kategori untuk proses klasifikasi otomatis."
+            icon="list"
+          />
+          <SummaryCard
+            title="Uncategorized transactions"
+            value={summary.uncategorizedTransactions}
+            description="Transaksi yang belum masuk kategori dari rules yang aktif saat ini."
+            icon="alert"
+          />
         </section>
 
-        <Separator />
-
-        <Card className="border-border bg-card">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Tags className="size-4 text-muted-foreground" />
-              <CardTitle>Keyword rules</CardTitle>
+        <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+          <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
+            <div className="space-y-1">
+              <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                Keyword rules
+              </h2>
+              <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+                Prioritas rule menentukan kategori mana yang dipilih lebih dulu
+                saat satu transaksi cocok ke lebih dari satu keyword.
+              </p>
             </div>
-            <CardDescription>
-              Setiap kategori menggunakan keyword untuk mencocokkan deskripsi
-              transaksi secara otomatis. Prioritas lebih tinggi akan dipilih
-              lebih dulu saat satu transaksi cocok ke banyak rule.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Keywords</TableHead>
-                  <TableHead>Matched</TableHead>
-                  <TableHead>Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {!isHydrated || state.categories.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={5}
-                      className="py-10 text-center text-muted-foreground"
-                    >
-                      {!isHydrated
-                        ? "Memuat rules workspace..."
-                        : "Belum ada rules di workspace."}
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-                {state.categories.map((category) => {
-                  const style = CATEGORY_COLOR_STYLES[category.color];
+            <CupertinoChip tone="neutral">
+              {isHydrated ? `${state.categories.length} rules` : "Loading"}
+            </CupertinoChip>
+          </div>
 
-                  return (
-                    <TableRow key={category.id}>
-                      <TableCell>
-                        <Badge variant="outline" className={style.badge}>
-                          {category.name}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            aria-label={`Naikkan prioritas ${category.name}`}
-                            onClick={() =>
-                              moveCategoryPriority(category.id, "up")
-                            }
-                          >
-                            <ArrowUp className="size-4 text-slate-600" />
-                          </Button>
-                          <span className="min-w-8 text-center text-sm font-medium text-foreground">
-                            {category.priority}
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            aria-label={`Turunkan prioritas ${category.name}`}
-                            onClick={() =>
-                              moveCategoryPriority(category.id, "down")
-                            }
-                          >
-                            <ArrowDown className="size-4 text-slate-600" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex max-w-[460px] flex-wrap gap-1.5">
-                          {category.keywords.map((keyword) => (
-                            <Badge
-                              key={`${category.id}-${keyword}`}
-                              variant="secondary"
-                              className="bg-muted text-foreground"
-                            >
-                              {keyword}
-                            </Badge>
-                          ))}
-                        </div>
-                      </TableCell>
-                      <TableCell>{matchedCounts.get(category.id) ?? 0}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            aria-label={`Edit ${category.name}`}
-                            onClick={() => openEditDialog(category)}
-                          >
-                            <Pencil className="size-4 text-slate-600" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            aria-label={`Delete ${category.name}`}
-                            onClick={() => setDeleteTarget(category)}
-                          >
-                            <Trash2 className="size-4 text-rose-600" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+          <CupertinoTable
+            columnsClassName="grid-cols-[minmax(0,1.1fr)_140px_minmax(240px,1.3fr)_100px_96px]"
+            minWidthClassName="min-w-[980px]"
+            headers={[
+              { key: "category", label: "Category" },
+              { key: "priority", label: "Priority" },
+              { key: "keywords", label: "Keywords" },
+              { key: "matched", label: "Matched" },
+              { key: "actions", label: "Actions", className: "text-right" },
+            ]}
+            hasRows={isHydrated && state.categories.length > 0}
+            emptyState={
+              <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+                {!isHydrated
+                  ? "Memuat rules workspace..."
+                  : "Belum ada rules di workspace."}
+              </div>
+            }
+          >
+            {state.categories.map((category) => (
+              <div
+                key={category.id}
+                className={`grid grid-cols-[minmax(0,1.1fr)_140px_minmax(240px,1.3fr)_100px_96px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+              >
+                <div className="min-w-0">
+                  <CategoryChip label={category.name} color={category.color} />
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    aria-label={`Naikkan prioritas ${category.name}`}
+                    onClick={() => moveCategoryPriority(category.id, "up")}
+                    className="flex size-8 items-center justify-center rounded-[8px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] text-[#636366] dark:text-[#8e8e93] transition-colors hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+                  >
+                    <CupertinoIcon name="chevronDown" className="size-3.5 rotate-180" />
+                  </button>
+                  <span className="min-w-7 text-center text-sm font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    {category.priority}
+                  </span>
+                  <button
+                    type="button"
+                    aria-label={`Turunkan prioritas ${category.name}`}
+                    onClick={() => moveCategoryPriority(category.id, "down")}
+                    className="flex size-8 items-center justify-center rounded-[8px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] text-[#636366] dark:text-[#8e8e93] transition-colors hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+                  >
+                    <CupertinoIcon name="chevronDown" className="size-3.5" />
+                  </button>
+                </div>
+
+                <div className="flex min-w-0 flex-wrap gap-1.5">
+                  {category.keywords.length > 0 ? (
+                    category.keywords.map((keyword) => (
+                      <CupertinoChip
+                        key={`${category.id}-${keyword}`}
+                        tone="neutral"
+                      >
+                        {keyword}
+                      </CupertinoChip>
+                    ))
+                  ) : (
+                    <span className="text-xs text-[#8e8e93]">No keywords</span>
+                  )}
+                </div>
+
+                <div>
+                  <CupertinoChip tone="neutral">
+                    {matchedCounts.get(category.id) ?? 0}
+                  </CupertinoChip>
+                </div>
+
+                <CupertinoTableRowActions
+                  actions={[
+                    {
+                      label: `Edit ${category.name}`,
+                      icon: "settings",
+                      onClick: () => openEditDialog(category),
+                    },
+                    {
+                      label: `Delete ${category.name}`,
+                      icon: "close",
+                      tone: "destructive",
+                      onClick: () => setDeleteTarget(category),
+                    },
+                  ]}
+                />
+              </div>
+            ))}
+          </CupertinoTable>
+        </section>
       </div>
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>
-              {editingCategory ? "Edit rule" : "Add rule"}
-            </DialogTitle>
-            <DialogDescription>
-              Atur nama kategori, warna, dan keyword untuk auto-classification.
-            </DialogDescription>
-          </DialogHeader>
-
+      <CupertinoModal
+        open={dialogOpen}
+        onClose={closeDialog}
+        title={editingCategory ? "Edit rule" : "Add rule"}
+        maxWidthClassName="max-w-[560px]"
+      >
+        <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-4">
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
+              <label className="text-[11px] font-medium text-[#8e8e93]">
                 Category name
               </label>
               <Input
@@ -320,16 +353,16 @@ export function RulesWorkspace() {
                   }))
                 }
                 placeholder="Misalnya: Transport"
+                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
+              <label className="text-[11px] font-medium text-[#8e8e93]">
                 Color
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-6 gap-2">
                 {CATEGORY_COLOR_OPTIONS.map((option) => {
-                  const style = CATEGORY_COLOR_STYLES[option.value];
                   const isActive = formState.color === option.value;
 
                   return (
@@ -342,18 +375,39 @@ export function RulesWorkspace() {
                           color: option.value,
                         }))
                       }
-                      className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors ${style.card} ${isActive ? "ring-2 ring-foreground/10" : ""}`}
+                      className={cn(
+                        "flex size-8 items-center justify-center rounded-[8px] ring-offset-2 ring-offset-white transition-all",
+                        isActive
+                          ? "ring-2 ring-[#007aff]"
+                          : "hover:scale-[1.03]",
+                      )}
+                      style={{ background: option.color }}
+                      aria-label={option.label}
                     >
-                      <span className={`size-2.5 rounded-full ${style.dot}`} />
-                      <span>{option.label}</span>
+                      {isActive ? (
+                        <span className="size-2 rounded-full bg-white" />
+                      ) : null}
                     </button>
                   );
                 })}
               </div>
+              <div className="flex items-center gap-2">
+                <span
+                  className="size-2.5 rounded-full"
+                  style={{ background: CATEGORY_COLOR_HEX[formState.color] }}
+                />
+                <span className="text-[11px] text-[#8e8e93]">
+                  {
+                    CATEGORY_COLOR_OPTIONS.find(
+                      (option) => option.value === formState.color,
+                    )?.label
+                  }
+                </span>
+              </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
+              <label className="text-[11px] font-medium text-[#8e8e93]">
                 Keywords
               </label>
               <Input
@@ -365,53 +419,46 @@ export function RulesWorkspace() {
                   }))
                 }
                 placeholder="Pisahkan dengan koma, misalnya: gojek, grab, transport"
+                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
               />
+              <p className="text-[11px] leading-5 text-[#8e8e93]">
+                Keyword akan dicocokkan ke deskripsi transaksi untuk auto-classification.
+              </p>
             </div>
           </div>
+        </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSubmit} disabled={!formState.name.trim()}>
-              Save rule
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        <div className="flex justify-end gap-2">
+          <CupertinoActionButton tone="white" onClick={closeDialog}>
+            Cancel
+          </CupertinoActionButton>
+          <CupertinoActionButton
+            onClick={handleSubmit}
+            disabled={!formState.name.trim()}
+          >
+            Save rule
+          </CupertinoActionButton>
+        </div>
+      </CupertinoModal>
 
-      <AlertDialog
+      <CupertinoConfirmDialog
         open={Boolean(deleteTarget)}
-        onOpenChange={(open) => {
-          if (!open) {
-            setDeleteTarget(null);
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (deleteTarget) {
+            deleteCategory(deleteTarget.id);
           }
+          setDeleteTarget(null);
         }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete rule?</AlertDialogTitle>
-            <AlertDialogDescription>
-              {deleteTarget
-                ? `${deleteTarget.name} akan dihapus dari workspace.`
-                : "Rule ini akan dihapus dari workspace."}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                if (deleteTarget) {
-                  deleteCategory(deleteTarget.id);
-                }
-                setDeleteTarget(null);
-              }}
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title="Delete rule?"
+        description={
+          deleteTarget
+            ? `${deleteTarget.name} akan dihapus dari workspace.`
+            : "Rule ini akan dihapus dari workspace."
+        }
+        confirmLabel="Delete"
+        tone="destructive"
+      />
     </main>
   );
 }

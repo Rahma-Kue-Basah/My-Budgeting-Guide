@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class ExpensappConfig(AppConfig):
+class ExpensaveConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'expensapp'
+    name = 'expensave'

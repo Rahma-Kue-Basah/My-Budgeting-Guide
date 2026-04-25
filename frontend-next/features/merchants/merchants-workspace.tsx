@@ -2,65 +2,25 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import {
-  ChevronDown,
-  GitMerge,
-  Pencil,
-  Search,
-  Store,
-} from "lucide-react";
+import { GitMerge, Pencil, Search } from "lucide-react";
 
-import { useFileWorkspace } from "@/hooks/use-file-workspace";
-import { CATEGORY_COLOR_STYLES, matchTransactionCategory } from "@/lib/categories";
-import { formatCurrency, formatDate } from "@/lib/formatters";
-import { resolveTransactionMerchant } from "@/lib/merchants";
+import { CupertinoIcon } from "@/components/icons/cupertino-icon";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Badge } from "@/components/ui/badge";
+  CupertinoTable,
+  CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
+} from "@/components/tables/cupertino-table";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { CupertinoActionButton } from "@/components/ui/cupertino-action-button";
+import { CupertinoChip } from "@/components/ui/cupertino-chip";
+import { CupertinoModal } from "@/components/ui/cupertino-modal";
+import { CupertinoSelect } from "@/components/ui/cupertino-select";
+import { CupertinoTableRowActions } from "@/components/ui/cupertino-table-row-actions";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { useFileWorkspace } from "@/hooks/use-file-workspace";
+import { formatCurrency, formatDate } from "@/lib/formatters";
+import { matchTransactionCategory } from "@/lib/categories";
+import { resolveTransactionMerchant } from "@/lib/merchants";
+import { cn } from "@/lib/utils";
 
 type MerchantRow = {
   merchantKey: string;
@@ -70,23 +30,70 @@ type MerchantRow = {
   incomeTotal: number;
   expenseTotal: number;
   lastDate: string;
-  mappingCategoryId: string | null;
+  hasMapping: boolean;
 };
+
+function CategoryChip({
+  label,
+  color,
+}: {
+  label: string;
+  color:
+    | "indigo"
+    | "sky"
+    | "emerald"
+    | "amber"
+    | "rose"
+    | "violet";
+}) {
+  return <CupertinoChip tone={color}>{label}</CupertinoChip>;
+}
+
+function SummaryCard({
+  title,
+  value,
+  description,
+  icon,
+}: {
+  title: string;
+  value: string | number;
+  description: string;
+  icon: "store" | "check" | "alert" | "list";
+}) {
+  return (
+    <div className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <p className="text-[11px] font-medium tracking-[0.02em] text-[#8e8e93]">
+            {title}
+          </p>
+          <p className="text-[24px] font-semibold tracking-[-0.03em] text-[#1c1c1e] dark:text-[#f2f2f7]">
+            {value}
+          </p>
+        </div>
+        <span className="flex size-9 items-center justify-center rounded-[10px] bg-[#f2f2f4] dark:bg-[#3a3a3c]">
+          <CupertinoIcon name={icon} className="size-4 text-[#636366] dark:text-[#8e8e93]" />
+        </span>
+      </div>
+      <p className="mt-3 text-[11px] leading-5 text-[#8e8e93]">{description}</p>
+    </div>
+  );
+}
 
 export function MerchantsWorkspace() {
   const {
     state,
     isHydrated,
-    setMerchantCategory,
     updateMerchantName,
     mergeMerchantMapping,
   } = useFileWorkspace();
-  const [selectedMerchantKey, setSelectedMerchantKey] = useState<string | null>(null);
+  const [selectedMerchantKey, setSelectedMerchantKey] = useState<string | null>(
+    null,
+  );
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "mapped" | "unmapped">(
+  const [statusFilter, setStatusFilter] = useState<"all" | "saved" | "raw">(
     "all",
   );
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [editingMerchant, setEditingMerchant] = useState<MerchantRow | null>(null);
   const [editingName, setEditingName] = useState("");
   const [mergeSource, setMergeSource] = useState<MerchantRow | null>(null);
@@ -130,10 +137,12 @@ export function MerchantsWorkspace() {
         incomeTotal: 0,
         expenseTotal: 0,
         lastDate: transaction.date,
-        mappingCategoryId: resolved.mapping?.categoryId ?? null,
+        hasMapping: Boolean(resolved.mapping),
       };
 
-      current.extractedKeys = [...new Set([...current.extractedKeys, resolved.extractedKey])];
+      current.extractedKeys = [
+        ...new Set([...current.extractedKeys, resolved.extractedKey]),
+      ];
       current.count += 1;
       if (transaction.type === "credit") {
         current.incomeTotal += transaction.amount;
@@ -179,15 +188,13 @@ export function MerchantsWorkspace() {
     () =>
       selectedMerchant
         ? processedTransactions
-            .filter(
-              (transaction) => {
-                const resolved = resolveTransactionMerchant(
-                  transaction,
-                  state.merchantMappings,
-                );
-                return resolved.merchantKey === selectedMerchant.merchantKey;
-              },
-            )
+            .filter((transaction) => {
+              const resolved = resolveTransactionMerchant(
+                transaction,
+                state.merchantMappings,
+              );
+              return resolved.merchantKey === selectedMerchant.merchantKey;
+            })
             .map((transaction) => ({
               ...transaction,
               resolvedCategory: matchTransactionCategory(
@@ -201,10 +208,9 @@ export function MerchantsWorkspace() {
   );
 
   const summary = useMemo(() => {
-    const mapped = merchantRows.filter((row) => row.mappingCategoryId).length;
-    const coverage = processedTransactions.filter(
-      (transaction) =>
-        resolveTransactionMerchant(transaction, state.merchantMappings).mapping,
+    const mapped = merchantRows.filter((row) => row.hasMapping).length;
+    const coverage = processedTransactions.filter((transaction) =>
+      Boolean(resolveTransactionMerchant(transaction, state.merchantMappings).mapping),
     ).length;
 
     return {
@@ -223,15 +229,12 @@ export function MerchantsWorkspace() {
 
       const matchesStatus =
         statusFilter === "all" ||
-        (statusFilter === "mapped" && Boolean(row.mappingCategoryId)) ||
-        (statusFilter === "unmapped" && !row.mappingCategoryId);
+        (statusFilter === "saved" && row.hasMapping) ||
+        (statusFilter === "raw" && !row.hasMapping);
 
-      const matchesCategory =
-        categoryFilter === "all" || row.mappingCategoryId === categoryFilter;
-
-      return matchesSearch && matchesStatus && matchesCategory;
+      return matchesSearch && matchesStatus;
     });
-  }, [categoryFilter, merchantRows, searchQuery, statusFilter]);
+  }, [merchantRows, searchQuery, statusFilter]);
 
   const mergeTargets = useMemo(() => {
     if (!mergeSource) {
@@ -256,9 +259,20 @@ export function MerchantsWorkspace() {
     });
   }, [mergeSearchQuery, mergeSource, merchantRows]);
 
+  const statusOptions = [
+    { value: "all", label: "All statuses" },
+    { value: "saved", label: "Saved only" },
+    { value: "raw", label: "Raw only" },
+  ];
+
   function openEditDialog(row: MerchantRow) {
     setEditingMerchant(row);
     setEditingName(row.merchantName);
+  }
+
+  function closeEditDialog() {
+    setEditingMerchant(null);
+    setEditingName("");
   }
 
   function openMergeDialog(row: MerchantRow) {
@@ -267,572 +281,390 @@ export function MerchantsWorkspace() {
     setMergeTargetKey(null);
   }
 
-  return (
-    <main className="flex-1">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 md:px-6 md:py-8">
-        <section className="space-y-4">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink render={<Link href="/" />}>
-                  Dashboard
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Merchants</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+  function closeMergeDialog() {
+    setMergeSource(null);
+    setMergeSearchQuery("");
+    setMergeTargetKey(null);
+  }
 
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-                Merchants
-              </h1>
-              <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
-                Kelompokkan nama merchant atau payee dari transaksi processed,
-                lalu petakan merchant tersebut ke kategori yang paling sesuai.
-                Mapping merchant akan dipakai sebelum keyword rules.
-              </p>
-            </div>
-            <Button variant="outline" render={<Link href="/categories" />}>
-              Open category review
+  return (
+    <main className="min-h-svh flex-1 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
+      <section className="sticky top-[58px] z-10 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0">
+        <div className="flex w-full items-center gap-3 px-3 py-2.5">
+          <h1 className="text-[22px] font-semibold tracking-tight text-[#1c1c1e] dark:text-[#f2f2f7]">
+            Advanced Tools
+          </h1>
+
+          <div className="ml-auto flex flex-wrap items-center gap-2">
+            <Button
+              className="h-9 rounded-[9px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] px-3 text-[#1c1c1e] dark:text-[#f2f2f7] shadow-none hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+              render={<Link href="/categories" />}
+            >
+              Categories
             </Button>
           </div>
+        </div>
+      </section>
+
+      <div className="flex w-full flex-col gap-3 px-3 py-3">
+        <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <SummaryCard
+            title="Total merchants"
+            value={summary.totalMerchants}
+            description="Jumlah merchant unik dari seluruh transaksi workspace yang sudah dikenali sistem."
+            icon="store"
+          />
+          <SummaryCard
+            title="Saved merchants"
+            value={summary.mapped}
+            description="Merchant yang sudah disimpan sebagai nama canonical atau hasil merge alias di workspace."
+            icon="check"
+          />
+          <SummaryCard
+            title="Raw merchants"
+            value={summary.unmapped}
+            description="Merchant yang masih tampil dari hasil ekstraksi mentah tanpa normalisasi nama khusus."
+            icon="alert"
+          />
+          <SummaryCard
+            title="Normalized transactions"
+            value={summary.coverage}
+            description="Jumlah transaksi workspace yang memakai nama merchant tersimpan atau hasil merge alias."
+            icon="list"
+          />
         </section>
 
-        <Separator />
-
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <Card className="border-indigo-200/80 bg-indigo-400/40">
-            <CardHeader>
-              <CardDescription>Total merchants</CardDescription>
-              <CardTitle className="text-2xl">{summary.totalMerchants}</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="border-emerald-200/80 bg-emerald-400/40">
-            <CardHeader>
-              <CardDescription>Mapped merchants</CardDescription>
-              <CardTitle className="text-2xl">{summary.mapped}</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="border-amber-200/80 bg-amber-400/40">
-            <CardHeader>
-              <CardDescription>Unmapped merchants</CardDescription>
-              <CardTitle className="text-2xl">{summary.unmapped}</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="border-violet-200/80 bg-violet-400/40">
-            <CardHeader>
-              <CardDescription>Covered transactions</CardDescription>
-              <CardTitle className="text-2xl">{summary.coverage}</CardTitle>
-            </CardHeader>
-          </Card>
-        </section>
-
-        <Card className="border-border bg-card">
-          <CardHeader>
-            <div className="flex flex-wrap items-end justify-between gap-3">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Store className="size-4 text-muted-foreground" />
-                  <CardTitle>Merchant directory</CardTitle>
-                </div>
-                <CardDescription>
-                  Pilih kategori per merchant untuk meningkatkan akurasi klasifikasi
-                  transaksi di seluruh workspace.
-                </CardDescription>
-              </div>
-              <div className="grid w-full gap-3 md:grid-cols-3 xl:max-w-4xl">
-                <label className="space-y-2">
-                  <span className="text-xs font-medium text-muted-foreground">
-                    Search
-                  </span>
-                  <div className="relative">
-                    <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      value={searchQuery}
-                      onChange={(event) => setSearchQuery(event.target.value)}
-                      placeholder="Cari merchant atau key"
-                      className="h-10 bg-background pl-9 text-sm"
-                    />
-                  </div>
-                </label>
-
-                <label className="space-y-2">
-                  <span className="text-xs font-medium text-muted-foreground">
-                    Status
-                  </span>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger
-                      render={
-                        <button
-                          type="button"
-                          className="inline-flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 text-sm outline-none transition-colors hover:bg-muted/60"
-                        />
-                      }
-                    >
-                      <span className="truncate capitalize">{statusFilter}</span>
-                      <ChevronDown className="size-4 text-muted-foreground" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-56 bg-popover">
-                      {["all", "mapped", "unmapped"].map((option) => (
-                        <DropdownMenuItem
-                          key={option}
-                          onClick={() =>
-                            setStatusFilter(option as "all" | "mapped" | "unmapped")
-                          }
-                        >
-                          {option === "all"
-                            ? "All statuses"
-                            : option === "mapped"
-                              ? "Mapped only"
-                              : "Unmapped only"}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </label>
-
-                <label className="space-y-2">
-                  <span className="text-xs font-medium text-muted-foreground">
-                    Category
-                  </span>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger
-                      render={
-                        <button
-                          type="button"
-                          className="inline-flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 text-sm outline-none transition-colors hover:bg-muted/60"
-                        />
-                      }
-                    >
-                      <span className="truncate">
-                        {categoryFilter === "all"
-                          ? "All categories"
-                          : state.categories.find((category) => category.id === categoryFilter)
-                              ?.name ?? "Unknown"}
-                      </span>
-                      <ChevronDown className="size-4 text-muted-foreground" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-56 bg-popover">
-                      <DropdownMenuItem onClick={() => setCategoryFilter("all")}>
-                        All categories
-                      </DropdownMenuItem>
-                      {state.categories.map((category) => (
-                        <DropdownMenuItem
-                          key={category.id}
-                          onClick={() => setCategoryFilter(category.id)}
-                        >
-                          {category.name}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </label>
-              </div>
+        <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+          <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
+            <div className="space-y-1">
+              <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                Merchant normalization
+              </h2>
+              <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+                Halaman ini dipakai untuk merapikan nama merchant dan
+                menggabungkan alias payee yang sebenarnya sama, tanpa mengubah kategori.
+              </p>
             </div>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Merchant</TableHead>
-                  <TableHead>Transactions</TableHead>
-                  <TableHead>In / Out</TableHead>
-                  <TableHead>Last seen</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {!isHydrated || filteredMerchantRows.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={6}
-                      className="py-10 text-center text-muted-foreground"
-                    >
-                      {!isHydrated
-                        ? "Memuat merchant workspace..."
-                        : "Belum ada merchant yang cocok dengan filter saat ini."}
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-                {filteredMerchantRows.map((row) => {
-                  const mappedCategory = row.mappingCategoryId
-                    ? state.categories.find(
-                        (category) => category.id === row.mappingCategoryId,
-                      ) ?? null
-                    : null;
+            <CupertinoChip tone="neutral">
+              {isHydrated ? `${filteredMerchantRows.length} merchants` : "Loading"}
+            </CupertinoChip>
+          </div>
 
-                  return (
-                    <TableRow
-                      key={row.merchantKey}
-                      className="cursor-pointer"
-                      onClick={() => setSelectedMerchantKey(row.merchantKey)}
-                    >
-                      <TableCell>
-                        <div className="space-y-1">
-                          <p className="font-medium text-foreground">
-                            {row.merchantName}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {row.extractedKeys.join(" • ")}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>{row.count}</TableCell>
-                      <TableCell className="space-y-1">
-                        {row.incomeTotal > 0 ? (
-                          <p className="text-sm text-emerald-700 dark:text-emerald-300">
-                            + {formatCurrency(row.incomeTotal)}
-                          </p>
-                        ) : null}
-                        {row.expenseTotal > 0 ? (
-                          <p className="text-sm text-rose-700 dark:text-rose-300">
-                            - {formatCurrency(row.expenseTotal)}
-                          </p>
-                        ) : null}
-                      </TableCell>
-                      <TableCell>{formatDate(row.lastDate)}</TableCell>
-                      <TableCell>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <DropdownMenu>
-                              <TooltipTrigger>
-                                <DropdownMenuTrigger
-                                  render={
-                                    <button
-                                      type="button"
-                                      onClick={(event) => event.stopPropagation()}
-                                      className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-2.5 py-1.5 text-xs outline-none transition-colors hover:bg-muted/60"
-                                    />
-                                  }
-                                >
-                                  {mappedCategory ? (
-                                    <Badge
-                                      variant="outline"
-                                      className={
-                                        CATEGORY_COLOR_STYLES[mappedCategory.color].badge
-                                      }
-                                    >
-                                      {mappedCategory.name}
-                                    </Badge>
-                                  ) : (
-                                    <span className="text-xs text-muted-foreground">
-                                      Unmapped
-                                    </span>
-                                  )}
-                                  <ChevronDown className="size-3.5 text-muted-foreground" />
-                                </DropdownMenuTrigger>
-                              </TooltipTrigger>
-                              <DropdownMenuContent
-                                align="start"
-                                className="max-h-80 w-52 overflow-y-auto bg-popover"
-                              >
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    setMerchantCategory(
-                                      row.merchantKey,
-                                      row.merchantName,
-                                      null,
-                                    )
-                                  }
-                                >
-                                  Unmapped
-                                </DropdownMenuItem>
-                                {state.categories.map((category) => (
-                                  <DropdownMenuItem
-                                    key={category.id}
-                                    onClick={() =>
-                                      setMerchantCategory(
-                                        row.merchantKey,
-                                        row.merchantName,
-                                        category.id,
-                                      )
-                                    }
-                                  >
-                                    {category.name}
-                                  </DropdownMenuItem>
-                                ))}
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                            <TooltipContent>Set category</TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger
-                                render={
-                                  <Button
-                                    variant="ghost"
-                                    size="icon-sm"
-                                    aria-label={`Edit ${row.merchantName}`}
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      openEditDialog(row);
-                                    }}
-                                  />
-                                }
-                              >
-                                <Pencil className="size-4 text-slate-600" />
-                              </TooltipTrigger>
-                              <TooltipContent>Edit merchant name</TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger
-                                render={
-                                  <Button
-                                    variant="ghost"
-                                    size="icon-sm"
-                                    aria-label={`Merge ${row.merchantName}`}
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      openMergeDialog(row);
-                                    }}
-                                  />
-                                }
-                              >
-                                <GitMerge className="size-4 text-slate-600" />
-                              </TooltipTrigger>
-                              <TooltipContent>Merge merchant</TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border bg-card">
-          <CardHeader>
-            <CardTitle>Merchant preview</CardTitle>
-            <CardDescription>
-              Preview transaksi dari merchant yang dipilih untuk memastikan
-              mapping kategori sudah sesuai.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Tanggal</TableHead>
-                  <TableHead>Deskripsi</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Nominal</TableHead>
-                  <TableHead>File</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {!selectedMerchant || selectedMerchantTransactions.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={5}
-                      className="py-10 text-center text-muted-foreground"
-                    >
-                      Pilih merchant dari tabel di atas untuk melihat preview.
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-                {selectedMerchantTransactions.map((transaction) => (
-                  <TableRow key={transaction.id}>
-                    <TableCell>{formatDate(transaction.date)}</TableCell>
-                    <TableCell className="max-w-[420px] truncate">
-                      {transaction.description}
-                    </TableCell>
-                    <TableCell>
-                      {transaction.resolvedCategory ? (
-                        <Badge
-                          variant="outline"
-                          className={
-                            CATEGORY_COLOR_STYLES[
-                              transaction.resolvedCategory.color
-                            ].badge
-                          }
-                        >
-                          {transaction.resolvedCategory.name}
-                        </Badge>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">
-                          Uncategorized
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell>{formatCurrency(transaction.amount)}</TableCell>
-                    <TableCell>{transaction.sourceFile}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-
-        <Dialog
-          open={Boolean(editingMerchant)}
-          onOpenChange={(open) => {
-            if (!open) {
-              setEditingMerchant(null);
-              setEditingName("");
-            }
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit merchant name</DialogTitle>
-              <DialogDescription>
-                Ubah nama merchant hasil ekstraksi agar lebih rapi dan konsisten
-                di seluruh workspace.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-3">
-              <div className="space-y-2">
-                <p className="text-xs font-medium text-muted-foreground">
-                  Merchant name
-                </p>
+          <div className="grid gap-3 px-[18px] pb-4 md:grid-cols-2">
+            <label className="space-y-2">
+              <span className="text-[11px] font-medium text-[#8e8e93]">
+                Search
+              </span>
+              <div className="relative">
+                <Search className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-[#8e8e93]" />
                 <Input
-                  value={editingName}
-                  onChange={(event) => setEditingName(event.target.value)}
-                  className="h-10 bg-background text-sm"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Cari merchant atau key"
+                  className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] pl-9 shadow-none focus-visible:ring-[#007aff]/30"
                 />
               </div>
-              <div className="rounded-lg border border-border bg-muted/20 p-3 text-xs text-muted-foreground">
-                Key asal: {editingMerchant?.merchantKey ?? "-"}
+            </label>
+
+            <label className="space-y-2">
+              <span className="text-[11px] font-medium text-[#8e8e93]">
+                Status
+              </span>
+              <CupertinoSelect
+                icon="list"
+                value={statusFilter}
+                onChange={(value) =>
+                  setStatusFilter(value as "all" | "saved" | "raw")
+                }
+                options={statusOptions}
+                minWidthClassName="w-full"
+                ariaLabel="Filter merchant status"
+              />
+            </label>
+          </div>
+
+          <CupertinoTable
+            columnsClassName="grid-cols-[minmax(0,1.3fr)_90px_160px_110px_120px_96px]"
+            minWidthClassName="min-w-[980px]"
+            headers={[
+              { key: "merchant", label: "Merchant" },
+              { key: "transactions", label: "Transactions" },
+              { key: "flow", label: "In / Out" },
+              { key: "last", label: "Last seen" },
+              { key: "status", label: "Status" },
+              { key: "actions", label: "Actions", className: "text-right" },
+            ]}
+            hasRows={isHydrated && filteredMerchantRows.length > 0}
+            emptyState={
+              <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+                {!isHydrated
+                  ? "Memuat merchant workspace..."
+                  : "Belum ada merchant yang cocok dengan filter saat ini."}
               </div>
-            </div>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setEditingMerchant(null);
-                  setEditingName("");
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => {
-                  if (!editingMerchant) {
-                    return;
-                  }
-
-                  updateMerchantName(editingMerchant.merchantKey, editingName);
-                  setEditingMerchant(null);
-                  setEditingName("");
-                }}
-              >
-                Save name
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <Dialog
-          open={Boolean(mergeSource)}
-          onOpenChange={(open) => {
-            if (!open) {
-              setMergeSource(null);
-              setMergeSearchQuery("");
-              setMergeTargetKey(null);
             }
-          }}
-        >
-          <DialogContent className="sm:max-w-xl">
-            <DialogHeader>
-              <DialogTitle>Merge merchants</DialogTitle>
-              <DialogDescription>
-                Gabungkan merchant yang sebenarnya sama ke satu mapping agar
-                kategori dan analitiknya konsisten.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="rounded-lg border border-border bg-muted/20 p-3 text-sm text-muted-foreground">
-                Source:{" "}
-                <span className="font-medium text-foreground">
-                  {mergeSource?.merchantName ?? "-"}
+          >
+            {filteredMerchantRows.map((row) => {
+              return (
+                <div
+                  key={row.merchantKey}
+                  className={cn(
+                    `grid cursor-pointer grid-cols-[minmax(0,1.3fr)_90px_160px_110px_120px_96px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS} transition`,
+                    activeMerchantKey === row.merchantKey
+                      ? "bg-[#007aff]/[0.05]"
+                      : "hover:bg-black/[0.014] dark:hover:bg-white/5",
+                  )}
+                  onClick={() => setSelectedMerchantKey(row.merchantKey)}
+                >
+                  <div className="min-w-0 space-y-1">
+                    <p className="truncate text-[11px] font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">
+                      {row.merchantName}
+                    </p>
+                    <p className="truncate text-[11px] text-[#8e8e93]">
+                      {row.extractedKeys.join(" • ")}
+                    </p>
+                  </div>
+                  <span className="text-[11px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    {row.count}
+                  </span>
+                  <div className="space-y-1 text-[11px]">
+                    {row.incomeTotal > 0 ? (
+                      <p className="font-medium text-[#1f8f43]">
+                        + {formatCurrency(row.incomeTotal)}
+                      </p>
+                    ) : null}
+                    {row.expenseTotal > 0 ? (
+                      <p className="font-medium text-[#ff453a]">
+                        - {formatCurrency(row.expenseTotal)}
+                      </p>
+                    ) : null}
+                  </div>
+                  <span className="text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                    {formatDate(row.lastDate)}
+                  </span>
+                  <div>
+                    <CupertinoChip tone={row.hasMapping ? "status-success" : "neutral"}>
+                      {row.hasMapping ? "Saved" : "Raw"}
+                    </CupertinoChip>
+                  </div>
+                  <CupertinoTableRowActions
+                    actions={[
+                      {
+                        label: `Edit ${row.merchantName}`,
+                        icon: "settings",
+                        onClick: () => openEditDialog(row),
+                        children: <Pencil className="size-4 text-current" />,
+                      },
+                      {
+                        label: `Merge ${row.merchantName}`,
+                        icon: "repeat",
+                        onClick: () => openMergeDialog(row),
+                        children: <GitMerge className="size-4 text-current" />,
+                      },
+                    ]}
+                  />
+                </div>
+              );
+            })}
+          </CupertinoTable>
+        </section>
+
+        <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+          <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
+            <div className="space-y-1">
+              <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                Merchant preview
+              </h2>
+              <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+                Preview transaksi dari merchant terpilih untuk memastikan nama
+                merchant dan alias yang digabung sudah konsisten.
+              </p>
+            </div>
+            {selectedMerchant ? (
+              <CupertinoChip tone="neutral">
+                {selectedMerchant.merchantName}
+              </CupertinoChip>
+            ) : null}
+          </div>
+
+          <CupertinoTable
+            columnsClassName="grid-cols-[110px_minmax(0,1.5fr)_150px_120px_180px]"
+            minWidthClassName="min-w-[900px]"
+            headers={[
+              { key: "date", label: "Tanggal" },
+              { key: "description", label: "Deskripsi" },
+              { key: "category", label: "Category" },
+              { key: "amount", label: "Nominal" },
+              { key: "file", label: "File" },
+            ]}
+            hasRows={Boolean(selectedMerchant) && selectedMerchantTransactions.length > 0}
+            emptyState={
+              <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+                Pilih merchant dari tabel di atas untuk melihat preview.
+              </div>
+            }
+          >
+            {selectedMerchantTransactions.map((transaction) => (
+                <div
+                  key={transaction.id}
+                className={`grid grid-cols-[110px_minmax(0,1.5fr)_150px_120px_180px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+              >
+                <span className="text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                  {formatDate(transaction.date)}
+                </span>
+                <span className="truncate text-[11px] text-[#1c1c1e] dark:text-[#f2f2f7]">
+                  {transaction.description}
+                </span>
+                <span>
+                  {transaction.resolvedCategory ? (
+                    <CategoryChip
+                      label={transaction.resolvedCategory.name}
+                      color={transaction.resolvedCategory.color}
+                    />
+                  ) : (
+                    <span className="text-[11px] text-[#8e8e93]">
+                      Uncategorized
+                    </span>
+                  )}
+                </span>
+                <span className="text-[11px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                  {formatCurrency(transaction.amount)}
+                </span>
+                <span className="truncate text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                  {transaction.sourceFile}
                 </span>
               </div>
-              <div className="space-y-2">
-                <p className="text-xs font-medium text-muted-foreground">
-                  Find target merchant
-                </p>
-                <Input
-                  value={mergeSearchQuery}
-                  onChange={(event) => setMergeSearchQuery(event.target.value)}
-                  placeholder="Cari merchant tujuan merge"
-                  className="h-10 bg-background text-sm"
-                />
-              </div>
-              <div className="max-h-64 space-y-2 overflow-y-auto rounded-lg border border-border bg-muted/10 p-2">
-                {mergeTargets.map((row) => (
-                  <button
-                    key={row.merchantKey}
-                    type="button"
-                    onClick={() => setMergeTargetKey(row.merchantKey)}
-                    className={`flex w-full items-center justify-between rounded-md border px-3 py-2 text-left transition-colors ${
-                      mergeTargetKey === row.merchantKey
-                        ? "border-indigo-200 bg-indigo-50/70 dark:border-indigo-900/70 dark:bg-indigo-950/40"
-                        : "border-transparent bg-background hover:bg-muted/40"
-                    }`}
-                  >
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium text-foreground">
-                        {row.merchantName}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {row.count} transaksi
-                      </p>
-                    </div>
-                    <span className="text-xs text-muted-foreground">
-                      {row.mappingCategoryId
-                        ? state.categories.find(
-                            (category) => category.id === row.mappingCategoryId,
-                          )?.name ?? "-"
-                        : "Unmapped"}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setMergeSource(null);
-                  setMergeSearchQuery("");
-                  setMergeTargetKey(null);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={!mergeSource || !mergeTargetKey}
-                onClick={() => {
-                  if (!mergeSource || !mergeTargetKey) {
-                    return;
-                  }
-
-                  mergeMerchantMapping(mergeSource.merchantKey, mergeTargetKey);
-                  setMergeSource(null);
-                  setMergeSearchQuery("");
-                  setMergeTargetKey(null);
-                }}
-              >
-                Merge merchant
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            ))}
+          </CupertinoTable>
+        </section>
       </div>
+
+      <CupertinoModal
+        open={Boolean(editingMerchant)}
+        onClose={closeEditDialog}
+        title="Edit merchant name"
+      >
+        <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-4">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-[11px] font-medium text-[#8e8e93]">
+                Merchant name
+              </label>
+              <Input
+                value={editingName}
+                onChange={(event) => setEditingName(event.target.value)}
+                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+              />
+            </div>
+            <div className="rounded-[10px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-3 py-2 text-[11px] text-[#8e8e93]">
+              Key asal: {editingMerchant?.merchantKey ?? "-"}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <CupertinoActionButton tone="white" onClick={closeEditDialog}>
+            Cancel
+          </CupertinoActionButton>
+          <CupertinoActionButton
+            onClick={() => {
+              if (!editingMerchant) {
+                return;
+              }
+
+              updateMerchantName(editingMerchant.merchantKey, editingName);
+              closeEditDialog();
+            }}
+          >
+            Save name
+          </CupertinoActionButton>
+        </div>
+      </CupertinoModal>
+
+      <CupertinoModal
+        open={Boolean(mergeSource)}
+        onClose={closeMergeDialog}
+        title="Merge merchants"
+        maxWidthClassName="max-w-[560px]"
+      >
+        <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-4">
+          <div className="space-y-4">
+            <div className="rounded-[10px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-3 py-2 text-[11px] text-[#8e8e93]">
+              Source:{" "}
+              <span className="font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">
+                {mergeSource?.merchantName ?? "-"}
+              </span>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[11px] font-medium text-[#8e8e93]">
+                Find target merchant
+              </label>
+              <Input
+                value={mergeSearchQuery}
+                onChange={(event) => setMergeSearchQuery(event.target.value)}
+                placeholder="Cari merchant tujuan merge"
+                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+              />
+            </div>
+
+            <div className="max-h-64 space-y-2 overflow-y-auto rounded-[10px] bg-[#f7f7f8] dark:bg-[#2c2c2e] p-2">
+              {mergeTargets.map((row) => (
+                <button
+                  key={row.merchantKey}
+                  type="button"
+                  onClick={() => setMergeTargetKey(row.merchantKey)}
+                  className={cn(
+                    "flex w-full items-center justify-between rounded-[9px] px-3 py-2 text-left transition-colors",
+                    mergeTargetKey === row.merchantKey
+                      ? "bg-[#007aff]/10"
+                      : "bg-white dark:bg-[#3a3a3c] hover:bg-black/3 dark:hover:bg-white/8",
+                  )}
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">
+                      {row.merchantName}
+                    </p>
+                    <p className="truncate text-[11px] text-[#8e8e93]">
+                      {row.extractedKeys.join(" • ")}
+                    </p>
+                  </div>
+                  {mergeTargetKey === row.merchantKey ? (
+                    <CupertinoIcon
+                      name="check"
+                      className="size-4 text-[#007aff]"
+                    />
+                  ) : null}
+                </button>
+              ))}
+
+              {mergeTargets.length === 0 ? (
+                <div className="px-3 py-4 text-center text-[11px] text-[#8e8e93]">
+                  Tidak ada merchant lain yang cocok untuk merge.
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <CupertinoActionButton tone="white" onClick={closeMergeDialog}>
+            Cancel
+          </CupertinoActionButton>
+          <CupertinoActionButton
+            disabled={!mergeSource || !mergeTargetKey}
+            onClick={() => {
+              if (!mergeSource || !mergeTargetKey) {
+                return;
+              }
+
+              mergeMerchantMapping(mergeSource.merchantKey, mergeTargetKey);
+              closeMergeDialog();
+            }}
+          >
+            Merge merchant
+          </CupertinoActionButton>
+        </div>
+      </CupertinoModal>
     </main>
   );
 }

@@ -4,7 +4,7 @@ import type {
   ParsedTransaction,
   WorkspaceCategory,
 } from "@/types/transaction";
-import { matchTransactionMerchantMapping } from "@/lib/merchants";
+import { CATEGORY_COLOR_HEX } from "@/lib/color-palette";
 
 const FOOD_KEYWORDS = [
   "warung",
@@ -301,13 +301,17 @@ export const DEFAULT_CATEGORIES: WorkspaceCategory[] = [
   },
 ];
 
-export const CATEGORY_COLOR_OPTIONS: { value: CategoryColor; label: string }[] = [
-  { value: "indigo", label: "Indigo" },
-  { value: "sky", label: "Sky" },
-  { value: "emerald", label: "Emerald" },
-  { value: "amber", label: "Amber" },
-  { value: "rose", label: "Rose" },
-  { value: "violet", label: "Violet" },
+export const CATEGORY_COLOR_OPTIONS: {
+  value: CategoryColor;
+  label: string;
+  color: string;
+}[] = [
+  { value: "indigo", label: "Blue", color: CATEGORY_COLOR_HEX.indigo },
+  { value: "emerald", label: "Green", color: CATEGORY_COLOR_HEX.emerald },
+  { value: "amber", label: "Orange", color: CATEGORY_COLOR_HEX.amber },
+  { value: "violet", label: "Graphite", color: CATEGORY_COLOR_HEX.violet },
+  { value: "sky", label: "BCA", color: CATEGORY_COLOR_HEX.sky },
+  { value: "rose", label: "Gold", color: CATEGORY_COLOR_HEX.rose },
 ];
 
 export const CATEGORY_COLOR_STYLES: Record<
@@ -319,34 +323,34 @@ export const CATEGORY_COLOR_STYLES: Record<
   }
 > = {
   indigo: {
-    badge: "border-indigo-200 bg-indigo-50 text-indigo-700",
-    card: "border-indigo-200/80 bg-indigo-50/40",
-    dot: "bg-indigo-400",
+    badge: "border-[#007aff]/20 bg-[#007aff]/10 text-[#007aff]",
+    card: "border-[#007aff]/20 bg-[#007aff]/[0.08]",
+    dot: "bg-[#007aff]",
   },
   sky: {
-    badge: "border-sky-200 bg-sky-50 text-sky-700",
-    card: "border-sky-200/80 bg-sky-50/40",
-    dot: "bg-sky-400",
+    badge: "border-[#1155cc]/20 bg-[#1155cc]/10 text-[#1155cc]",
+    card: "border-[#1155cc]/20 bg-[#1155cc]/[0.08]",
+    dot: "bg-[#1155cc]",
   },
   emerald: {
-    badge: "border-emerald-200 bg-emerald-50 text-emerald-700",
-    card: "border-emerald-200/80 bg-emerald-50/40",
-    dot: "bg-emerald-400",
+    badge: "border-[#30d158]/20 bg-[#30d158]/10 text-[#1f8f43]",
+    card: "border-[#30d158]/20 bg-[#30d158]/[0.08]",
+    dot: "bg-[#30d158]",
   },
   amber: {
-    badge: "border-amber-200 bg-amber-50 text-amber-700",
-    card: "border-amber-200/80 bg-amber-50/40",
-    dot: "bg-amber-400",
+    badge: "border-[#ff9f0a]/20 bg-[#ff9f0a]/10 text-[#c26d00]",
+    card: "border-[#ff9f0a]/20 bg-[#ff9f0a]/[0.08]",
+    dot: "bg-[#ff9f0a]",
   },
   rose: {
-    badge: "border-rose-200 bg-rose-50 text-rose-700",
-    card: "border-rose-200/80 bg-rose-50/40",
-    dot: "bg-rose-400",
+    badge: "border-[#b8860b]/20 bg-[#b8860b]/10 text-[#8c6500]",
+    card: "border-[#b8860b]/20 bg-[#b8860b]/[0.08]",
+    dot: "bg-[#b8860b]",
   },
   violet: {
-    badge: "border-violet-200 bg-violet-50 text-violet-700",
-    card: "border-violet-200/80 bg-violet-50/40",
-    dot: "bg-violet-400",
+    badge: "border-[#1c1c1e]/15 bg-[#1c1c1e]/10 text-[#1c1c1e]",
+    card: "border-[#1c1c1e]/15 bg-[#1c1c1e]/[0.06]",
+    dot: "bg-[#1c1c1e]",
   },
 };
 
@@ -369,7 +373,7 @@ export function reindexCategoryPriorities(categories: WorkspaceCategory[]) {
 
   return categories.map((category, index) => ({
     ...category,
-    priority: (total - index) * 10,
+    priority: total - index,
   }));
 }
 
@@ -466,20 +470,10 @@ export function matchTransactionCategory(
 ) {
   const description = transaction.description.toLowerCase();
 
+  void merchantMappings;
+
   if (transaction.categoryId) {
     return categories.find((category) => category.id === transaction.categoryId) ?? null;
-  }
-
-  const merchantMapping = matchTransactionMerchantMapping(
-    transaction,
-    merchantMappings,
-  );
-
-  if (merchantMapping) {
-    return (
-      categories.find((category) => category.id === merchantMapping.categoryId) ??
-      null
-    );
   }
 
   return (

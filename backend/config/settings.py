@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "dj_rest_auth",
     "dj_rest_auth.registration",
-    "expensapp_auth",
+    "expensave_auth",
 ]
 
 SITE_ID = 1
@@ -182,11 +182,11 @@ DATABASES = {
 
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "MBG Backend API Documentation",
+    "TITLE": "Expensave Backend API Documentation",
     "DESCRIPTION": "STEM Prasetia Mulya - CSL USE Backend API Documentation by Aziz Rahmad",
     "VERSION": "1.0.0",
     "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
-    "RETRIEVE_SCHEMA_PATH": "/api/schema/",
+    "RETRIEVE_SCHEMA_PATH": "/api/docs/",
 }
 
 

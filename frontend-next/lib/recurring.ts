@@ -264,16 +264,11 @@ function pickMostCommonDescription(transactions: ProcessedRecurringTransaction[]
 function buildProcessedTransactions(
   state: FileWorkspaceState,
 ): ProcessedRecurringTransaction[] {
-  const processedFileMap = new Map(
-    state.files
-      .filter((file) => file.status === "processed")
-      .map((file) => [file.name, file]),
-  );
+  const fileMap = new Map(state.files.map((file) => [file.name, file]));
 
   return state.transactions
-    .filter((transaction) => processedFileMap.has(transaction.sourceFile))
     .map((transaction) => {
-      const sourceFile = processedFileMap.get(transaction.sourceFile)!;
+      const sourceFile = fileMap.get(transaction.sourceFile) ?? null;
       const merchant = resolveTransactionMerchant(
         transaction,
         state.merchantMappings,
@@ -286,7 +281,7 @@ function buildProcessedTransactions(
 
       return {
         ...transaction,
-        bank: sourceFile.bank,
+        bank: sourceFile?.bank ?? "Manual",
         merchantKey: merchant.merchantKey,
         merchantName: merchant.merchantName,
         categoryId: category?.id ?? null,
