@@ -25,6 +25,12 @@ import {
   CupertinoTable,
   CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
 } from "@/components/tables/cupertino-table";
+import {
+  CollapsibleFilterPanel,
+  FILTER_INPUT_CLASS_NAME,
+  FilterPanelField,
+  FilterPanelGrid,
+} from "@/components/filters/collapsible-filter-panel";
 import { useFileWorkspace } from "@/hooks/use-file-workspace";
 import {
   matchTransactionCategory,
@@ -763,19 +769,12 @@ export function ReportsWorkspace() {
         className="flex w-full flex-col gap-3 px-3 py-3"
       >
         <section data-print-hidden="true">
-          <div className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
-            <div className="space-y-1">
-              <h2 className="text-[13px] font-semibold text-primary">
-                Report filters
-              </h2>
-              <p className="text-[11px] leading-5 text-tertiary">
-                Atur source, periode, dan modul report yang ingin ditampilkan atau diexport.
-              </p>
-            </div>
-
-            <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              <label className="space-y-2">
-                <span className="text-[11px] font-medium text-tertiary">Search</span>
+          <CollapsibleFilterPanel
+            title="Report filters"
+            description="Atur source, periode, dan modul report yang ingin ditampilkan atau diexport."
+          >
+            <FilterPanelGrid>
+              <FilterPanelField label="Search">
                 <div className="relative">
                   <CupertinoIcon
                     name="search"
@@ -785,12 +784,11 @@ export function ReportsWorkspace() {
                     value={search}
                     onChange={(event) => setSearch(event.target.value)}
                     placeholder="Cari deskripsi, source, atau kategori"
-                    className="h-10 rounded-[10px] border-subtle bg-surface-muted pl-9 shadow-none focus-visible:ring-[var(--accent)]/30"
+                    className={`${FILTER_INPUT_CLASS_NAME} pl-9`}
                   />
                 </div>
-              </label>
-              <label className="space-y-2">
-                <span className="text-[11px] font-medium text-tertiary">Period</span>
+              </FilterPanelField>
+              <FilterPanelField label="Period">
                 <CupertinoSelect
                   icon="calendar"
                   value={period}
@@ -799,9 +797,8 @@ export function ReportsWorkspace() {
                   minWidthClassName="w-full"
                   ariaLabel="Filter report period"
                 />
-              </label>
-              <label className="space-y-2">
-                <span className="text-[11px] font-medium text-tertiary">Type</span>
+              </FilterPanelField>
+              <FilterPanelField label="Type">
                 <CupertinoSelect
                   icon="repeat"
                   value={typeFilter}
@@ -812,9 +809,8 @@ export function ReportsWorkspace() {
                   minWidthClassName="w-full"
                   ariaLabel="Filter transaction type"
                 />
-              </label>
-              <label className="space-y-2">
-                <span className="text-[11px] font-medium text-tertiary">Source</span>
+              </FilterPanelField>
+              <FilterPanelField label="Source">
                 <CupertinoSelect
                   icon="wallet"
                   value={bankFilter}
@@ -823,12 +819,11 @@ export function ReportsWorkspace() {
                   minWidthClassName="w-full"
                   ariaLabel="Filter report source"
                 />
-              </label>
-            </div>
+              </FilterPanelField>
+            </FilterPanelGrid>
 
-            <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              <label className="space-y-2">
-                <span className="text-[11px] font-medium text-tertiary">Category</span>
+            <FilterPanelGrid className="mt-3">
+              <FilterPanelField label="Category">
                 <CupertinoSelect
                   icon="tag"
                   value={categoryFilter}
@@ -837,25 +832,23 @@ export function ReportsWorkspace() {
                   minWidthClassName="w-full"
                   ariaLabel="Filter report category"
                 />
-              </label>
-              <label className="space-y-2">
-                <span className="text-[11px] font-medium text-tertiary">Month from</span>
+              </FilterPanelField>
+              <FilterPanelField label="Month from">
                 <Input
                   type="month"
                   value={monthFrom}
                   onChange={(event) => setMonthFrom(event.target.value)}
-                  className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
+                  className={FILTER_INPUT_CLASS_NAME}
                 />
-              </label>
-              <label className="space-y-2">
-                <span className="text-[11px] font-medium text-tertiary">Month to</span>
+              </FilterPanelField>
+              <FilterPanelField label="Month to">
                 <Input
                   type="month"
                   value={monthTo}
                   onChange={(event) => setMonthTo(event.target.value)}
-                  className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
+                  className={FILTER_INPUT_CLASS_NAME}
                 />
-              </label>
+              </FilterPanelField>
               <div className="flex items-end">
                 <Button
                   variant="outline"
@@ -865,7 +858,7 @@ export function ReportsWorkspace() {
                   Reset filters
                 </Button>
               </div>
-            </div>
+            </FilterPanelGrid>
 
             <div className="mt-4 space-y-2">
               <div className="flex items-center justify-between gap-3">
@@ -920,7 +913,7 @@ export function ReportsWorkspace() {
                 </p>
               </div>
             </div>
-          </div>
+          </CollapsibleFilterPanel>
         </section>
 
         {showSummaryCards ? (

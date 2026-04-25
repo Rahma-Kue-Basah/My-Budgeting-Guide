@@ -7,6 +7,12 @@ import {
   AmountDistributionCard,
   type AmountDistributionRange,
 } from "@/components/charts/amount-distribution-card";
+import {
+  CollapsibleFilterPanel,
+  FILTER_INPUT_CLASS_NAME,
+  FilterPanelField,
+  FilterPanelGrid,
+} from "@/components/filters/collapsible-filter-panel";
 import { CupertinoIcon } from "@/components/icons/cupertino-icon";
 import {
   CupertinoTable,
@@ -522,19 +528,12 @@ export function ReviewAlertsWorkspace() {
           ))}
         </section>
 
-        <section className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
-          <div className="space-y-1">
-            <h2 className="text-[13px] font-semibold text-primary">
-              Alert filters
-            </h2>
-            <p className="text-[11px] leading-5 text-tertiary">
-              Saring anomali berdasarkan source, kategori, tipe transaksi, dan rentang nominal.
-            </p>
-          </div>
-
-          <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Search</span>
+        <CollapsibleFilterPanel
+          title="Alert filters"
+          description="Saring anomali berdasarkan source, kategori, tipe transaksi, dan rentang nominal."
+        >
+          <FilterPanelGrid>
+            <FilterPanelField label="Search">
               <div className="relative">
                 <CupertinoIcon
                   name="search"
@@ -544,12 +543,11 @@ export function ReviewAlertsWorkspace() {
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Cari deskripsi, source, atau kategori"
-                  className="h-10 rounded-[10px] border-subtle bg-surface-muted pl-9 shadow-none focus-visible:ring-[var(--accent)]/30"
+                  className={`${FILTER_INPUT_CLASS_NAME} pl-9`}
                 />
               </div>
-            </label>
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Type</span>
+            </FilterPanelField>
+            <FilterPanelField label="Type">
               <CupertinoSelect
                 icon="repeat"
                 value={typeFilter}
@@ -558,9 +556,8 @@ export function ReviewAlertsWorkspace() {
                 minWidthClassName="w-full"
                 ariaLabel="Filter anomaly transaction type"
               />
-            </label>
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Source</span>
+            </FilterPanelField>
+            <FilterPanelField label="Source">
               <CupertinoSelect
                 icon="wallet"
                 value={bankFilter}
@@ -569,9 +566,8 @@ export function ReviewAlertsWorkspace() {
                 minWidthClassName="w-full"
                 ariaLabel="Filter anomaly source"
               />
-            </label>
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Category</span>
+            </FilterPanelField>
+            <FilterPanelField label="Category">
               <CupertinoSelect
                 icon="tag"
                 value={categoryFilter}
@@ -580,30 +576,28 @@ export function ReviewAlertsWorkspace() {
                 minWidthClassName="w-full"
                 ariaLabel="Filter anomaly category"
               />
-            </label>
-          </div>
+            </FilterPanelField>
+          </FilterPanelGrid>
 
-          <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Minimum amount</span>
+          <FilterPanelGrid className="mt-3">
+            <FilterPanelField label="Minimum amount">
               <Input
                 inputMode="numeric"
                 placeholder="Nominal minimum"
                 value={amountMin}
                 onChange={(event) => setAmountMin(event.target.value)}
-                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
+                className={FILTER_INPUT_CLASS_NAME}
               />
-            </label>
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Maximum amount</span>
+            </FilterPanelField>
+            <FilterPanelField label="Maximum amount">
               <Input
                 inputMode="numeric"
                 placeholder="Nominal maksimum"
                 value={amountMax}
                 onChange={(event) => setAmountMax(event.target.value)}
-                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
+                className={FILTER_INPUT_CLASS_NAME}
               />
-            </label>
+            </FilterPanelField>
             <div className="flex items-end">
               <Button
                 variant="outline"
@@ -613,8 +607,8 @@ export function ReviewAlertsWorkspace() {
                 Reset filters
               </Button>
             </div>
-          </div>
-        </section>
+          </FilterPanelGrid>
+        </CollapsibleFilterPanel>
 
         <AmountDistributionCard
           transactions={processedTransactions}

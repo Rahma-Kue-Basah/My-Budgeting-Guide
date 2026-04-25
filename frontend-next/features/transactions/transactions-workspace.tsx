@@ -3,6 +3,13 @@
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 
+import {
+  CollapsibleFilterPanel,
+  FILTER_INPUT_CLASS_NAME,
+  FilterPanelActions,
+  FilterPanelField,
+  FilterPanelGrid,
+} from "@/components/filters/collapsible-filter-panel";
 import { CupertinoIcon } from "@/components/icons/cupertino-icon";
 import {
   CupertinoTable,
@@ -329,10 +336,12 @@ function TransactionsWorkspaceContent({
           />
         </section>
 
-        <section className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Search</span>
+        <CollapsibleFilterPanel
+          title="Transaction filters"
+          description="Saring transaksi berdasarkan keyword, tipe, source, kategori, tanggal, dan rentang nominal."
+        >
+          <FilterPanelGrid>
+            <FilterPanelField label="Search">
               <div className="relative">
                 <CupertinoIcon
                   name="search"
@@ -342,12 +351,11 @@ function TransactionsWorkspaceContent({
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Cari deskripsi, source, atau bank"
-                  className="h-10 rounded-[10px] border-subtle bg-surface-muted pl-9 shadow-none focus-visible:ring-[var(--accent)]/30"
+                  className={`${FILTER_INPUT_CLASS_NAME} pl-9`}
                 />
               </div>
-            </label>
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Type</span>
+            </FilterPanelField>
+            <FilterPanelField label="Type">
               <CupertinoSelect
                 icon="repeat"
                 value={typeFilter}
@@ -356,9 +364,8 @@ function TransactionsWorkspaceContent({
                 minWidthClassName="w-full"
                 ariaLabel="Filter transaction type"
               />
-            </label>
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Source</span>
+            </FilterPanelField>
+            <FilterPanelField label="Source">
               <CupertinoSelect
                 icon="wallet"
                 value={bankFilter}
@@ -367,9 +374,8 @@ function TransactionsWorkspaceContent({
                 minWidthClassName="w-full"
                 ariaLabel="Filter transaction source"
               />
-            </label>
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Category</span>
+            </FilterPanelField>
+            <FilterPanelField label="Category">
               <CupertinoSelect
                 icon="tag"
                 value={categoryFilter}
@@ -378,51 +384,47 @@ function TransactionsWorkspaceContent({
                 minWidthClassName="w-full"
                 ariaLabel="Filter transaction category"
               />
-            </label>
-          </div>
+            </FilterPanelField>
+          </FilterPanelGrid>
 
-          <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Date from</span>
+          <FilterPanelGrid className="mt-3">
+            <FilterPanelField label="Date from">
               <Input
                 type="date"
                 value={dateFrom}
                 onChange={(event) => setDateFrom(event.target.value)}
-                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
+                className={FILTER_INPUT_CLASS_NAME}
               />
-            </label>
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Date to</span>
+            </FilterPanelField>
+            <FilterPanelField label="Date to">
               <Input
                 type="date"
                 value={dateTo}
                 onChange={(event) => setDateTo(event.target.value)}
-                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
+                className={FILTER_INPUT_CLASS_NAME}
               />
-            </label>
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Minimum amount</span>
+            </FilterPanelField>
+            <FilterPanelField label="Minimum amount">
               <Input
                 inputMode="numeric"
                 placeholder="Nominal minimum"
                 value={amountMin}
                 onChange={(event) => setAmountMin(event.target.value)}
-                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
+                className={FILTER_INPUT_CLASS_NAME}
               />
-            </label>
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Maximum amount</span>
+            </FilterPanelField>
+            <FilterPanelField label="Maximum amount">
               <Input
                 inputMode="numeric"
                 placeholder="Nominal maksimum"
                 value={amountMax}
                 onChange={(event) => setAmountMax(event.target.value)}
-                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
+                className={FILTER_INPUT_CLASS_NAME}
               />
-            </label>
-          </div>
+            </FilterPanelField>
+          </FilterPanelGrid>
 
-          <div className="mt-3 flex flex-wrap items-center gap-2">
+          <FilterPanelActions className="mt-3">
             {transactionIdFilter ? (
               <span className="inline-flex h-5 items-center justify-center rounded-full border border-subtle bg-surface-muted px-2 py-0.5 text-[10px] font-medium whitespace-nowrap text-secondary">
                 Focused transaction
@@ -435,8 +437,8 @@ function TransactionsWorkspaceContent({
             >
               Reset filters
             </Button>
-          </div>
-        </section>
+          </FilterPanelActions>
+        </CollapsibleFilterPanel>
 
         <section className="rounded-[13px] border-0 bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">

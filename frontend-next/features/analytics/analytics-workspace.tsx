@@ -19,6 +19,12 @@ import {
   CupertinoTable,
   CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
 } from "@/components/tables/cupertino-table";
+import {
+  CollapsibleFilterPanel,
+  FILTER_INPUT_CLASS_NAME,
+  FilterPanelField,
+  FilterPanelGrid,
+} from "@/components/filters/collapsible-filter-panel";
 import { Button } from "@/components/ui/button";
 import { CupertinoChip } from "@/components/ui/cupertino-chip";
 import { CupertinoSelect } from "@/components/ui/cupertino-select";
@@ -454,19 +460,12 @@ export function CategoryInsightsWorkspace() {
       <WorkspaceTopBar title="Analytics" />
 
       <div className="flex w-full flex-col gap-3 px-3 py-3">
-        <section className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
-          <div className="space-y-1">
-            <h2 className="text-[13px] font-semibold text-primary">
-              Analytics filters
-            </h2>
-            <p className="text-[11px] leading-5 text-tertiary">
-              Jelajahi performa kategori, source, merchant, dan cash flow dari seluruh transaksi workspace.
-            </p>
-          </div>
-
-          <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Search</span>
+        <CollapsibleFilterPanel
+          title="Analytics filters"
+          description="Jelajahi performa kategori, source, merchant, dan cash flow dari seluruh transaksi workspace."
+        >
+          <FilterPanelGrid>
+            <FilterPanelField label="Search">
               <div className="relative">
                 <CupertinoIcon
                   name="search"
@@ -476,12 +475,11 @@ export function CategoryInsightsWorkspace() {
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Cari kategori, merchant, deskripsi, atau source"
-                  className="h-10 rounded-[10px] border-subtle bg-surface-muted pl-9 shadow-none focus-visible:ring-[var(--accent)]/30"
+                  className={`${FILTER_INPUT_CLASS_NAME} pl-9`}
                 />
               </div>
-            </label>
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Type</span>
+            </FilterPanelField>
+            <FilterPanelField label="Type">
               <CupertinoSelect
                 icon="repeat"
                 value={typeFilter}
@@ -490,9 +488,8 @@ export function CategoryInsightsWorkspace() {
                 minWidthClassName="w-full"
                 ariaLabel="Filter analytics transaction type"
               />
-            </label>
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Source</span>
+            </FilterPanelField>
+            <FilterPanelField label="Source">
               <CupertinoSelect
                 icon="wallet"
                 value={bankFilter}
@@ -501,7 +498,7 @@ export function CategoryInsightsWorkspace() {
                 minWidthClassName="w-full"
                 ariaLabel="Filter analytics source"
               />
-            </label>
+            </FilterPanelField>
             <div className="flex items-end">
               <Button
                 variant="outline"
@@ -511,29 +508,27 @@ export function CategoryInsightsWorkspace() {
                 Reset filters
               </Button>
             </div>
-          </div>
+          </FilterPanelGrid>
 
-          <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Month from</span>
+          <FilterPanelGrid className="mt-3">
+            <FilterPanelField label="Month from">
               <Input
                 type="month"
                 value={monthFrom}
                 onChange={(event) => setMonthFrom(event.target.value)}
-                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
+                className={FILTER_INPUT_CLASS_NAME}
               />
-            </label>
-            <label className="space-y-2">
-              <span className="text-[11px] font-medium text-tertiary">Month to</span>
+            </FilterPanelField>
+            <FilterPanelField label="Month to">
               <Input
                 type="month"
                 value={monthTo}
                 onChange={(event) => setMonthTo(event.target.value)}
-                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
+                className={FILTER_INPUT_CLASS_NAME}
               />
-            </label>
-          </div>
-        </section>
+            </FilterPanelField>
+          </FilterPanelGrid>
+        </CollapsibleFilterPanel>
 
         <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {summaryCards.map((card) => (
