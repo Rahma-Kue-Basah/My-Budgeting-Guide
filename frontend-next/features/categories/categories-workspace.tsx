@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo } from "react";
 import {
   Bar,
@@ -17,9 +16,10 @@ import {
   CupertinoTable,
   CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
 } from "@/components/tables/cupertino-table";
-import { Button } from "@/components/ui/button";
 import { CupertinoChip } from "@/components/ui/cupertino-chip";
 import { SummaryCard } from "@/components/ui/summary-card";
+import { WorkspaceTopBar } from "@/components/ui/workspace-top-bar";
+import { WorkspaceTopBarActionButton } from "@/components/ui/workspace-top-bar-action-button";
 import { useFileWorkspace } from "@/hooks/use-file-workspace";
 import {
   CHART_AXIS_TICK,
@@ -141,28 +141,19 @@ export function CategoriesWorkspace() {
 
   return (
     <main className="min-h-svh flex-1 bg-app text-primary">
-      <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
-        <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
-            Categories
-          </h1>
-
-          <div className="ml-auto flex flex-wrap items-center gap-2">
-            <Button
-              className="h-9 rounded-[9px] border border-strong bg-surface px-3 text-primary shadow-none hover:bg-surface-muted"
-              render={<Link href="/rules" />}
-            >
+      <WorkspaceTopBar
+        title="Categories"
+        actions={
+          <>
+            <WorkspaceTopBarActionButton tone="secondary" href="/rules">
               Rules
-            </Button>
-            <Button
-              className="h-9 rounded-[9px] border border-strong bg-surface px-3 text-primary shadow-none hover:bg-surface-muted"
-              render={<Link href="/analytics" />}
-            >
+            </WorkspaceTopBarActionButton>
+            <WorkspaceTopBarActionButton tone="secondary" href="/analytics">
               Analytics
-            </Button>
-          </div>
-        </div>
-      </section>
+            </WorkspaceTopBarActionButton>
+          </>
+        }
+      />
 
       <div className="flex w-full flex-col gap-3 px-3 py-3">
         <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">

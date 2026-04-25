@@ -10,6 +10,7 @@ import {
 } from "@/components/tables/cupertino-table";
 import { CupertinoChip } from "@/components/ui/cupertino-chip";
 import { SummaryCard } from "@/components/ui/summary-card";
+import { WorkspaceTopBar } from "@/components/ui/workspace-top-bar";
 import {
   Tooltip,
   TooltipContent,
@@ -290,13 +291,7 @@ export function RecurringWorkspace() {
   return (
     <TooltipProvider>
       <main className="min-h-svh flex-1 bg-app text-primary">
-        <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
-          <div className="flex w-full items-center gap-3 px-3 py-2.5">
-            <h1 className="text-[22px] font-semibold tracking-tight text-primary">
-              Recurring
-            </h1>
-          </div>
-        </section>
+        <WorkspaceTopBar title="Recurring" />
 
         <div className="flex w-full flex-col gap-3 px-3 py-3">
           <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">

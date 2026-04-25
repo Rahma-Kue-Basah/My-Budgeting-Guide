@@ -39,6 +39,8 @@ import { Button } from "@/components/ui/button";
 import { CupertinoChip } from "@/components/ui/cupertino-chip";
 import { CupertinoSelect } from "@/components/ui/cupertino-select";
 import { Input } from "@/components/ui/input";
+import { WorkspaceTopBar } from "@/components/ui/workspace-top-bar";
+import { WorkspaceTopBarActionButton } from "@/components/ui/workspace-top-bar-action-button";
 import {
   formatCompactNumber,
   formatCurrency,
@@ -744,26 +746,16 @@ export function ReportsWorkspace() {
 
   return (
     <main className="min-h-svh flex-1 bg-app text-primary">
-      <section
-        className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0"
-        data-print-hidden="true"
-      >
-        <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
-            Reports
-          </h1>
-
-          <div className="ml-auto flex flex-wrap items-center gap-2">
-            <Button
-              onClick={exportPdf}
-              className="h-9 rounded-[9px] bg-[var(--text-primary)] px-3 text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)]"
-            >
-              <Download className="size-3.5" />
-              Export PDF
-            </Button>
-          </div>
-        </div>
-      </section>
+      <WorkspaceTopBar
+        title="Reports"
+        className="z-10"
+        actions={
+          <WorkspaceTopBarActionButton onClick={exportPdf}>
+            <Download className="size-3.5" />
+            Export PDF
+          </WorkspaceTopBarActionButton>
+        }
+      />
 
       <div
         ref={printRef}

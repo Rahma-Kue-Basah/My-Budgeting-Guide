@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { CupertinoIcon } from "@/components/icons/cupertino-icon";
@@ -8,13 +7,14 @@ import {
   CupertinoTable,
   CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
 } from "@/components/tables/cupertino-table";
-import { Button } from "@/components/ui/button";
 import { CupertinoActionButton } from "@/components/ui/cupertino-action-button";
 import { CupertinoChip } from "@/components/ui/cupertino-chip";
 import { CupertinoConfirmDialog } from "@/components/ui/cupertino-confirm-dialog";
 import { CupertinoModal } from "@/components/ui/cupertino-modal";
 import { CupertinoTableRowActions } from "@/components/ui/cupertino-table-row-actions";
 import { Input } from "@/components/ui/input";
+import { WorkspaceTopBar } from "@/components/ui/workspace-top-bar";
+import { WorkspaceTopBarActionButton } from "@/components/ui/workspace-top-bar-action-button";
 import { useFileWorkspace } from "@/hooks/use-file-workspace";
 import {
   CATEGORY_COLOR_OPTIONS,
@@ -181,26 +181,20 @@ export function RulesWorkspace() {
 
   return (
     <main className="min-h-svh flex-1 bg-app text-primary">
-      <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
-        <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
-            Rules
-          </h1>
-
-          <div className="ml-auto flex flex-wrap items-center gap-2">
-            <Button
-              className="h-9 rounded-[9px] border border-strong bg-surface px-3 text-primary shadow-none hover:bg-surface-muted"
-              render={<Link href="/transactions" />}
-            >
+      <WorkspaceTopBar
+        title="Rules"
+        actions={
+          <>
+            <WorkspaceTopBarActionButton tone="secondary" href="/transactions">
               Transactions
-            </Button>
-            <CupertinoActionButton onClick={openCreateDialog}>
+            </WorkspaceTopBarActionButton>
+            <WorkspaceTopBarActionButton onClick={openCreateDialog}>
               <CupertinoIcon name="plus" className="size-3.5" />
               Add rule
-            </CupertinoActionButton>
-          </div>
-        </div>
-      </section>
+            </WorkspaceTopBarActionButton>
+          </>
+        }
+      />
 
       <div className="flex w-full flex-col gap-3 px-3 py-3">
         <section className="grid gap-3 md:grid-cols-3">

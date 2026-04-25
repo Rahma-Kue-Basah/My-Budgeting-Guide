@@ -6,6 +6,7 @@ import { CupertinoIcon } from "@/components/icons/cupertino-icon";
 import { APP_COLOR_OPTIONS } from "@/lib/color-palette";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { WorkspacePrimaryButton } from "@/components/ui/workspace-primary-button";
 
 export type WalletTone = (typeof APP_COLOR_OPTIONS)[number]["walletTone"];
 
@@ -550,12 +551,12 @@ export function AddWalletDialog({
           >
             Cancel
           </Button>
-          <Button
+          <WorkspacePrimaryButton
             type="submit"
-            className="rounded-[10px] bg-[var(--text-primary)] dark:bg-surface-raised text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)] dark:hover:bg-surface-raised"
+            className="rounded-[10px]"
           >
             Add wallet
-          </Button>
+          </WorkspacePrimaryButton>
         </div>
       </form>
     </div>

@@ -20,8 +20,11 @@ import { matchTransactionCategory } from "@/lib/categories";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { WorkspacePrimaryButton } from "@/components/ui/workspace-primary-button";
 import { CupertinoSelect } from "@/components/ui/cupertino-select";
 import { SummaryCard } from "@/components/ui/summary-card";
+import { WorkspaceTopBar } from "@/components/ui/workspace-top-bar";
+import { WorkspaceTopBarActionButton } from "@/components/ui/workspace-top-bar-action-button";
 import {
   AddWalletDialog,
   useDashboardWallets,
@@ -572,9 +575,9 @@ function DashboardOverview({
                     {alert.description}
                   </p>
                 </div>
-                <Button className="h-7 rounded-[7px] bg-[var(--text-primary)] px-2 text-[10px] text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)]">
+                <WorkspaceTopBarActionButton size="sm">
                   Review
-                </Button>
+                </WorkspaceTopBarActionButton>
               </div>
             ))}
           </div>
@@ -890,15 +893,11 @@ export function DashboardWorkspace({
 
   return (
     <main className="min-h-svh bg-app text-primary">
-      <header className="fixed top-[58px] right-0 left-0 z-20 border-b border-subtle bg-surface md:top-0 md:left-[232px] md:w-[calc(100%-232px)]">
-        <div className="flex h-[58px] w-full items-center gap-3 px-3">
-          <div className="min-w-0">
-            <h1 className="truncate text-xl font-semibold tracking-normal">
-              {pageTitle}
-            </h1>
-          </div>
-
-          <div className="ml-auto hidden flex-wrap items-center gap-2 sm:flex">
+      <WorkspaceTopBar
+        title={pageTitle}
+        variant="fixed"
+        actions={
+          <>
             <CupertinoSelect
               icon="wallet"
               value={activeWallet}
@@ -914,17 +913,15 @@ export function DashboardWorkspace({
                 })),
               ]}
             />
-
-            <Button
-              className="h-9 rounded-[9px] bg-[var(--text-primary)] px-3 text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)]"
+            <WorkspaceTopBarActionButton
               onClick={() => setIsWalletDialogOpen(true)}
             >
               <CupertinoIcon name="plus" className="size-3.5" />
               Add wallet
-            </Button>
-          </div>
-        </div>
-      </header>
+            </WorkspaceTopBarActionButton>
+          </>
+        }
+      />
 
       {isTransactionsPage ? (
       <div className="flex w-full flex-col gap-4 px-3 pt-[132px] pb-3 md:px-3 md:pt-[70px]">
@@ -1100,10 +1097,10 @@ export function DashboardWorkspace({
                     />
                   </div>
 
-                  <Button className="h-8 rounded-[8px] bg-[var(--text-primary)] px-3 text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)]">
+                  <WorkspacePrimaryButton size="sm">
                     <CupertinoIcon name="plus" className="size-3.5" />
                     Add
-                  </Button>
+                  </WorkspacePrimaryButton>
                   <Button
                     variant="outline"
                     className="h-8 rounded-[8px] border-strong bg-surface-muted px-3 shadow-none"

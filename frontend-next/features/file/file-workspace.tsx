@@ -13,8 +13,11 @@ import { CupertinoActionButton } from "@/components/ui/cupertino-action-button";
 import { CupertinoChip } from "@/components/ui/cupertino-chip";
 import { CupertinoConfirmDialog } from "@/components/ui/cupertino-confirm-dialog";
 import { CupertinoModal } from "@/components/ui/cupertino-modal";
+import { WorkspacePrimaryButton } from "@/components/ui/workspace-primary-button";
 import { CupertinoSelect } from "@/components/ui/cupertino-select";
 import { CupertinoTableRowActions } from "@/components/ui/cupertino-table-row-actions";
+import { WorkspaceTopBar } from "@/components/ui/workspace-top-bar";
+import { WorkspaceTopBarActionButton } from "@/components/ui/workspace-top-bar-action-button";
 import {
   formatCurrency,
   formatDate,
@@ -587,15 +590,14 @@ function ReviewDetailPanel({
                 <CupertinoIcon name="repeat" className="size-3.5" />
                 Re-parse
               </Button>
-              <Button
+              <WorkspacePrimaryButton
                 size="sm"
                 disabled={processDisabled}
-                className="rounded-[8px] bg-[var(--text-primary)] dark:bg-surface-raised px-3 text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)] dark:hover:bg-surface-raised disabled:bg-[var(--text-primary)]/40 dark:disabled:bg-surface-muted"
                 onClick={onProcess}
               >
                 <CupertinoIcon name="check" className="size-3.5" />
                 Mark processed
-              </Button>
+              </WorkspacePrimaryButton>
               <Button variant="outline" size="sm" className="rounded-[8px] border-strong bg-danger/10 text-danger shadow-none hover:bg-danger/15 hover:text-danger" onClick={onDelete}>
                 <CupertinoIcon name="close" className="size-3.5" />
                 Delete
@@ -900,22 +902,14 @@ export function FileWorkspace() {
 
   return (
     <main className="min-h-svh flex-1 bg-app text-primary">
-      <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
-        <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
-            Import workspace
-          </h1>
-
-          <div className="ml-auto flex flex-wrap items-center gap-2">
-            <Button
-              className="h-9 rounded-[9px] bg-[var(--text-primary)] dark:bg-surface-raised px-3 text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)] dark:hover:bg-surface-raised"
-              render={<Link href="/transactions" />}
-            >
-              Transactions
-            </Button>
-          </div>
-        </div>
-      </section>
+      <WorkspaceTopBar
+        title="Import workspace"
+        actions={
+          <WorkspaceTopBarActionButton href="/transactions">
+            Transactions
+          </WorkspaceTopBarActionButton>
+        }
+      />
 
       <div className="flex w-full flex-col gap-3 px-3 py-3">
         <UploadPanel
@@ -1105,13 +1099,12 @@ export function FileWorkspace() {
             >
               Cancel
             </Button>
-            <Button
+            <WorkspacePrimaryButton
               type="button"
-              className="h-9 rounded-[9px] bg-[var(--text-primary)] dark:bg-surface-raised px-3 text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)] dark:hover:bg-surface-raised"
               onClick={submitTransactionEdit}
             >
               Save changes
-            </Button>
+            </WorkspacePrimaryButton>
           </div>
         </CupertinoModal>
 

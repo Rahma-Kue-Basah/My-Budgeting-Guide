@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { CupertinoIcon } from "@/components/icons/cupertino-icon";
 import { CupertinoChip } from "@/components/ui/cupertino-chip";
+import { WorkspaceTopBar } from "@/components/ui/workspace-top-bar";
 
 type GuideStep = {
   number: string;
@@ -113,13 +114,7 @@ const followUpLinks = [
 export function GuideWorkspace() {
   return (
     <main className="min-h-svh flex-1 bg-app text-primary">
-      <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
-        <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
-            Cara Pakai MBG
-          </h1>
-        </div>
-      </section>
+      <WorkspaceTopBar title="Cara Pakai MBG" />
 
       <div className="flex w-full flex-col gap-3 px-3 py-3">
         <section className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">

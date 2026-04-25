@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { GitMerge, Pencil, Search } from "lucide-react";
 
@@ -9,7 +8,6 @@ import {
   CupertinoTable,
   CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
 } from "@/components/tables/cupertino-table";
-import { Button } from "@/components/ui/button";
 import { CupertinoActionButton } from "@/components/ui/cupertino-action-button";
 import { CupertinoChip } from "@/components/ui/cupertino-chip";
 import { CupertinoModal } from "@/components/ui/cupertino-modal";
@@ -17,6 +15,8 @@ import { CupertinoSelect } from "@/components/ui/cupertino-select";
 import { CupertinoTableRowActions } from "@/components/ui/cupertino-table-row-actions";
 import { Input } from "@/components/ui/input";
 import { SummaryCard } from "@/components/ui/summary-card";
+import { WorkspaceTopBar } from "@/components/ui/workspace-top-bar";
+import { WorkspaceTopBarActionButton } from "@/components/ui/workspace-top-bar-action-button";
 import { useFileWorkspace } from "@/hooks/use-file-workspace";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import { matchTransactionCategory } from "@/lib/categories";
@@ -259,22 +259,14 @@ export function MerchantsWorkspace() {
 
   return (
     <main className="min-h-svh flex-1 bg-app text-primary">
-      <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
-        <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
-            Advanced Tools
-          </h1>
-
-          <div className="ml-auto flex flex-wrap items-center gap-2">
-            <Button
-              className="h-9 rounded-[9px] border border-strong bg-surface px-3 text-primary shadow-none hover:bg-surface-muted"
-              render={<Link href="/categories" />}
-            >
-              Categories
-            </Button>
-          </div>
-        </div>
-      </section>
+      <WorkspaceTopBar
+        title="Advanced Tools"
+        actions={
+          <WorkspaceTopBarActionButton tone="secondary" href="/categories">
+            Categories
+          </WorkspaceTopBarActionButton>
+        }
+      />
 
       <div className="flex w-full flex-col gap-3 px-3 py-3">
         <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">

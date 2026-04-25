@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { CupertinoChip } from "@/components/ui/cupertino-chip";
 import { CupertinoSelect } from "@/components/ui/cupertino-select";
 import { Input } from "@/components/ui/input";
+import { WorkspaceTopBar } from "@/components/ui/workspace-top-bar";
 import { useFileWorkspace } from "@/hooks/use-file-workspace";
 import { matchTransactionCategory } from "@/lib/categories";
 import { formatCurrency, formatDate } from "@/lib/formatters";
@@ -304,13 +305,7 @@ function TransactionsWorkspaceContent({
 
   return (
     <main className="min-h-svh flex-1 bg-app text-primary">
-      <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
-        <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
-            Transactions
-          </h1>
-        </div>
-      </section>
+      <WorkspaceTopBar title="Transactions" />
 
       <div className="flex w-full flex-col gap-3 px-3 py-3">
         <section className="grid gap-3 md:grid-cols-3">

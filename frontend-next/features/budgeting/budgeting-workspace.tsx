@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { WorkspaceTopBar } from "@/components/ui/workspace-top-bar";
 import { useFileWorkspace } from "@/hooks/use-file-workspace";
 import {
   CATEGORY_COLOR_STYLES,
@@ -659,13 +660,7 @@ export function BudgetingWorkspace() {
 
   return (
     <main className="min-h-svh flex-1 bg-app text-primary">
-      <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
-        <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
-            Budgeting
-          </h1>
-        </div>
-      </section>
+      <WorkspaceTopBar title="Budgeting" />
 
       <div className="flex w-full flex-col gap-3 px-3 py-3">
         {!isHydrated || processedTransactions.length === 0 ? (
