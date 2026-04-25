@@ -43,7 +43,7 @@ export function CupertinoSelect({
   function renderLeading(option: CupertinoSelectOption | null, isSelected: boolean) {
     if (!option) {
       return (
-        <span className="flex size-5 shrink-0 items-center justify-center rounded-[6px] bg-[#007aff]">
+        <span className="flex size-5 shrink-0 items-center justify-center rounded-[6px] bg-[var(--accent)]">
           <CupertinoIcon name={icon} className="size-3 text-white" />
         </span>
       );
@@ -56,7 +56,7 @@ export function CupertinoSelect({
         className={cn(
           "flex shrink-0 items-center justify-center text-white",
           isSelected ? "size-7 rounded-[7px] text-[8px] font-bold tracking-[0.02em]" : "size-5 rounded-[6px] text-[7px] font-bold tracking-[0.02em]",
-          option.leadingColor ? null : isSelected ? "bg-[#007aff]" : "bg-[#8e8e93]",
+          option.leadingColor ? null : isSelected ? "bg-[var(--accent)]" : "bg-surface-raised text-secondary",
           option.leadingClassName,
         )}
         style={option.leadingColor ? { background: option.leadingColor } : undefined}
@@ -81,21 +81,21 @@ export function CupertinoSelect({
           <button
             type="button"
             className={cn(
-              "mb-px flex h-[36px] items-center gap-[9px] rounded-[8px] border-0 bg-[#f2f2f4] dark:bg-[#2c2c2e] px-2.5 text-left hover:bg-black/6 dark:hover:bg-white/8",
+              "mb-px flex h-[36px] items-center gap-[9px] rounded-[8px] border-0 bg-surface-raised px-2.5 text-left hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30 dark:hover:bg-surface-raised/80",
               minWidthClassName,
             )}
           />
         }
       >
         {renderLeading(selectedOption, false)}
-        <span className="min-w-0 flex-1 truncate text-[13px] font-normal text-[#1c1c1e] dark:text-[#f2f2f7]">
+        <span className="min-w-0 flex-1 truncate text-[13px] font-normal text-primary">
           {selectedOption?.label ?? ""}
         </span>
-        <CupertinoIcon name="chevronDown" className="size-3.5 text-[#8e8e93]" />
+        <CupertinoIcon name="chevronDown" className="size-3.5 text-tertiary" />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="rounded-[10px] border border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#2c2c2e] p-1 shadow-[0_12px_28px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_28px_rgba(0,0,0,0.4)] ring-0"
+        className="rounded-[10px] border border-subtle bg-surface p-1 shadow-[0_12px_28px_rgba(0,0,0,0.12)] ring-0 dark:bg-surface-muted dark:shadow-[0_12px_28px_rgba(0,0,0,0.4)]"
       >
         <div className="space-y-1">
           {options.map((option) => {
@@ -106,15 +106,16 @@ export function CupertinoSelect({
                 key={option.value}
                 onClick={() => onChange(option.value)}
                 className={cn(
-                  "flex w-full items-center gap-2.5 rounded-[8px] border-0 px-2 py-1.5 text-left text-[#1c1c1e] dark:text-[#f2f2f7] outline-none focus:text-[#1c1c1e] dark:focus:text-[#f2f2f7]",
-                  isSelected ? "bg-[#007aff]/10" : "focus:bg-black/3 dark:focus:bg-white/8",
+                  "flex w-full items-center gap-2.5 rounded-[8px] border-0 px-2 py-1.5 text-left outline-none",
+                  "text-primary focus:bg-surface-raised focus:text-primary",
+                  isSelected ? "bg-[color-mix(in_srgb,var(--accent)_10%,transparent)]" : null,
                 )}
               >
                 {renderLeading(option, true)}
                 <span
                   className={cn(
                     "min-w-0 flex-1 truncate text-xs font-medium",
-                    isSelected ? "text-[#007aff]" : "text-[#1c1c1e] dark:text-[#f2f2f7]",
+                    isSelected ? "text-accent" : "text-primary",
                   )}
                 >
                   {option.label}
@@ -125,15 +126,15 @@ export function CupertinoSelect({
                       className={cn(
                         "rounded-full px-1.5 py-0.5 text-[10px] font-medium ring-1",
                         option.badgeTone === "success"
-                          ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
-                          : "bg-slate-100 text-slate-600 ring-slate-200",
+                          ? "bg-emerald-50 text-emerald-700 ring-emerald-200 dark:bg-emerald-400/12 dark:text-emerald-300 dark:ring-emerald-400/25"
+                          : "bg-surface-muted text-secondary ring-[var(--border-subtle)]",
                       )}
                     >
                       {option.badgeLabel}
                     </span>
                   ) : null}
                   {isSelected ? (
-                    <CupertinoIcon name="check" className="size-3.5 text-[#007aff]" />
+                    <CupertinoIcon name="check" className="size-3.5 text-accent" />
                   ) : null}
                 </span>
               </DropdownMenuItem>

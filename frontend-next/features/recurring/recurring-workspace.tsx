@@ -4,12 +4,12 @@ import { useRouter } from "next/navigation";
 import { Fragment, useMemo, useState } from "react";
 import { ExternalLink, History } from "lucide-react";
 
-import { CupertinoIcon } from "@/components/icons/cupertino-icon";
 import {
   CupertinoTable,
   CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
 } from "@/components/tables/cupertino-table";
 import { CupertinoChip } from "@/components/ui/cupertino-chip";
+import { SummaryCard } from "@/components/ui/summary-card";
 import {
   Tooltip,
   TooltipContent,
@@ -41,37 +41,6 @@ function buildTransactionsHref(
 
   const query = params.toString();
   return query ? `/transactions?${query}` : "/transactions";
-}
-
-function SummaryCard({
-  title,
-  value,
-  description,
-  icon,
-}: {
-  title: string;
-  value: string | number;
-  description: string;
-  icon: "repeat" | "calendar" | "upload" | "download";
-}) {
-  return (
-    <div className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
-      <div className="flex items-start justify-between gap-3">
-        <div className="space-y-1">
-          <p className="text-[11px] font-medium tracking-[0.02em] text-[#8e8e93]">
-            {title}
-          </p>
-          <p className="text-[24px] font-semibold tracking-[-0.03em] text-[#1c1c1e] dark:text-[#f2f2f7]">
-            {value}
-          </p>
-        </div>
-        <span className="flex size-9 items-center justify-center rounded-[10px] bg-[#f2f2f4] dark:bg-[#3a3a3c]">
-          <CupertinoIcon name={icon} className="size-4 text-[#636366] dark:text-[#8e8e93]" />
-        </span>
-      </div>
-      <p className="mt-3 text-[11px] leading-5 text-[#8e8e93]">{description}</p>
-    </div>
-  );
 }
 
 function TypeChip({ type }: { type: TransactionType }) {

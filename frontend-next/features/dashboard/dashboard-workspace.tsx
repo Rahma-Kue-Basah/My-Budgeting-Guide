@@ -21,6 +21,7 @@ import { formatCurrency, formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CupertinoSelect } from "@/components/ui/cupertino-select";
+import { SummaryCard } from "@/components/ui/summary-card";
 import {
   AddWalletDialog,
   useDashboardWallets,
@@ -312,35 +313,35 @@ function DashboardOverview({
       value: "Rp 28.416.000",
       detail: "vs last month",
       trend: "↑ 2.4%",
-      tone: "text-[#30d158]",
+      tone: "text-success",
     },
     {
       label: "Monthly Income",
       value: "Rp 5.250.000",
       detail: "salary + transfers",
       trend: null,
-      tone: "text-[#1c1c1e] dark:text-[#f2f2f7]",
+      tone: "text-primary",
     },
     {
       label: "Total Expenses",
       value: "Rp 3.990.000",
       detail: "vs last month",
       trend: "↓ 5.1%",
-      tone: "text-[#30d158]",
+      tone: "text-success",
     },
     {
       label: "Remaining",
       value: "Rp 1.260.000",
       detail: "of Rp 2.200.000 budget",
       trend: null,
-      tone: "text-[#1c1c1e] dark:text-[#f2f2f7]",
+      tone: "text-primary",
     },
     {
       label: "Savings Rate",
       value: "24%",
       detail: "target 25%",
       trend: "↑ 2 pts",
-      tone: "text-[#30d158]",
+      tone: "text-success",
     },
   ];
 
@@ -348,25 +349,16 @@ function DashboardOverview({
     <div className="flex w-full flex-col gap-3 px-3 pt-[132px] pb-3 md:px-3 md:pt-[70px]">
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {summaryCards.map((card) => (
-          <div
+          <SummaryCard
             key={card.label}
-            className="rounded-[13px] bg-white dark:bg-[#1c1c1e] px-[18px] py-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none"
-          >
-            <p className="mb-1.5 text-[11px] font-medium text-[#8e8e93]">
-              {card.label}
-            </p>
-            <p className="truncate text-xl font-bold text-[#1c1c1e] dark:text-[#f2f2f7]">
-              {card.value}
-            </p>
-            <div className="mt-1 flex items-center gap-1.5 text-[11px]">
-              {card.trend ? (
-                <span className={cn("font-semibold", card.tone)}>
-                  {card.trend}
-                </span>
-              ) : null}
-              <span className="truncate text-[#8e8e93]">{card.detail}</span>
-            </div>
-          </div>
+            title={card.label}
+            value={card.value}
+            detail={card.detail}
+            trend={card.trend}
+            trendClassName={card.tone}
+            className="px-[18px] py-3.5"
+            valueClassName="truncate text-xl font-bold tracking-normal"
+          />
         ))}
       </section>
 
@@ -877,22 +869,22 @@ export function DashboardWorkspace({
     {
       label: "Total Income",
       value: formatCurrency(totals.income),
-      color: "text-[#30d158]",
+      color: "text-success",
     },
     {
       label: "Total Expenses",
       value: formatCurrency(totals.expense),
-      color: "text-[#ff453a]",
+      color: "text-danger",
     },
     {
       label: "Net",
       value: `${totals.net >= 0 ? "+" : "-"}${formatCurrency(Math.abs(totals.net))}`,
-      color: totals.net >= 0 ? "text-[#30d158]" : "text-[#ff453a]",
+      color: totals.net >= 0 ? "text-success" : "text-danger",
     },
     {
       label: "Transactions",
       value: String(totals.count),
-      color: "text-[#1c1c1e] dark:text-[#f2f2f7]",
+      color: "text-primary",
     },
   ];
 
@@ -940,17 +932,13 @@ export function DashboardWorkspace({
           <div className="flex min-w-0 flex-col gap-3">
             <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {summaryCards.map((card) => (
-                <div
+                <SummaryCard
                   key={card.label}
-                  className="rounded-[13px] bg-white dark:bg-[#1c1c1e] px-[18px] py-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none"
-                >
-                  <p className="mb-1.5 text-[11px] font-medium text-[#8e8e93]">
-                    {card.label}
-                  </p>
-                  <p className={cn("truncate text-xl font-bold", card.color)}>
-                    {card.value}
-                  </p>
-                </div>
+                  title={card.label}
+                  value={card.value}
+                  className="px-[18px] py-3.5"
+                  valueClassName={cn("truncate text-xl font-bold tracking-normal", card.color)}
+                />
               ))}
             </section>
 

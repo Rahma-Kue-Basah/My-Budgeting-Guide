@@ -19,6 +19,7 @@ type CupertinoTableProps = {
   minWidthClassName?: string;
   bodyClassName?: string;
   headerClassName?: string;
+  rowTextClassName?: string;
 };
 
 export function CupertinoTable({
@@ -30,13 +31,14 @@ export function CupertinoTable({
   minWidthClassName = "min-w-[760px]",
   bodyClassName,
   headerClassName,
+  rowTextClassName,
 }: CupertinoTableProps) {
   return (
     <div className="overflow-x-auto">
       <div className={cn(minWidthClassName)}>
         <div
           className={cn(
-            "grid gap-3 border-b border-black/[0.04] dark:border-white/[0.07] px-[18px] py-2",
+            "grid gap-3 border-b border-subtle px-[18px] py-2",
             columnsClassName,
             headerClassName,
           )}
@@ -45,7 +47,7 @@ export function CupertinoTable({
             <span
               key={header.key}
               className={cn(
-                "text-left text-[10px] font-semibold tracking-[0.04em] text-[#8e8e93] uppercase",
+                "text-left text-[10px] font-semibold tracking-[0.04em] text-tertiary uppercase",
                 header.className,
               )}
             >
@@ -54,8 +56,10 @@ export function CupertinoTable({
           ))}
         </div>
 
-        <div className={cn("divide-y divide-black/[0.04] dark:divide-white/[0.07]", bodyClassName)}>
-          {!hasRows && emptyState ? emptyState : null}
+        <div className={cn("divide-y divide-[var(--border-subtle)] text-primary", rowTextClassName, bodyClassName)}>
+          {!hasRows && emptyState ? (
+            <div className="text-secondary">{emptyState}</div>
+          ) : null}
           {hasRows ? children : null}
         </div>
       </div>

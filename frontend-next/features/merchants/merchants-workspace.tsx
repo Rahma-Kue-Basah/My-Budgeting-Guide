@@ -16,6 +16,7 @@ import { CupertinoModal } from "@/components/ui/cupertino-modal";
 import { CupertinoSelect } from "@/components/ui/cupertino-select";
 import { CupertinoTableRowActions } from "@/components/ui/cupertino-table-row-actions";
 import { Input } from "@/components/ui/input";
+import { SummaryCard } from "@/components/ui/summary-card";
 import { useFileWorkspace } from "@/hooks/use-file-workspace";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import { matchTransactionCategory } from "@/lib/categories";
@@ -47,37 +48,6 @@ function CategoryChip({
     | "violet";
 }) {
   return <CupertinoChip tone={color}>{label}</CupertinoChip>;
-}
-
-function SummaryCard({
-  title,
-  value,
-  description,
-  icon,
-}: {
-  title: string;
-  value: string | number;
-  description: string;
-  icon: "store" | "check" | "alert" | "list";
-}) {
-  return (
-    <div className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
-      <div className="flex items-start justify-between gap-3">
-        <div className="space-y-1">
-          <p className="text-[11px] font-medium tracking-[0.02em] text-[#8e8e93]">
-            {title}
-          </p>
-          <p className="text-[24px] font-semibold tracking-[-0.03em] text-[#1c1c1e] dark:text-[#f2f2f7]">
-            {value}
-          </p>
-        </div>
-        <span className="flex size-9 items-center justify-center rounded-[10px] bg-[#f2f2f4] dark:bg-[#3a3a3c]">
-          <CupertinoIcon name={icon} className="size-4 text-[#636366] dark:text-[#8e8e93]" />
-        </span>
-      </div>
-      <p className="mt-3 text-[11px] leading-5 text-[#8e8e93]">{description}</p>
-    </div>
-  );
 }
 
 export function MerchantsWorkspace() {
