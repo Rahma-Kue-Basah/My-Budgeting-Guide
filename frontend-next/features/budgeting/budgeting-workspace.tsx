@@ -114,21 +114,21 @@ function SummaryCard({
   icon: "wallet" | "barChart" | "piggy" | "calendar";
 }) {
   return (
-    <div className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+    <div className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
-          <p className="text-[11px] font-medium tracking-[0.02em] text-[#8e8e93]">
+          <p className="text-[11px] font-medium tracking-[0.02em] text-tertiary">
             {title}
           </p>
-          <p className="text-[24px] font-semibold tracking-[-0.03em] text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <p className="text-[24px] font-semibold tracking-[-0.03em] text-primary">
             {value}
           </p>
         </div>
-        <span className="flex size-9 items-center justify-center rounded-[10px] bg-[#f2f2f4] dark:bg-[#3a3a3c]">
-          <CupertinoIcon name={icon} className="size-4 text-[#636366] dark:text-[#8e8e93]" />
+        <span className="flex size-9 items-center justify-center rounded-[10px] bg-surface-raised">
+          <CupertinoIcon name={icon} className="size-4 text-secondary" />
         </span>
       </div>
-      <p className="mt-3 text-[11px] leading-5 text-[#8e8e93]">{description}</p>
+      <p className="mt-3 text-[11px] leading-5 text-tertiary">{description}</p>
     </div>
   );
 }
@@ -300,11 +300,11 @@ function BudgetPlanner({
   }
 
   return (
-    <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+    <section className="rounded-[13px] border-0 bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
       <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
         <div className="space-y-1">
-          <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Plan editor</h2>
-          <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+          <h2 className="text-[13px] font-semibold text-primary">Plan editor</h2>
+          <p className="max-w-3xl text-[11px] leading-5 text-tertiary">
             Isi dulu pengeluaran wajib, lalu gunakan suggestion untuk membantu membagi sisa target expense ke kategori lain.
           </p>
         </div>
@@ -316,52 +316,52 @@ function BudgetPlanner({
       <div className="space-y-5 px-[18px] pb-[18px]">
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           <label className="space-y-2">
-            <span className="text-[11px] font-medium text-[#8e8e93]">Salary target</span>
+            <span className="text-[11px] font-medium text-tertiary">Salary target</span>
             <Input
               inputMode="numeric"
               value={incomeTarget}
               onChange={(event) => setIncomeTarget(event.target.value)}
-              className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+              className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
             />
           </label>
           <label className="space-y-2">
-            <span className="text-[11px] font-medium text-[#8e8e93]">Expense target</span>
+            <span className="text-[11px] font-medium text-tertiary">Expense target</span>
             <Input
               inputMode="numeric"
               value={expenseTarget}
               onChange={(event) => setExpenseTarget(event.target.value)}
-              className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+              className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
             />
           </label>
         </div>
 
-        <p className="text-[11px] text-[#8e8e93]">
+        <p className="text-[11px] text-tertiary">
           Savings target diambil dari category Savings di tabel allocation, bukan dari input terpisah.
         </p>
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          <div className="rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-3 py-3">
-            <p className="text-[11px] font-medium text-[#8e8e93]">Planned expenses</p>
-            <p className="mt-2 text-[20px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <div className="rounded-[12px] bg-surface-muted px-3 py-3">
+            <p className="text-[11px] font-medium text-tertiary">Planned expenses</p>
+            <p className="mt-2 text-[20px] font-semibold text-primary">
               {formatCurrency(plannedExpenseTotal)}
             </p>
           </div>
-          <div className="rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-3 py-3">
-            <p className="text-[11px] font-medium text-[#8e8e93]">Expense gap</p>
-            <p className="mt-2 text-[20px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <div className="rounded-[12px] bg-surface-muted px-3 py-3">
+            <p className="text-[11px] font-medium text-tertiary">Expense gap</p>
+            <p className="mt-2 text-[20px] font-semibold text-primary">
               {formatCurrency(expenseGap)}
             </p>
           </div>
-          <div className="rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-3 py-3">
-            <p className="text-[11px] font-medium text-[#8e8e93]">Savings from category</p>
-            <p className="mt-2 text-[20px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <div className="rounded-[12px] bg-surface-muted px-3 py-3">
+            <p className="text-[11px] font-medium text-tertiary">Savings from category</p>
+            <p className="mt-2 text-[20px] font-semibold text-primary">
               {formatCurrency(savingsTargetNumber)}
             </p>
           </div>
-          <div className="rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-3 py-3">
-            <p className="text-[11px] font-medium text-[#8e8e93]">Remaining cashflow</p>
+          <div className="rounded-[12px] bg-surface-muted px-3 py-3">
+            <p className="text-[11px] font-medium text-tertiary">Remaining cashflow</p>
             <p
-              className={`mt-2 text-[20px] font-semibold ${remainingCashflow >= 0 ? "text-[#1f8f43]" : "text-[#ff453a]"}`}
+              className={`mt-2 text-[20px] font-semibold ${remainingCashflow >= 0 ? "text-success" : "text-danger"}`}
             >
               {formatCurrency(remainingCashflow)}
             </p>
@@ -371,10 +371,10 @@ function BudgetPlanner({
         <div className="space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="space-y-0.5">
-              <p className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+              <p className="text-[13px] font-semibold text-primary">
                 Required expenses first
               </p>
-              <p className="text-[11px] leading-5 text-[#8e8e93]">
+              <p className="text-[11px] leading-5 text-tertiary">
                 Isi dulu pengeluaran wajib seperti kos, bill, transport rutin, atau cicilan. Setelah itu baru pakai suggestion untuk sisa budget.
               </p>
             </div>
@@ -389,10 +389,10 @@ function BudgetPlanner({
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
-                className="w-56 rounded-[10px] border border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#2c2c2e] p-1 shadow-[0_12px_28px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_28px_rgba(0,0,0,0.4)] ring-0"
+                className="w-56 rounded-[10px] border border-subtle bg-surface dark:bg-surface-muted p-1 shadow-[0_12px_28px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_28px_rgba(0,0,0,0.4)] ring-0"
               >
                 {availableRows.length === 0 ? (
-                  <DropdownMenuItem disabled className="text-[11px] text-[#8e8e93]">
+                  <DropdownMenuItem disabled className="text-[11px] text-tertiary">
                     Semua kategori sudah dipilih
                   </DropdownMenuItem>
                 ) : null}
@@ -400,7 +400,7 @@ function BudgetPlanner({
                   <DropdownMenuItem
                     key={row.categoryId}
                     onClick={() => addCategory(row.categoryId)}
-                    className="rounded-[8px] px-2 py-1.5 text-[13px] text-[#1c1c1e] dark:text-[#f2f2f7] focus:bg-black/3 dark:focus:bg-white/8"
+                    className="rounded-[8px] px-2 py-1.5 text-[13px] text-primary focus:bg-surface-muted"
                   >
                     {row.categoryName}
                   </DropdownMenuItem>
@@ -409,7 +409,7 @@ function BudgetPlanner({
             </DropdownMenu>
           </div>
 
-          <div className="overflow-hidden rounded-[12px] border border-black/[0.05] dark:border-white/8">
+          <div className="overflow-hidden rounded-[12px] border border-subtle">
             <CupertinoTable
               columnsClassName="grid-cols-[minmax(200px,1.5fr)_140px_160px_180px]"
               minWidthClassName="min-w-[760px]"
@@ -421,7 +421,7 @@ function BudgetPlanner({
               ]}
               hasRows={selectedRows.length > 0}
               emptyState={
-                <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+                <div className="px-[18px] py-10 text-center text-sm text-tertiary">
                   Belum ada pengeluaran wajib di plan ini. Tambahkan dulu category yang memang harus dibayar tiap bulan.
                 </div>
               }
@@ -429,7 +429,7 @@ function BudgetPlanner({
               {selectedRows.map((row) => (
                 <div
                   key={row.categoryId}
-                  className={`grid grid-cols-[minmax(200px,1.5fr)_140px_160px_180px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                  className={`grid grid-cols-[minmax(200px,1.5fr)_140px_160px_180px] items-center gap-3 px-[18px] text-[11px] text-secondary ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
                 >
                   <div className="flex items-center gap-2">
                     <span
@@ -441,12 +441,12 @@ function BudgetPlanner({
                       type="button"
                       aria-label={`Remove ${row.categoryName}`}
                       onClick={() => removeCategory(row.categoryId)}
-                      className="flex size-6 items-center justify-center rounded-[6px] text-[#ff453a] transition-colors hover:bg-[#ff453a]/10"
+                      className="flex size-6 items-center justify-center rounded-[6px] text-danger transition-colors hover:bg-danger/10"
                     >
                       <Trash2 className="size-3.5" />
                     </button>
                   </div>
-                  <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7] tabular-nums">
+                  <span className="font-semibold text-primary tabular-nums">
                     {formatCurrency(row.recommendedAmount)}
                   </span>
                   <span className="tabular-nums">{formatCurrency(row.lastMonthExpense)}</span>
@@ -459,7 +459,7 @@ function BudgetPlanner({
                         [row.categoryId]: event.target.value,
                       }))
                     }
-                    className="h-8 rounded-[8px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] text-[11px] shadow-none focus-visible:ring-[#007aff]/30"
+                    className="h-8 rounded-[8px] border-subtle bg-surface-muted text-[11px] shadow-none focus-visible:ring-[var(--accent)]/30"
                   />
                 </div>
               ))}
@@ -467,11 +467,11 @@ function BudgetPlanner({
           </div>
         </div>
 
-        <div className="space-y-3 rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] p-4">
+        <div className="space-y-3 rounded-[12px] bg-surface-muted p-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="space-y-0.5">
-              <p className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Suggest the rest</p>
-              <p className="text-[11px] leading-5 text-[#8e8e93]">
+              <p className="text-[13px] font-semibold text-primary">Suggest the rest</p>
+              <p className="text-[11px] leading-5 text-tertiary">
                 Setelah pengeluaran wajib diisi, MBG bantu menyarankan category lain untuk sisa target expense yang belum teralokasi.
               </p>
             </div>
@@ -490,28 +490,28 @@ function BudgetPlanner({
           </div>
 
           {expenseTargetNumber <= 0 ? (
-            <p className="text-[11px] text-[#8e8e93]">
+            <p className="text-[11px] text-tertiary">
               Isi Expense target dulu supaya MBG tahu sisa budget yang perlu dibantu.
             </p>
           ) : null}
           {expenseTargetNumber > 0 && selectedRows.length === 0 ? (
-            <p className="text-[11px] text-[#8e8e93]">
+            <p className="text-[11px] text-tertiary">
               Tambahkan minimal satu pengeluaran wajib dulu sebelum melihat suggestion.
             </p>
           ) : null}
           {expenseTargetNumber > 0 && selectedRows.length > 0 && remainingExpenseBudget <= 0 ? (
-            <p className="text-[11px] text-[#8e8e93]">
+            <p className="text-[11px] text-tertiary">
               Tidak ada sisa target expense untuk disarankan. Kurangi plan wajib atau naikkan Expense target.
             </p>
           ) : null}
           {canSuggestRemaining && remainingSuggestionRows.length === 0 ? (
-            <p className="text-[11px] text-[#8e8e93]">
+            <p className="text-[11px] text-tertiary">
               Belum ada histori category lain yang cukup untuk dijadikan suggestion.
             </p>
           ) : null}
 
           {canSuggestRemaining && remainingSuggestionRows.length > 0 ? (
-            <div className="overflow-hidden rounded-[12px] border border-black/[0.05] dark:border-white/8 bg-white">
+            <div className="overflow-hidden rounded-[12px] border border-subtle bg-surface">
               <CupertinoTable
                 columnsClassName="grid-cols-[minmax(180px,1.5fr)_140px_160px_120px]"
                 minWidthClassName="min-w-[680px]"
@@ -526,7 +526,7 @@ function BudgetPlanner({
                 {remainingSuggestionRows.map((row) => (
                   <div
                     key={`${row.categoryId}-suggestion`}
-                    className={`grid grid-cols-[minmax(180px,1.5fr)_140px_160px_120px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                    className={`grid grid-cols-[minmax(180px,1.5fr)_140px_160px_120px] items-center gap-3 px-[18px] text-[11px] text-secondary ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
                   >
                     <span
                       className={`inline-flex h-6 items-center rounded-full border px-2 text-[11px] font-medium ${CATEGORY_COLOR_STYLES[row.color].badge}`}
@@ -534,7 +534,7 @@ function BudgetPlanner({
                       {row.categoryName}
                     </span>
                     <span className="tabular-nums">{formatCurrency(row.recommendedAmount)}</span>
-                    <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7] tabular-nums">
+                    <span className="font-semibold text-primary tabular-nums">
                       {formatCurrency(row.suggestedPlanAmount)}
                     </span>
                     <div className="flex justify-end">
@@ -560,7 +560,7 @@ function BudgetPlanner({
           {existingPlan ? (
             <CupertinoActionButton
               tone="white"
-              className="text-[#ff453a] hover:bg-[#ff453a]/10"
+              className="text-danger hover:bg-danger/10"
               onClick={() => onDelete(month)}
             >
               Delete saved plan
@@ -658,10 +658,10 @@ export function BudgetingWorkspace() {
   ];
 
   return (
-    <main className="min-h-svh flex-1 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
-      <section className="sticky top-[58px] z-10 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0">
+    <main className="min-h-svh flex-1 bg-app text-primary">
+      <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
         <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
             Budgeting
           </h1>
         </div>
@@ -669,19 +669,19 @@ export function BudgetingWorkspace() {
 
       <div className="flex w-full flex-col gap-3 px-3 py-3">
         {!isHydrated || processedTransactions.length === 0 ? (
-          <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+          <section className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
             <div className="space-y-1">
-              <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+              <h2 className="text-[13px] font-semibold text-primary">
                 Belum ada histori untuk budgeting
               </h2>
-              <p className="text-[11px] leading-5 text-[#8e8e93]">
+              <p className="text-[11px] leading-5 text-tertiary">
                 Budgeting baru bisa dibuat setelah ada transaksi di workspace.
               </p>
             </div>
             <div className="mt-4">
               <Link
                 href="/file"
-                className="inline-flex h-9 items-center justify-center gap-2 rounded-[9px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] px-3 text-sm font-medium text-[#1c1c1e] dark:text-[#f2f2f7] transition-colors hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+                className="inline-flex h-9 items-center justify-center gap-2 rounded-[9px] border border-strong bg-surface px-3 text-sm font-medium text-primary transition-colors hover:bg-surface-muted"
               >
                 Buka File
               </Link>
@@ -701,30 +701,30 @@ export function BudgetingWorkspace() {
               ))}
             </section>
 
-            <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+            <section className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
               <div className="space-y-1">
-                <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                <h2 className="text-[13px] font-semibold text-primary">
                   Planning setup
                 </h2>
-                <p className="text-[11px] leading-5 text-[#8e8e93]">
+                <p className="text-[11px] leading-5 text-tertiary">
                   Pilih bulan target dan jumlah histori yang dipakai sebagai baseline.
                 </p>
               </div>
 
               <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                 <label className="space-y-2">
-                  <span className="text-[11px] font-medium text-[#8e8e93]">Target month</span>
+                  <span className="text-[11px] font-medium text-tertiary">Target month</span>
                   <Input
                     type="month"
                     value={targetMonth}
                     onChange={(event) =>
                       setTargetMonth(event.target.value || getCurrentMonthValue())
                     }
-                    className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+                    className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
                   />
                 </label>
                 <label className="space-y-2">
-                  <span className="text-[11px] font-medium text-[#8e8e93]">Baseline window</span>
+                  <span className="text-[11px] font-medium text-tertiary">Baseline window</span>
                   <CupertinoSelect
                     value={lookbackMonths}
                     icon="calendar"
@@ -762,13 +762,13 @@ export function BudgetingWorkspace() {
               onDelete={deleteBudgetPlan}
             />
 
-            <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+            <section className="rounded-[13px] border-0 bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
               <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
                 <div className="space-y-1">
-                  <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                  <h2 className="text-[13px] font-semibold text-primary">
                     Monthly baseline history
                   </h2>
-                  <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+                  <p className="max-w-3xl text-[11px] leading-5 text-tertiary">
                     Ringkasan salary dan expense dari histori yang dipakai untuk menyusun plan.
                   </p>
                 </div>
@@ -788,7 +788,7 @@ export function BudgetingWorkspace() {
                 ]}
                 hasRows={suggestion.monthlySummaries.length > 0}
                 emptyState={
-                  <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+                  <div className="px-[18px] py-10 text-center text-sm text-tertiary">
                     Belum ada histori bulanan untuk ditampilkan.
                   </div>
                 }
@@ -796,21 +796,21 @@ export function BudgetingWorkspace() {
                 {suggestion.monthlySummaries.slice(0, 6).map((row) => (
                   <div
                     key={row.month}
-                    className={`grid grid-cols-[140px_150px_150px_150px_120px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                    className={`grid grid-cols-[140px_150px_150px_150px_120px] items-center gap-3 px-[18px] text-[11px] text-secondary ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
                   >
-                    <span className="font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    <span className="font-medium text-primary">
                       {formatMonthLabel(row.month)}
                     </span>
-                    <span className="text-[#1f8f43] tabular-nums">
+                    <span className="text-success tabular-nums">
                       {formatCurrency(row.salaryIncome)}
                     </span>
-                    <span className="text-[#ff453a] tabular-nums">
+                    <span className="text-danger tabular-nums">
                       {formatCurrency(row.expense)}
                     </span>
-                    <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7] tabular-nums">
+                    <span className="font-semibold text-primary tabular-nums">
                       {formatCurrency(row.net)}
                     </span>
-                    <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    <span className="font-semibold text-primary">
                       {row.transactionCount}
                     </span>
                   </div>

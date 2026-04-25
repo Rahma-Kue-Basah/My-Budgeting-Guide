@@ -107,28 +107,28 @@ function SummaryCard({
   icon: "download" | "upload" | "wallet" | "database";
 }) {
   return (
-    <div className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+    <div className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
-          <p className="text-[11px] font-medium tracking-[0.02em] text-[#8e8e93]">
+          <p className="text-[11px] font-medium tracking-[0.02em] text-tertiary">
             {title}
           </p>
-          <p className="text-[24px] font-semibold tracking-[-0.03em] text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <p className="text-[24px] font-semibold tracking-[-0.03em] text-primary">
             {value}
           </p>
         </div>
-        <span className="flex size-9 items-center justify-center rounded-[10px] bg-[#f2f2f4] dark:bg-[#3a3a3c]">
-          <CupertinoIcon name={icon} className="size-4 text-[#636366] dark:text-[#8e8e93]" />
+        <span className="flex size-9 items-center justify-center rounded-[10px] bg-surface-raised">
+          <CupertinoIcon name={icon} className="size-4 text-secondary" />
         </span>
       </div>
-      <p className="mt-3 text-[11px] leading-5 text-[#8e8e93]">{description}</p>
+      <p className="mt-3 text-[11px] leading-5 text-tertiary">{description}</p>
     </div>
   );
 }
 
 function ChartEmptyState({ message }: { message: string }) {
   return (
-    <div className="flex h-[320px] items-center justify-center rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] dark:bg-[#2c2c2e] px-4 text-center text-sm text-[#8e8e93]">
+    <div className="flex h-[320px] items-center justify-center rounded-[12px] bg-surface-muted px-4 text-center text-sm text-tertiary">
       {message}
     </div>
   );
@@ -140,7 +140,7 @@ function ChartLegend({
   items: { label: string; color: string }[];
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-4 text-[11px] text-[#8e8e93]">
+    <div className="flex flex-wrap items-center gap-4 text-[11px] text-tertiary">
       {items.map((item) => (
         <span key={item.label} className="inline-flex items-center gap-1.5">
           <span
@@ -649,7 +649,7 @@ export function ReportsWorkspace() {
             }
             body {
               padding: 0;
-              color: #0f172a;
+              color: var(--text-primary);
               font-family: Arial, Helvetica, sans-serif;
             }
             .report-print-shell {
@@ -743,20 +743,20 @@ export function ReportsWorkspace() {
   }
 
   return (
-    <main className="min-h-svh flex-1 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
+    <main className="min-h-svh flex-1 bg-app text-primary">
       <section
-        className="sticky top-[58px] z-10 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0"
+        className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0"
         data-print-hidden="true"
       >
         <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
             Reports
           </h1>
 
           <div className="ml-auto flex flex-wrap items-center gap-2">
             <Button
               onClick={exportPdf}
-              className="h-9 rounded-[9px] bg-[#1c1c1e] px-3 text-white shadow-none hover:bg-black"
+              className="h-9 rounded-[9px] bg-[var(--text-primary)] px-3 text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)]"
             >
               <Download className="size-3.5" />
               Export PDF
@@ -771,34 +771,34 @@ export function ReportsWorkspace() {
         className="flex w-full flex-col gap-3 px-3 py-3"
       >
         <section data-print-hidden="true">
-          <div className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+          <div className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
             <div className="space-y-1">
-              <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+              <h2 className="text-[13px] font-semibold text-primary">
                 Report filters
               </h2>
-              <p className="text-[11px] leading-5 text-[#8e8e93]">
+              <p className="text-[11px] leading-5 text-tertiary">
                 Atur source, periode, dan modul report yang ingin ditampilkan atau diexport.
               </p>
             </div>
 
             <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
               <label className="space-y-2">
-                <span className="text-[11px] font-medium text-[#8e8e93]">Search</span>
+                <span className="text-[11px] font-medium text-tertiary">Search</span>
                 <div className="relative">
                   <CupertinoIcon
                     name="search"
-                    className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-[#8e8e93]"
+                    className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-tertiary"
                   />
                   <Input
                     value={search}
                     onChange={(event) => setSearch(event.target.value)}
                     placeholder="Cari deskripsi, source, atau kategori"
-                    className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] pl-9 shadow-none focus-visible:ring-[#007aff]/30"
+                    className="h-10 rounded-[10px] border-subtle bg-surface-muted pl-9 shadow-none focus-visible:ring-[var(--accent)]/30"
                   />
                 </div>
               </label>
               <label className="space-y-2">
-                <span className="text-[11px] font-medium text-[#8e8e93]">Period</span>
+                <span className="text-[11px] font-medium text-tertiary">Period</span>
                 <CupertinoSelect
                   icon="calendar"
                   value={period}
@@ -809,7 +809,7 @@ export function ReportsWorkspace() {
                 />
               </label>
               <label className="space-y-2">
-                <span className="text-[11px] font-medium text-[#8e8e93]">Type</span>
+                <span className="text-[11px] font-medium text-tertiary">Type</span>
                 <CupertinoSelect
                   icon="repeat"
                   value={typeFilter}
@@ -822,7 +822,7 @@ export function ReportsWorkspace() {
                 />
               </label>
               <label className="space-y-2">
-                <span className="text-[11px] font-medium text-[#8e8e93]">Source</span>
+                <span className="text-[11px] font-medium text-tertiary">Source</span>
                 <CupertinoSelect
                   icon="wallet"
                   value={bankFilter}
@@ -836,7 +836,7 @@ export function ReportsWorkspace() {
 
             <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
               <label className="space-y-2">
-                <span className="text-[11px] font-medium text-[#8e8e93]">Category</span>
+                <span className="text-[11px] font-medium text-tertiary">Category</span>
                 <CupertinoSelect
                   icon="tag"
                   value={categoryFilter}
@@ -847,28 +847,28 @@ export function ReportsWorkspace() {
                 />
               </label>
               <label className="space-y-2">
-                <span className="text-[11px] font-medium text-[#8e8e93]">Month from</span>
+                <span className="text-[11px] font-medium text-tertiary">Month from</span>
                 <Input
                   type="month"
                   value={monthFrom}
                   onChange={(event) => setMonthFrom(event.target.value)}
-                  className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+                  className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
                 />
               </label>
               <label className="space-y-2">
-                <span className="text-[11px] font-medium text-[#8e8e93]">Month to</span>
+                <span className="text-[11px] font-medium text-tertiary">Month to</span>
                 <Input
                   type="month"
                   value={monthTo}
                   onChange={(event) => setMonthTo(event.target.value)}
-                  className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+                  className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
                 />
               </label>
               <div className="flex items-end">
                 <Button
                   variant="outline"
                   onClick={resetFilters}
-                  className="h-10 rounded-[10px] border-black/[0.08] bg-[#f7f7f8] px-3 text-[#1c1c1e] dark:text-[#f2f2f7] shadow-none hover:bg-[#ededf0] dark:hover:bg-[#3a3a3c]"
+                  className="h-10 rounded-[10px] border-subtle bg-surface-muted px-3 text-primary shadow-none hover:bg-surface-raised"
                 >
                   Reset filters
                 </Button>
@@ -877,7 +877,7 @@ export function ReportsWorkspace() {
 
             <div className="mt-4 space-y-2">
               <div className="flex items-center justify-between gap-3">
-                <span className="text-[11px] font-medium text-[#8e8e93]">Report items</span>
+                <span className="text-[11px] font-medium text-tertiary">Report items</span>
                 <CupertinoChip tone="neutral">
                   {visibleReportItems.length}/{REPORT_ITEM_OPTIONS.length} active
                 </CupertinoChip>
@@ -894,8 +894,8 @@ export function ReportsWorkspace() {
                       variant="outline"
                       className={
                         selected
-                          ? "h-8 rounded-[8px] border-[#007aff]/15 bg-[#007aff]/10 px-3 text-[#007aff] shadow-none hover:bg-[#007aff]/15"
-                          : "h-8 rounded-[8px] border-black/[0.08] bg-[#f7f7f8] px-3 text-[#636366] dark:text-[#8e8e93] shadow-none hover:bg-[#ededf0] dark:hover:bg-[#3a3a3c]"
+                          ? "h-8 rounded-[8px] border-accent/15 bg-[color-mix(in_srgb,var(--accent)_10%,transparent)] px-3 text-accent shadow-none hover:bg-[var(--accent)]/15"
+                          : "h-8 rounded-[8px] border-subtle bg-surface-muted px-3 text-secondary shadow-none hover:bg-surface-raised"
                       }
                       onClick={() => toggleVisibleReportItem(item.id)}
                     >
@@ -909,7 +909,7 @@ export function ReportsWorkspace() {
                   type="button"
                   size="sm"
                   variant="outline"
-                  className="h-8 rounded-[8px] border-black/[0.08] bg-[#f7f7f8] px-3 text-[#1c1c1e] dark:text-[#f2f2f7] shadow-none hover:bg-[#ededf0] dark:hover:bg-[#3a3a3c]"
+                  className="h-8 rounded-[8px] border-subtle bg-surface-muted px-3 text-primary shadow-none hover:bg-surface-raised"
                   onClick={selectAllReportItems}
                 >
                   Select all
@@ -918,12 +918,12 @@ export function ReportsWorkspace() {
                   type="button"
                   size="sm"
                   variant="outline"
-                  className="h-8 rounded-[8px] border-black/[0.08] bg-[#f7f7f8] px-3 text-[#1c1c1e] dark:text-[#f2f2f7] shadow-none hover:bg-[#ededf0] dark:hover:bg-[#3a3a3c]"
+                  className="h-8 rounded-[8px] border-subtle bg-surface-muted px-3 text-primary shadow-none hover:bg-surface-raised"
                   onClick={clearReportItems}
                 >
                   Clear all
                 </Button>
-                <p className="text-[11px] text-[#8e8e93]">
+                <p className="text-[11px] text-tertiary">
                   Hanya modul yang aktif di sini yang tampil dan ikut export PDF.
                 </p>
               </div>
@@ -964,10 +964,10 @@ export function ReportsWorkspace() {
                 className="space-y-6"
               >
                 {visibleReportItemSet.has("monthly_cash_flow") ? (
-                  <section data-print-card="true" className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+                  <section data-print-card="true" className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                     <div className="space-y-1">
-                      <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Monthly cash flow</h2>
-                      <p className="text-[11px] leading-5 text-[#8e8e93]">
+                      <h2 className="text-[13px] font-semibold text-primary">Monthly cash flow</h2>
+                      <p className="text-[11px] leading-5 text-tertiary">
                         Perbandingan income dan expense per bulan untuk data
                         workspace yang sedang aktif.
                       </p>
@@ -1039,10 +1039,10 @@ export function ReportsWorkspace() {
                 ) : null}
 
                 {visibleReportItemSet.has("daily_balance_trend") ? (
-                  <section data-print-card="true" className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+                  <section data-print-card="true" className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                     <div className="space-y-1">
-                      <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Daily balance trend</h2>
-                      <p className="text-[11px] leading-5 text-[#8e8e93]">
+                      <h2 className="text-[13px] font-semibold text-primary">Daily balance trend</h2>
+                      <p className="text-[11px] leading-5 text-tertiary">
                         Diagram garis saldo terakhir per hari untuk data report
                         pada periode terpilih.
                       </p>
@@ -1104,11 +1104,11 @@ export function ReportsWorkspace() {
                 ) : null}
 
                 {visibleReportItemSet.has("monthly_report_table") ? (
-                  <section data-print-card="true" className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+                  <section data-print-card="true" className="rounded-[13px] border-0 bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                     <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
                       <div className="space-y-1">
-                        <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Monthly report table</h2>
-                        <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+                        <h2 className="text-[13px] font-semibold text-primary">Monthly report table</h2>
+                        <p className="max-w-3xl text-[11px] leading-5 text-tertiary">
                         Rekap per bulan untuk jumlah source import, transaction count,
                         income, expense, net, dan saldo akhir.
                         </p>
@@ -1131,7 +1131,7 @@ export function ReportsWorkspace() {
                       ]}
                       hasRows={isHydrated && monthlyRows.length > 0}
                       emptyState={
-                        <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+                        <div className="px-[18px] py-10 text-center text-sm text-tertiary">
                           {!isHydrated
                             ? "Memuat data report..."
                             : "Belum ada data workspace untuk ditampilkan."}
@@ -1141,15 +1141,15 @@ export function ReportsWorkspace() {
                       {[...monthlyRows].reverse().map((row) => (
                         <div
                           key={row.monthKey}
-                          className={`grid grid-cols-[130px_120px_120px_130px_130px_130px_150px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                          className={`grid grid-cols-[130px_120px_120px_130px_130px_130px_150px] items-center gap-3 px-[18px] text-[11px] text-secondary ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
                         >
-                          <span className="text-sm font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">{row.monthLabel}</span>
-                          <span className="text-sm text-[#636366] dark:text-[#8e8e93]">{row.fileCount}</span>
-                          <span className="text-sm text-[#636366] dark:text-[#8e8e93]">{row.transactionCount}</span>
-                          <span className="text-sm text-[#1f8f43]">{formatCurrency(row.income)}</span>
-                          <span className="text-sm text-[#ff453a]">{formatCurrency(row.expense)}</span>
-                          <span className="text-sm font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">{formatCurrency(row.net)}</span>
-                          <span className="text-sm text-[#636366] dark:text-[#8e8e93]">{formatCurrency(row.closingBalance)}</span>
+                          <span className="text-sm font-medium text-primary">{row.monthLabel}</span>
+                          <span className="text-sm text-secondary">{row.fileCount}</span>
+                          <span className="text-sm text-secondary">{row.transactionCount}</span>
+                          <span className="text-sm text-success">{formatCurrency(row.income)}</span>
+                          <span className="text-sm text-danger">{formatCurrency(row.expense)}</span>
+                          <span className="text-sm font-semibold text-primary">{formatCurrency(row.net)}</span>
+                          <span className="text-sm text-secondary">{formatCurrency(row.closingBalance)}</span>
                         </div>
                       ))}
                     </CupertinoTable>
@@ -1157,10 +1157,10 @@ export function ReportsWorkspace() {
                 ) : null}
 
                 {visibleReportItemSet.has("expense_by_category") ? (
-                  <section data-print-card="true" className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+                  <section data-print-card="true" className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                     <div className="space-y-1">
-                      <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Expense by category</h2>
-                      <p className="text-[11px] leading-5 text-[#8e8e93]">
+                      <h2 className="text-[13px] font-semibold text-primary">Expense by category</h2>
+                      <p className="text-[11px] leading-5 text-tertiary">
                         Pengeluaran berdasarkan kategori untuk periode yang
                         dipilih.
                       </p>
@@ -1225,10 +1225,10 @@ export function ReportsWorkspace() {
                 className="space-y-6"
               >
                 {visibleReportItemSet.has("debit_credit_composition") ? (
-                  <section data-print-card="true" className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+                  <section data-print-card="true" className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                     <div className="space-y-1">
-                      <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Debit vs credit composition</h2>
-                      <p className="text-[11px] leading-5 text-[#8e8e93]">
+                      <h2 className="text-[13px] font-semibold text-primary">Debit vs credit composition</h2>
+                      <p className="text-[11px] leading-5 text-tertiary">
                         Komposisi nominal expense dan income dari data final.
                       </p>
                     </div>
@@ -1277,10 +1277,10 @@ export function ReportsWorkspace() {
                 ) : null}
 
                 {visibleReportItemSet.has("bank_summary") ? (
-                  <section data-print-card="true" className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+                  <section data-print-card="true" className="rounded-[13px] border-0 bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                     <div className="space-y-1 px-[18px] pt-[18px]">
-                      <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Source summary</h2>
-                      <p className="text-[11px] leading-5 text-[#8e8e93]">
+                      <h2 className="text-[13px] font-semibold text-primary">Source summary</h2>
+                      <p className="text-[11px] leading-5 text-tertiary">
                         Kontribusi transaksi dan jumlah source import per sumber transaksi.
                       </p>
                     </div>
@@ -1329,7 +1329,7 @@ export function ReportsWorkspace() {
                             </ResponsiveContainer>
                           </div>
 
-                          <div className="overflow-hidden rounded-[12px] border border-black/[0.05] dark:border-white/8">
+                          <div className="overflow-hidden rounded-[12px] border border-subtle">
                             <CupertinoTable
                               columnsClassName="grid-cols-[minmax(0,1fr)_120px_120px]"
                               minWidthClassName="min-w-[420px]"
@@ -1343,11 +1343,11 @@ export function ReportsWorkspace() {
                               {bankRows.map((row) => (
                                 <div
                                   key={row.bank}
-                                  className={`grid grid-cols-[minmax(0,1fr)_120px_120px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                                  className={`grid grid-cols-[minmax(0,1fr)_120px_120px] items-center gap-3 px-[18px] text-[11px] text-secondary ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
                                 >
-                                  <span className="truncate text-sm font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">{row.bank}</span>
-                                  <span className="text-sm text-[#636366] dark:text-[#8e8e93]">{row.fileCount}</span>
-                                  <span className="text-sm text-[#636366] dark:text-[#8e8e93]">{row.transactionCount}</span>
+                                  <span className="truncate text-sm font-medium text-primary">{row.bank}</span>
+                                  <span className="text-sm text-secondary">{row.fileCount}</span>
+                                  <span className="text-sm text-secondary">{row.transactionCount}</span>
                                 </div>
                               ))}
                             </CupertinoTable>
@@ -1359,10 +1359,10 @@ export function ReportsWorkspace() {
                 ) : null}
 
                 {visibleReportItemSet.has("income_by_category") ? (
-                  <section data-print-card="true" className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+                  <section data-print-card="true" className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                     <div className="space-y-1">
-                      <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Income by category</h2>
-                      <p className="text-[11px] leading-5 text-[#8e8e93]">
+                      <h2 className="text-[13px] font-semibold text-primary">Income by category</h2>
+                      <p className="text-[11px] leading-5 text-tertiary">
                         Pendapatan berdasarkan kategori untuk periode yang
                         dipilih.
                       </p>
@@ -1416,7 +1416,7 @@ export function ReportsWorkspace() {
                             </ResponsiveContainer>
                           </div>
 
-                          <div className="overflow-hidden rounded-[12px] border border-black/[0.05] dark:border-white/8">
+                          <div className="overflow-hidden rounded-[12px] border border-subtle">
                             <CupertinoTable
                               columnsClassName="grid-cols-[minmax(0,1fr)_140px]"
                               minWidthClassName="min-w-[360px]"
@@ -1429,10 +1429,10 @@ export function ReportsWorkspace() {
                               {incomeCategoryRows.map((row) => (
                                 <div
                                   key={row.name}
-                                  className={`grid grid-cols-[minmax(0,1fr)_140px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                                  className={`grid grid-cols-[minmax(0,1fr)_140px] items-center gap-3 px-[18px] text-[11px] text-secondary ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
                                 >
-                                  <span className="truncate text-sm font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">{row.name}</span>
-                                  <span className="text-sm text-[#1f8f43]">{formatCurrency(row.total)}</span>
+                                  <span className="truncate text-sm font-medium text-primary">{row.name}</span>
+                                  <span className="text-sm text-success">{formatCurrency(row.total)}</span>
                                 </div>
                               ))}
                             </CupertinoTable>
@@ -1448,7 +1448,7 @@ export function ReportsWorkspace() {
         ) : null}
 
         {!showSummaryCards && !hasVisibleMainSections ? (
-          <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] px-[18px] py-10 text-center text-sm text-[#8e8e93] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+          <section className="rounded-[13px] border-0 bg-surface px-[18px] py-10 text-center text-sm text-tertiary shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
               Pilih minimal satu item report di panel Filters untuk menampilkan
               isi halaman dan export PDF.
           </section>

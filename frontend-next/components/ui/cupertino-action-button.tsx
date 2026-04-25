@@ -20,7 +20,7 @@ export function CupertinoActionButton({
       className={cn(
         "inline-flex h-9 items-center justify-center gap-2 rounded-[9px] px-3 text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50",
         (tone === "primary" || tone === "dark") &&
-          "bg-[var(--text-primary)] text-[var(--bg-surface)] shadow-none hover:bg-black dark:hover:bg-surface-raised",
+          "bg-[var(--text-primary)] text-[var(--bg-surface)] shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)] dark:hover:bg-surface-raised",
         (tone === "white" || tone === "secondary") &&
           "border border-strong bg-surface text-primary shadow-none hover:bg-surface-muted dark:hover:bg-surface-raised",
         tone === "destructive" &&

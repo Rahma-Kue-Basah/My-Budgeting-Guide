@@ -25,7 +25,7 @@ const mainSteps: GuideStep[] = [
     href: "/file",
     cta: "Open file workspace",
     icon: "upload",
-    iconBg: "bg-[#0a84ff]",
+    iconBg: "bg-[var(--accent)]",
     iconColor: "text-white",
   },
   {
@@ -36,7 +36,7 @@ const mainSteps: GuideStep[] = [
     href: "/file",
     cta: "Open file review",
     icon: "receipt",
-    iconBg: "bg-[#ff9f0a]",
+    iconBg: "bg-warning",
     iconColor: "text-white",
   },
   {
@@ -47,7 +47,7 @@ const mainSteps: GuideStep[] = [
     href: "/rules",
     cta: "Open rules",
     icon: "tag",
-    iconBg: "bg-[#5ac8fa]",
+    iconBg: "bg-[var(--accent)]",
     iconColor: "text-white",
   },
   {
@@ -58,7 +58,7 @@ const mainSteps: GuideStep[] = [
     href: "/merchants",
     cta: "Open advanced tools",
     icon: "store",
-    iconBg: "bg-[#30d158]",
+    iconBg: "bg-success",
     iconColor: "text-white",
   },
   {
@@ -69,7 +69,7 @@ const mainSteps: GuideStep[] = [
     href: "/categories",
     cta: "Open category review",
     icon: "list",
-    iconBg: "bg-[#ff375f]",
+    iconBg: "bg-danger",
     iconColor: "text-white",
   },
   {
@@ -80,7 +80,7 @@ const mainSteps: GuideStep[] = [
     href: "/budgeting",
     cta: "Open budgeting",
     icon: "piggy",
-    iconBg: "bg-[#34c759]",
+    iconBg: "bg-success",
     iconColor: "text-white",
   },
 ];
@@ -112,18 +112,18 @@ const followUpLinks = [
 
 export function GuideWorkspace() {
   return (
-    <main className="min-h-svh flex-1 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
-      <section className="sticky top-[58px] z-10 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0">
+    <main className="min-h-svh flex-1 bg-app text-primary">
+      <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
         <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
             Cara Pakai MBG
           </h1>
         </div>
       </section>
 
       <div className="flex w-full flex-col gap-3 px-3 py-3">
-        <section className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
-          <p className="text-[11px] leading-5 text-[#8e8e93]">
+        <section className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+          <p className="text-[11px] leading-5 text-tertiary">
             MBG paling enak dipakai sebagai workflow bertahap — rapikan data dulu, baru masuk ke klasifikasi, lalu analisis. Ikuti urutan ini untuk hasil terbaik.
           </p>
         </section>
@@ -132,7 +132,7 @@ export function GuideWorkspace() {
           {mainSteps.map((step) => (
             <div
               key={step.number}
-              className="flex flex-col rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none"
+              className="flex flex-col rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none"
             >
               <div className="flex items-start justify-between gap-3">
                 <CupertinoChip tone="neutral">Step {step.number}</CupertinoChip>
@@ -143,45 +143,45 @@ export function GuideWorkspace() {
                 </span>
               </div>
 
-              <p className="mt-3 text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+              <p className="mt-3 text-[13px] font-semibold text-primary">
                 {step.title}
               </p>
-              <p className="mt-1.5 flex-1 text-[11px] leading-5 text-[#8e8e93]">
+              <p className="mt-1.5 flex-1 text-[11px] leading-5 text-tertiary">
                 {step.description}
               </p>
 
               <Link
                 href={step.href}
-                className="mt-4 inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-black/[0.08] bg-[#f7f7f8] px-3 text-[11px] font-medium text-[#1c1c1e] dark:text-[#f2f2f7] transition-colors hover:bg-[#ededf0] dark:hover:bg-[#3a3a3c] self-start"
+                className="mt-4 inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-subtle bg-surface-muted px-3 text-[11px] font-medium text-primary transition-colors hover:bg-surface-raised self-start"
               >
                 {step.cta}
-                <CupertinoIcon name="chevronDown" className="size-3 -rotate-90 text-[#8e8e93]" />
+                <CupertinoIcon name="chevronDown" className="size-3 -rotate-90 text-tertiary" />
               </Link>
             </div>
           ))}
         </section>
 
-        <section className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
-          <h2 className="mb-1 text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Setelah Step 6</h2>
-          <p className="mb-4 text-[11px] leading-5 text-[#8e8e93]">
+        <section className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+          <h2 className="mb-1 text-[13px] font-semibold text-primary">Setelah Step 6</h2>
+          <p className="mb-4 text-[11px] leading-5 text-tertiary">
             Gunakan halaman-halaman ini setelah data dan budget plan sudah rapi untuk mendapatkan insight lebih dalam.
           </p>
           <div className="grid gap-2 md:grid-cols-3">
             {followUpLinks.map((item) => (
-              <div key={item.title} className="rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] p-3">
+              <div key={item.title} className="rounded-[12px] bg-surface-muted p-3">
                 <div className="flex items-center gap-2">
-                  <span className="flex size-7 items-center justify-center rounded-[8px] bg-white dark:bg-[#2c2c2e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
-                    <CupertinoIcon name={item.icon} className="size-3.5 text-[#636366] dark:text-[#8e8e93]" />
+                  <span className="flex size-7 items-center justify-center rounded-[8px] bg-surface dark:bg-surface-muted shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+                    <CupertinoIcon name={item.icon} className="size-3.5 text-secondary" />
                   </span>
-                  <p className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">{item.title}</p>
+                  <p className="text-[13px] font-semibold text-primary">{item.title}</p>
                 </div>
-                <p className="mt-2 text-[11px] leading-5 text-[#8e8e93]">{item.description}</p>
+                <p className="mt-2 text-[11px] leading-5 text-tertiary">{item.description}</p>
                 <Link
                   href={item.href}
-                  className="mt-3 inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-black/[0.08] dark:border-white/10 bg-white dark:bg-[#2c2c2e] px-3 text-[11px] font-medium text-[#1c1c1e] dark:text-[#f2f2f7] transition-colors hover:bg-[#f7f7f8] dark:hover:bg-[#3a3a3c]"
+                  className="mt-3 inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-subtle bg-surface dark:bg-surface-muted px-3 text-[11px] font-medium text-primary transition-colors hover:bg-surface-muted dark:hover:bg-surface-raised"
                 >
                   {item.cta}
-                  <CupertinoIcon name="chevronDown" className="size-3 -rotate-90 text-[#8e8e93]" />
+                  <CupertinoIcon name="chevronDown" className="size-3 -rotate-90 text-tertiary" />
                 </Link>
               </div>
             ))}

@@ -258,16 +258,16 @@ export function MerchantsWorkspace() {
   }
 
   return (
-    <main className="min-h-svh flex-1 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
-      <section className="sticky top-[58px] z-10 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0">
+    <main className="min-h-svh flex-1 bg-app text-primary">
+      <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
         <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
             Advanced Tools
           </h1>
 
           <div className="ml-auto flex flex-wrap items-center gap-2">
             <Button
-              className="h-9 rounded-[9px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] px-3 text-[#1c1c1e] dark:text-[#f2f2f7] shadow-none hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+              className="h-9 rounded-[9px] border border-strong bg-surface px-3 text-primary shadow-none hover:bg-surface-muted"
               render={<Link href="/categories" />}
             >
               Categories
@@ -304,13 +304,13 @@ export function MerchantsWorkspace() {
           />
         </section>
 
-        <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <section className="rounded-[13px] border-0 bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
             <div className="space-y-1">
-              <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+              <h2 className="text-[13px] font-semibold text-primary">
                 Merchant normalization
               </h2>
-              <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+              <p className="max-w-3xl text-[11px] leading-5 text-tertiary">
                 Halaman ini dipakai untuk merapikan nama merchant dan
                 menggabungkan alias payee yang sebenarnya sama, tanpa mengubah kategori.
               </p>
@@ -322,22 +322,22 @@ export function MerchantsWorkspace() {
 
           <div className="grid gap-3 px-[18px] pb-4 md:grid-cols-2">
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">
+              <span className="text-[11px] font-medium text-tertiary">
                 Search
               </span>
               <div className="relative">
-                <Search className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-[#8e8e93]" />
+                <Search className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-tertiary" />
                 <Input
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
                   placeholder="Cari merchant atau key"
-                  className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] pl-9 shadow-none focus-visible:ring-[#007aff]/30"
+                  className="h-10 rounded-[10px] border-subtle bg-surface-muted pl-9 shadow-none focus-visible:ring-[var(--accent)]/30"
                 />
               </div>
             </label>
 
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">
+              <span className="text-[11px] font-medium text-tertiary">
                 Status
               </span>
               <CupertinoSelect
@@ -366,7 +366,7 @@ export function MerchantsWorkspace() {
             ]}
             hasRows={isHydrated && filteredMerchantRows.length > 0}
             emptyState={
-              <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+              <div className="px-[18px] py-10 text-center text-sm text-tertiary">
                 {!isHydrated
                   ? "Memuat merchant workspace..."
                   : "Belum ada merchant yang cocok dengan filter saat ini."}
@@ -378,37 +378,37 @@ export function MerchantsWorkspace() {
                 <div
                   key={row.merchantKey}
                   className={cn(
-                    `grid cursor-pointer grid-cols-[minmax(0,1.3fr)_90px_160px_110px_120px_96px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS} transition`,
+                    `grid cursor-pointer grid-cols-[minmax(0,1.3fr)_90px_160px_110px_120px_96px] items-center gap-3 px-[18px] text-[11px] text-secondary ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS} transition`,
                     activeMerchantKey === row.merchantKey
-                      ? "bg-[#007aff]/[0.05]"
-                      : "hover:bg-black/[0.014] dark:hover:bg-white/5",
+                      ? "bg-[color-mix(in_srgb,var(--accent)_5%,transparent)]"
+                      : "hover:bg-surface-muted",
                   )}
                   onClick={() => setSelectedMerchantKey(row.merchantKey)}
                 >
                   <div className="min-w-0 space-y-1">
-                    <p className="truncate text-[11px] font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    <p className="truncate text-[11px] font-medium text-primary">
                       {row.merchantName}
                     </p>
-                    <p className="truncate text-[11px] text-[#8e8e93]">
+                    <p className="truncate text-[11px] text-tertiary">
                       {row.extractedKeys.join(" • ")}
                     </p>
                   </div>
-                  <span className="text-[11px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                  <span className="text-[11px] font-semibold text-primary">
                     {row.count}
                   </span>
                   <div className="space-y-1 text-[11px]">
                     {row.incomeTotal > 0 ? (
-                      <p className="font-medium text-[#1f8f43]">
+                      <p className="font-medium text-success">
                         + {formatCurrency(row.incomeTotal)}
                       </p>
                     ) : null}
                     {row.expenseTotal > 0 ? (
-                      <p className="font-medium text-[#ff453a]">
+                      <p className="font-medium text-danger">
                         - {formatCurrency(row.expenseTotal)}
                       </p>
                     ) : null}
                   </div>
-                  <span className="text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                  <span className="text-[11px] text-secondary">
                     {formatDate(row.lastDate)}
                   </span>
                   <div>
@@ -438,13 +438,13 @@ export function MerchantsWorkspace() {
           </CupertinoTable>
         </section>
 
-        <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <section className="rounded-[13px] border-0 bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
             <div className="space-y-1">
-              <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+              <h2 className="text-[13px] font-semibold text-primary">
                 Merchant preview
               </h2>
-              <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+              <p className="max-w-3xl text-[11px] leading-5 text-tertiary">
                 Preview transaksi dari merchant terpilih untuk memastikan nama
                 merchant dan alias yang digabung sudah konsisten.
               </p>
@@ -468,7 +468,7 @@ export function MerchantsWorkspace() {
             ]}
             hasRows={Boolean(selectedMerchant) && selectedMerchantTransactions.length > 0}
             emptyState={
-              <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+              <div className="px-[18px] py-10 text-center text-sm text-tertiary">
                 Pilih merchant dari tabel di atas untuk melihat preview.
               </div>
             }
@@ -476,12 +476,12 @@ export function MerchantsWorkspace() {
             {selectedMerchantTransactions.map((transaction) => (
                 <div
                   key={transaction.id}
-                className={`grid grid-cols-[110px_minmax(0,1.5fr)_150px_120px_180px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                className={`grid grid-cols-[110px_minmax(0,1.5fr)_150px_120px_180px] items-center gap-3 px-[18px] text-[11px] text-secondary ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
               >
-                <span className="text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                <span className="text-[11px] text-secondary">
                   {formatDate(transaction.date)}
                 </span>
-                <span className="truncate text-[11px] text-[#1c1c1e] dark:text-[#f2f2f7]">
+                <span className="truncate text-[11px] text-primary">
                   {transaction.description}
                 </span>
                 <span>
@@ -491,15 +491,15 @@ export function MerchantsWorkspace() {
                       color={transaction.resolvedCategory.color}
                     />
                   ) : (
-                    <span className="text-[11px] text-[#8e8e93]">
+                    <span className="text-[11px] text-tertiary">
                       Uncategorized
                     </span>
                   )}
                 </span>
-                <span className="text-[11px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                <span className="text-[11px] font-semibold text-primary">
                   {formatCurrency(transaction.amount)}
                 </span>
-                <span className="truncate text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                <span className="truncate text-[11px] text-secondary">
                   {transaction.sourceFile}
                 </span>
               </div>
@@ -513,19 +513,19 @@ export function MerchantsWorkspace() {
         onClose={closeEditDialog}
         title="Edit merchant name"
       >
-        <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-4">
+        <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-4">
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-[11px] font-medium text-[#8e8e93]">
+              <label className="text-[11px] font-medium text-tertiary">
                 Merchant name
               </label>
               <Input
                 value={editingName}
                 onChange={(event) => setEditingName(event.target.value)}
-                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
               />
             </div>
-            <div className="rounded-[10px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-3 py-2 text-[11px] text-[#8e8e93]">
+            <div className="rounded-[10px] bg-surface-muted px-3 py-2 text-[11px] text-tertiary">
               Key asal: {editingMerchant?.merchantKey ?? "-"}
             </div>
           </div>
@@ -556,28 +556,28 @@ export function MerchantsWorkspace() {
         title="Merge merchants"
         maxWidthClassName="max-w-[560px]"
       >
-        <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-4">
+        <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-4">
           <div className="space-y-4">
-            <div className="rounded-[10px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-3 py-2 text-[11px] text-[#8e8e93]">
+            <div className="rounded-[10px] bg-surface-muted px-3 py-2 text-[11px] text-tertiary">
               Source:{" "}
-              <span className="font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">
+              <span className="font-medium text-primary">
                 {mergeSource?.merchantName ?? "-"}
               </span>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[11px] font-medium text-[#8e8e93]">
+              <label className="text-[11px] font-medium text-tertiary">
                 Find target merchant
               </label>
               <Input
                 value={mergeSearchQuery}
                 onChange={(event) => setMergeSearchQuery(event.target.value)}
                 placeholder="Cari merchant tujuan merge"
-                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
               />
             </div>
 
-            <div className="max-h-64 space-y-2 overflow-y-auto rounded-[10px] bg-[#f7f7f8] dark:bg-[#2c2c2e] p-2">
+            <div className="max-h-64 space-y-2 overflow-y-auto rounded-[10px] bg-surface-muted p-2">
               {mergeTargets.map((row) => (
                 <button
                   key={row.merchantKey}
@@ -586,29 +586,29 @@ export function MerchantsWorkspace() {
                   className={cn(
                     "flex w-full items-center justify-between rounded-[9px] px-3 py-2 text-left transition-colors",
                     mergeTargetKey === row.merchantKey
-                      ? "bg-[#007aff]/10"
-                      : "bg-white dark:bg-[#3a3a3c] hover:bg-black/3 dark:hover:bg-white/8",
+                      ? "bg-[color-mix(in_srgb,var(--accent)_10%,transparent)]"
+                      : "bg-surface dark:bg-surface-raised hover:bg-surface-muted",
                   )}
                 >
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    <p className="truncate text-sm font-medium text-primary">
                       {row.merchantName}
                     </p>
-                    <p className="truncate text-[11px] text-[#8e8e93]">
+                    <p className="truncate text-[11px] text-tertiary">
                       {row.extractedKeys.join(" • ")}
                     </p>
                   </div>
                   {mergeTargetKey === row.merchantKey ? (
                     <CupertinoIcon
                       name="check"
-                      className="size-4 text-[#007aff]"
+                      className="size-4 text-accent"
                     />
                   ) : null}
                 </button>
               ))}
 
               {mergeTargets.length === 0 ? (
-                <div className="px-3 py-4 text-center text-[11px] text-[#8e8e93]">
+                <div className="px-3 py-4 text-center text-[11px] text-tertiary">
                   Tidak ada merchant lain yang cocok untuk merge.
                 </div>
               ) : null}

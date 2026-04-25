@@ -147,13 +147,13 @@ function UploadPanel({
   }
 
   return (
-    <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+    <div className="rounded-[13px] bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
       <div className="px-[18px] pt-[18px] pb-3">
         <div className="space-y-1">
-          <p className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <p className="text-[13px] font-semibold text-primary">
             Import statement PDFs
           </p>
-          <p className="text-[11px] leading-5 text-[#8e8e93]">
+          <p className="text-[11px] leading-5 text-tertiary">
             Pilih bank terlebih dulu, lalu tambahkan file PDF mutasi rekening
             untuk diparse, dikategorikan otomatis lewat rules, lalu masuk ke workspace MBG.
           </p>
@@ -170,7 +170,7 @@ function UploadPanel({
         />
 
         <div
-          className="rounded-[16px] border border-black/[0.05] dark:border-white/8 bg-white dark:bg-[#1c1c1e] p-3 shadow-[0_1px_2px_rgba(0,0,0,0.05)] dark:shadow-none transition-colors data-[dragging=true]:border-[#007aff]/20 data-[dragging=true]:shadow-[0_1px_2px_rgba(0,0,0,0.05),0_0_0_3px_rgba(0,122,255,0.08)]"
+          className="rounded-[16px] border border-subtle bg-surface p-3 shadow-[0_1px_2px_rgba(0,0,0,0.05)] dark:shadow-none transition-colors data-[dragging=true]:border-accent/20 data-[dragging=true]:shadow-[0_1px_2px_rgba(0,0,0,0.05),0_0_0_3px_rgba(0,122,255,0.08)]"
           data-dragging={isDragging}
           onDragOver={(event) => {
             event.preventDefault();
@@ -183,16 +183,16 @@ function UploadPanel({
             handleFiles(event.dataTransfer.files);
           }}
         >
-          <div className="rounded-[13px] border border-dashed border-black/10 dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] px-5 py-7 data-[dragging=true]:border-[#007aff]/35 data-[dragging=true]:bg-[#007aff]/[0.05]">
+          <div className="rounded-[13px] border border-dashed border-strong bg-surface-muted px-5 py-7 data-[dragging=true]:border-accent/35 data-[dragging=true]:bg-[color-mix(in_srgb,var(--accent)_5%,transparent)]">
             <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center">
-              <div className="flex size-12 items-center justify-center rounded-[12px] bg-white dark:bg-[#2c2c2e] shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-none">
-                <CupertinoIcon name="upload" className="size-5 text-[#007aff]" />
+              <div className="flex size-12 items-center justify-center rounded-[12px] bg-surface dark:bg-surface-muted shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-none">
+                <CupertinoIcon name="upload" className="size-5 text-accent" />
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                <p className="text-sm font-semibold text-primary">
                   Drag and drop file PDF mutasi rekening
                 </p>
-                <p className="text-[11px] leading-5 text-[#8e8e93]">
+                <p className="text-[11px] leading-5 text-tertiary">
                   Parser membaca text layer PDF, membuat draft transaksi, lalu mencoba assign category sejak awal sebelum file dipindahkan ke Transactions.
                 </p>
               </div>
@@ -216,14 +216,14 @@ function UploadPanel({
                     leadingLabel: bank.label.slice(0, 2).toUpperCase(),
                     leadingColor:
                       bank.value === "bca"
-                        ? "#1155cc"
+                        ? "var(--accent)"
                         : bank.value === "mandiri"
-                          ? "#e8a900"
+                          ? "var(--warning)"
                           : bank.value === "bni"
-                          ? "#f15a24"
+                          ? "var(--warning)"
                           : bank.value === "bri"
-                            ? "#00529c"
-                            : "#6b7280",
+                            ? "var(--accent)"
+                            : "var(--text-secondary)",
                   }))}
                 />
                 <CupertinoActionButton
@@ -235,9 +235,9 @@ function UploadPanel({
                 </CupertinoActionButton>
               </div>
               {error ? (
-                <p className="text-xs text-[#ff453a]">{error}</p>
+                <p className="text-xs text-danger">{error}</p>
               ) : (
-                <p className="text-[11px] text-[#8e8e93]">
+                <p className="text-[11px] text-tertiary">
                   PDF diparse langsung di browser dan disimpan ke local storage.
                 </p>
               )}
@@ -251,29 +251,29 @@ function UploadPanel({
           title="Contoh format mutasi rekening"
           maxWidthClassName="max-w-[860px]"
         >
-          <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-4">
+          <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-4">
             <Image
               src="/images/example-mutation.png"
               alt="Contoh format file mutasi rekening"
               width={794}
               height={1123}
-              className="h-auto w-full rounded-[12px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e]"
+              className="h-auto w-full rounded-[12px] border border-strong bg-surface"
             />
           </div>
         </CupertinoModal>
 
         <div className="grid gap-3 md:grid-cols-3">
-          <div className="rounded-[12px] border border-black/[0.05] dark:border-white/8 bg-[#f7f7f8] dark:bg-[#2c2c2e] px-4 py-3">
-            <p className="text-[12px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Format</p>
-            <p className="text-[11px] text-[#8e8e93]">PDF mutasi rekening bank</p>
+          <div className="rounded-[12px] border border-subtle bg-surface-muted px-4 py-3">
+            <p className="text-[12px] font-semibold text-primary">Format</p>
+            <p className="text-[11px] text-tertiary">PDF mutasi rekening bank</p>
           </div>
-          <div className="rounded-[12px] border border-black/[0.05] dark:border-white/8 bg-[#f7f7f8] dark:bg-[#2c2c2e] px-4 py-3">
-            <p className="text-[12px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Merge</p>
-            <p className="text-[11px] text-[#8e8e93]">Gabung file baru ke data yang ada</p>
+          <div className="rounded-[12px] border border-subtle bg-surface-muted px-4 py-3">
+            <p className="text-[12px] font-semibold text-primary">Merge</p>
+            <p className="text-[11px] text-tertiary">Gabung file baru ke data yang ada</p>
           </div>
-          <div className="rounded-[12px] border border-black/[0.05] dark:border-white/8 bg-[#f7f7f8] dark:bg-[#2c2c2e] px-4 py-3">
-            <p className="text-[12px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Storage</p>
-            <p className="text-[11px] text-[#8e8e93]">Simpan state lokal di browser</p>
+          <div className="rounded-[12px] border border-subtle bg-surface-muted px-4 py-3">
+            <p className="text-[12px] font-semibold text-primary">Storage</p>
+            <p className="text-[11px] text-tertiary">Simpan state lokal di browser</p>
           </div>
         </div>
       </div>
@@ -295,24 +295,24 @@ function SummaryCard({
   href?: string;
 }) {
   const content = (
-    <div className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+    <div className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
-          <p className="text-[11px] font-medium tracking-[0.02em] text-[#8e8e93]">
+          <p className="text-[11px] font-medium tracking-[0.02em] text-tertiary">
             {title}
           </p>
-          <p className="text-[24px] font-semibold tracking-[-0.03em] text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <p className="text-[24px] font-semibold tracking-[-0.03em] text-primary">
             {value}
           </p>
         </div>
-        <span className="flex size-9 items-center justify-center rounded-[10px] bg-[#f2f2f4] dark:bg-[#3a3a3c]">
+        <span className="flex size-9 items-center justify-center rounded-[10px] bg-surface-raised">
           <CupertinoIcon
             name={icon}
-            className="size-4 text-[#636366] dark:text-[#8e8e93]"
+            className="size-4 text-secondary"
           />
         </span>
       </div>
-      <p className="mt-3 text-[11px] leading-5 text-[#8e8e93]">
+      <p className="mt-3 text-[11px] leading-5 text-tertiary">
         {description}
       </p>
     </div>
@@ -383,20 +383,20 @@ function FileTable({
   onReset: () => void;
 }) {
   return (
-    <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+    <div className="rounded-[13px] bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
       <div className="px-[18px] py-3.5">
-        <p className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Daftar file PDF</p>
-        <p className="text-[11px] text-[#8e8e93]">
+        <p className="text-[13px] font-semibold text-primary">Daftar file PDF</p>
+        <p className="text-[11px] text-tertiary">
           Semua file mutasi yang sudah diupload ke workspace MBG.
         </p>
       </div>
       <div className="space-y-4 px-[18px] pb-[18px]">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="relative w-full max-w-2xl">
-            <CupertinoIcon className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-[#8e8e93]" name="search" />
+            <CupertinoIcon className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-tertiary" name="search" />
             <Input
               placeholder="Cari nama file, bank, atau periode"
-              className="h-8 rounded-[8px] border-black/10 dark:border-white/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] pl-8 text-xs shadow-none"
+              className="h-8 rounded-[8px] border-strong bg-surface-muted pl-8 text-xs shadow-none"
               value={search}
               onChange={(event) => onSearchChange(event.target.value)}
             />
@@ -405,7 +405,7 @@ function FileTable({
             <Button
               variant="outline"
               size="sm"
-              className="rounded-[8px] border-black/10 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7] shadow-none hover:bg-[#ededf0] dark:hover:bg-[#3a3a3c]"
+              className="rounded-[8px] border-strong bg-app text-primary shadow-none hover:bg-surface-raised"
               onClick={onReset}
             >
               <CupertinoIcon name="close" className="size-3.5" />
@@ -414,13 +414,13 @@ function FileTable({
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-[13px] border border-black/[0.05] dark:border-white/8">
+        <div className="overflow-hidden rounded-[13px] border border-subtle">
           <CupertinoTable
             columnsClassName="grid-cols-[minmax(240px,1.3fr)_90px_120px_90px_150px_100px_120px]"
             minWidthClassName="min-w-[980px]"
             hasRows={files.length > 0}
             emptyState={
-              <div className="px-5 py-14 text-center text-sm text-[#8e8e93]">
+              <div className="px-5 py-14 text-center text-sm text-tertiary">
                 Belum ada file PDF yang diupload.
               </div>
             }
@@ -437,9 +437,9 @@ function FileTable({
             {files.map((file) => (
               <div
                 key={file.name}
-                className={`grid grid-cols-[minmax(240px,1.3fr)_90px_120px_90px_150px_100px_120px] items-center gap-3 px-[18px] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS} text-[11px] text-[#636366] dark:text-[#8e8e93] transition hover:bg-black/[0.014] dark:hover:bg-white/5`}
+                className={`grid grid-cols-[minmax(240px,1.3fr)_90px_120px_90px_150px_100px_120px] items-center gap-3 px-[18px] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS} text-[11px] text-secondary transition hover:bg-surface-muted`}
               >
-                <span className="truncate pr-3 text-sm font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">
+                <span className="truncate pr-3 text-sm font-medium text-primary">
                   {file.name}
                 </span>
                 <span>
@@ -471,16 +471,16 @@ function ReviewQueuePanel({
   onSelect: (fileId: string) => void;
 }) {
   return (
-    <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+    <div className="rounded-[13px] bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
       <div className="px-[18px] py-3.5">
-        <p className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Review queue</p>
-        <p className="text-[11px] text-[#8e8e93]">
+        <p className="text-[13px] font-semibold text-primary">Review queue</p>
+        <p className="text-[11px] text-tertiary">
           Pilih file yang baru diimport untuk cek hasil parsing dan klasifikasinya sebelum dipindahkan ke processed.
         </p>
       </div>
       <div className="space-y-3 px-[18px] pb-[18px]">
         {files.length === 0 ? (
-          <div className="rounded-[12px] border border-dashed border-black/10 dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] px-4 py-10 text-center text-sm text-[#8e8e93]">
+          <div className="rounded-[12px] border border-dashed border-strong bg-surface-muted px-4 py-10 text-center text-sm text-tertiary">
             Tidak ada file yang sedang menunggu review.
           </div>
         ) : null}
@@ -494,21 +494,21 @@ function ReviewQueuePanel({
               className={cn(
                 "w-full rounded-2xl border p-4 text-left transition-colors",
                 isActive
-                  ? "border-[#007aff]/25 bg-[#007aff]/[0.06] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
-                  : "border-black/5 dark:border-white/8 bg-[#f7f7f8] dark:bg-[#2c2c2e] hover:bg-[#f1f1f3] dark:hover:bg-[#3a3a3c]",
+                  ? "border-accent/25 bg-[var(--accent)]/[0.06] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+                  : "border-subtle bg-surface-muted hover:bg-surface-raised",
               )}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1">
-                  <p className="font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">{file.name}</p>
-                  <div className="flex flex-wrap items-center gap-1.5 text-xs text-[#8e8e93]">
+                  <p className="font-medium text-primary">{file.name}</p>
+                  <div className="flex flex-wrap items-center gap-1.5 text-xs text-tertiary">
                     <BankChip label={file.bank} />
                     <span>{formatStatementPeriod(file.statementPeriod)}</span>
                   </div>
                 </div>
                 <StatusBadge status={file.status} />
               </div>
-              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-[#8e8e93]">
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-tertiary">
                 <span>{file.transactionCount} transaksi</span>
                 <span>{file.issueCount} issue</span>
                 <span>{formatRelativeTime(file.uploadedAt)}</span>
@@ -566,12 +566,12 @@ function ReviewDetailPanel({
   }, [rows]);
 
   return (
-    <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+    <div className="rounded-[13px] bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
       <div className="px-[18px] py-3.5">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-1">
-            <p className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Classification preview</p>
-            <p className="text-[11px] leading-5 text-[#8e8e93]">
+            <p className="text-[13px] font-semibold text-primary">Classification preview</p>
+            <p className="text-[11px] leading-5 text-tertiary">
               {file
                 ? `Preview hasil parsing untuk ${file.name}. Pastikan semua transaksi sudah punya category sebelum file masuk ke Transactions.`
                 : "Pilih salah satu file review untuk melihat hasil parsing dan klasifikasi."}
@@ -579,24 +579,24 @@ function ReviewDetailPanel({
           </div>
           {file ? (
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" className="rounded-[8px] border-black/10 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7] shadow-none hover:bg-[#ededf0] dark:hover:bg-[#3a3a3c]" onClick={onPreviewRaw}>
+              <Button variant="outline" size="sm" className="rounded-[8px] border-strong bg-app text-primary shadow-none hover:bg-surface-raised" onClick={onPreviewRaw}>
                 <CupertinoIcon name="paperclip" className="size-3.5" />
                 Raw text
               </Button>
-              <Button variant="outline" size="sm" className="rounded-[8px] border-black/10 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7] shadow-none hover:bg-[#ededf0] dark:hover:bg-[#3a3a3c]" onClick={onReparse}>
+              <Button variant="outline" size="sm" className="rounded-[8px] border-strong bg-app text-primary shadow-none hover:bg-surface-raised" onClick={onReparse}>
                 <CupertinoIcon name="repeat" className="size-3.5" />
                 Re-parse
               </Button>
               <Button
                 size="sm"
                 disabled={processDisabled}
-                className="rounded-[8px] bg-[#1c1c1e] dark:bg-[#3a3a3c] px-3 text-white shadow-none hover:bg-black dark:hover:bg-[#48484a] disabled:bg-[#1c1c1e]/40 dark:disabled:bg-white/10"
+                className="rounded-[8px] bg-[var(--text-primary)] dark:bg-surface-raised px-3 text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)] dark:hover:bg-surface-raised disabled:bg-[var(--text-primary)]/40 dark:disabled:bg-surface-muted"
                 onClick={onProcess}
               >
                 <CupertinoIcon name="check" className="size-3.5" />
                 Mark processed
               </Button>
-              <Button variant="outline" size="sm" className="rounded-[8px] border-black/10 bg-[#ff453a]/10 text-[#ff453a] shadow-none hover:bg-[#ff453a]/15 hover:text-[#ff453a]" onClick={onDelete}>
+              <Button variant="outline" size="sm" className="rounded-[8px] border-strong bg-danger/10 text-danger shadow-none hover:bg-danger/15 hover:text-danger" onClick={onDelete}>
                 <CupertinoIcon name="close" className="size-3.5" />
                 Delete
               </Button>
@@ -606,44 +606,44 @@ function ReviewDetailPanel({
       </div>
       <div className="space-y-5 px-[18px] pb-[18px]">
         {!file ? (
-          <div className="rounded-[12px] border border-dashed border-black/10 dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] px-4 py-14 text-center text-sm text-[#8e8e93]">
+          <div className="rounded-[12px] border border-dashed border-strong bg-surface-muted px-4 py-14 text-center text-sm text-tertiary">
             Belum ada file yang dipilih untuk preview classification.
           </div>
         ) : (
           <>
             {summary.uncategorized > 0 ? (
-              <div className="rounded-[12px] border border-[#ff453a]/15 bg-[#ff453a]/10 px-4 py-3 text-[11px] leading-5 text-[#b42318]">
+              <div className="rounded-[12px] border border-danger/15 bg-danger/10 px-4 py-3 text-[11px] leading-5 text-danger">
                 {summary.uncategorized} transaksi masih belum punya category. Lengkapi rules atau edit transaksi dulu sebelum file ditandai processed.
               </div>
             ) : null}
             <div className="grid gap-3 md:grid-cols-4">
-              <div className="rounded-[12px] bg-[#007aff]/10 px-4 py-3">
-                <p className="text-[11px] text-[#8e8e93]">Total transactions</p>
-                <p className="text-xl font-bold text-[#1c1c1e] dark:text-[#f2f2f7]">{summary.total}</p>
+              <div className="rounded-[12px] bg-[color-mix(in_srgb,var(--accent)_10%,transparent)] px-4 py-3">
+                <p className="text-[11px] text-tertiary">Total transactions</p>
+                <p className="text-xl font-bold text-primary">{summary.total}</p>
               </div>
-              <div className="rounded-[12px] bg-[#30d158]/10 px-4 py-3">
-                <p className="text-[11px] text-[#8e8e93]">Keyword matched</p>
-                <p className="text-xl font-bold text-[#1c1c1e] dark:text-[#f2f2f7]">{summary.keywordMatched}</p>
+              <div className="rounded-[12px] bg-success/10 px-4 py-3">
+                <p className="text-[11px] text-tertiary">Keyword matched</p>
+                <p className="text-xl font-bold text-primary">{summary.keywordMatched}</p>
               </div>
-              <div className="rounded-[12px] bg-[#ff453a]/10 px-4 py-3">
-                <p className="text-[11px] text-[#8e8e93]">Need category review</p>
-                <p className="text-xl font-bold text-[#1c1c1e] dark:text-[#f2f2f7]">{summary.uncategorized}</p>
+              <div className="rounded-[12px] bg-danger/10 px-4 py-3">
+                <p className="text-[11px] text-tertiary">Need category review</p>
+                <p className="text-xl font-bold text-primary">{summary.uncategorized}</p>
               </div>
-              <div className="rounded-[12px] bg-[#f2f2f4] dark:bg-[#2c2c2e] px-4 py-3">
-                <p className="text-[11px] text-[#8e8e93]">Debit total</p>
-                <p className="text-xl font-bold text-[#1c1c1e] dark:text-[#f2f2f7]">{formatCurrency(summary.debitTotal)}</p>
+              <div className="rounded-[12px] bg-surface-muted px-4 py-3">
+                <p className="text-[11px] text-tertiary">Debit total</p>
+                <p className="text-xl font-bold text-primary">{formatCurrency(summary.debitTotal)}</p>
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-[13px] border border-black/5 dark:border-white/8 bg-white dark:bg-[#1c1c1e]">
+            <div className="overflow-hidden rounded-[13px] border border-subtle bg-surface">
                 <CupertinoTable
                   columnsClassName="grid-cols-[90px_180px_minmax(240px,1fr)_140px_120px_96px]"
                   minWidthClassName="min-w-[1080px]"
                   hasRows={rows.length > 0}
-                  headerClassName="bg-[#fbfbfc] dark:bg-[#1c1c1e]"
-                  bodyClassName="max-h-[460px] overflow-y-auto bg-white dark:bg-[#1c1c1e]"
+                  headerClassName="bg-surface-muted dark:bg-surface"
+                  bodyClassName="max-h-[460px] overflow-y-auto bg-surface"
                   emptyState={
-                    <div className="px-5 py-14 text-center text-sm text-[#8e8e93]">
+                    <div className="px-5 py-14 text-center text-sm text-tertiary">
                       Belum ada transaksi hasil parsing untuk file ini.
                   </div>
                 }
@@ -659,13 +659,13 @@ function ReviewDetailPanel({
                 {rows.map((row) => (
                   <div
                     key={row.id}
-                    className={`grid grid-cols-[90px_180px_minmax(240px,1fr)_140px_120px_96px] items-center gap-3 px-[18px] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS} text-[11px] text-[#636366] dark:text-[#8e8e93] transition hover:bg-black/[0.014] dark:hover:bg-white/5`}
+                    className={`grid grid-cols-[90px_180px_minmax(240px,1fr)_140px_120px_96px] items-center gap-3 px-[18px] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS} text-[11px] text-secondary transition hover:bg-surface-muted`}
                   >
-                    <span className="text-[#8e8e93]">{formatDate(row.date)}</span>
-                    <span className="truncate pr-3 text-sm font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    <span className="text-tertiary">{formatDate(row.date)}</span>
+                    <span className="truncate pr-3 text-sm font-medium text-primary">
                       {row.merchantName}
                     </span>
-                    <span className="truncate pr-5 text-[#636366] dark:text-[#8e8e93]">{row.description}</span>
+                    <span className="truncate pr-5 text-secondary">{row.description}</span>
                     <span>
                       {row.categoryName ? (
                         row.categoryColor ? (
@@ -677,10 +677,10 @@ function ReviewDetailPanel({
                           <CupertinoChip>{row.categoryName}</CupertinoChip>
                         )
                       ) : (
-                        <span className="text-xs text-[#8e8e93]">Uncategorized</span>
+                        <span className="text-xs text-tertiary">Uncategorized</span>
                       )}
                     </span>
-                    <span className="text-sm font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    <span className="text-sm font-semibold text-primary">
                       {formatCurrency(row.amount)}
                     </span>
                     <CupertinoTableRowActions
@@ -899,16 +899,16 @@ export function FileWorkspace() {
   }
 
   return (
-    <main className="min-h-svh flex-1 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
-      <section className="sticky top-[58px] z-10 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0">
+    <main className="min-h-svh flex-1 bg-app text-primary">
+      <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
         <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
             Import workspace
           </h1>
 
           <div className="ml-auto flex flex-wrap items-center gap-2">
             <Button
-              className="h-9 rounded-[9px] bg-[#1c1c1e] dark:bg-[#3a3a3c] px-3 text-white shadow-none hover:bg-black dark:hover:bg-[#48484a]"
+              className="h-9 rounded-[9px] bg-[var(--text-primary)] dark:bg-surface-raised px-3 text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)] dark:hover:bg-surface-raised"
               render={<Link href="/transactions" />}
             >
               Transactions
@@ -1001,13 +1001,13 @@ export function FileWorkspace() {
           onClose={() => setEditingTransactionId(null)}
           title="Edit transaction"
         >
-          <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-3.5">
+          <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3.5">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-[11px] font-medium text-[#636366] dark:text-[#8e8e93]">Date</label>
+                <label className="text-[11px] font-medium text-secondary">Date</label>
                 <Input
                   type="date"
-                  className="h-9 rounded-[9px] border-black/10 dark:border-white/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] text-xs shadow-none"
+                  className="h-9 rounded-[9px] border-strong bg-surface-muted text-xs shadow-none"
                   value={editForm.date}
                   onChange={(event) =>
                     setEditForm((current) => ({
@@ -1018,15 +1018,15 @@ export function FileWorkspace() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[11px] font-medium text-[#636366] dark:text-[#8e8e93]">Type</label>
-                <div className="flex rounded-[8px] bg-[#f2f2f4] dark:bg-[#2c2c2e] p-0.5">
+                <label className="text-[11px] font-medium text-secondary">Type</label>
+                <div className="flex rounded-[8px] bg-surface-muted p-0.5">
                   <button
                     type="button"
                     className={cn(
                       "flex-1 rounded-[6px] px-3 py-1.5 text-[11px] font-medium transition",
                       editForm.type === "debit"
-                        ? "bg-white dark:bg-[#3a3a3c] text-[#1c1c1e] dark:text-[#f2f2f7] shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-none"
-                        : "text-[#8e8e93]",
+                        ? "bg-surface dark:bg-surface-raised text-primary shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-none"
+                        : "text-tertiary",
                     )}
                     onClick={() =>
                       setEditForm((current) => ({ ...current, type: "debit" }))
@@ -1039,8 +1039,8 @@ export function FileWorkspace() {
                     className={cn(
                       "flex-1 rounded-[6px] px-3 py-1.5 text-[11px] font-medium transition",
                       editForm.type === "credit"
-                        ? "bg-white dark:bg-[#3a3a3c] text-[#1c1c1e] dark:text-[#f2f2f7] shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-none"
-                        : "text-[#8e8e93]",
+                        ? "bg-surface dark:bg-surface-raised text-primary shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-none"
+                        : "text-tertiary",
                     )}
                     onClick={() =>
                       setEditForm((current) => ({ ...current, type: "credit" }))
@@ -1051,11 +1051,11 @@ export function FileWorkspace() {
                 </div>
               </div>
               <div className="space-y-2 sm:col-span-2">
-                <label className="text-[11px] font-medium text-[#636366] dark:text-[#8e8e93]">
+                <label className="text-[11px] font-medium text-secondary">
                   Description
                 </label>
                 <Input
-                  className="h-9 rounded-[9px] border-black/10 dark:border-white/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] text-xs shadow-none"
+                  className="h-9 rounded-[9px] border-strong bg-surface-muted text-xs shadow-none"
                   value={editForm.description}
                   onChange={(event) =>
                     setEditForm((current) => ({
@@ -1066,10 +1066,10 @@ export function FileWorkspace() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[11px] font-medium text-[#636366] dark:text-[#8e8e93]">Amount</label>
+                <label className="text-[11px] font-medium text-secondary">Amount</label>
                 <Input
                   inputMode="decimal"
-                  className="h-9 rounded-[9px] border-black/10 dark:border-white/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] text-xs shadow-none"
+                  className="h-9 rounded-[9px] border-strong bg-surface-muted text-xs shadow-none"
                   value={editForm.amount}
                   onChange={(event) =>
                     setEditForm((current) => ({
@@ -1080,11 +1080,11 @@ export function FileWorkspace() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[11px] font-medium text-[#636366] dark:text-[#8e8e93]">Balance</label>
+                <label className="text-[11px] font-medium text-secondary">Balance</label>
                 <Input
                   inputMode="decimal"
                   placeholder="Kosongkan jika tidak ada"
-                  className="h-9 rounded-[9px] border-black/10 dark:border-white/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] text-xs shadow-none"
+                  className="h-9 rounded-[9px] border-strong bg-surface-muted text-xs shadow-none"
                   value={editForm.balance}
                   onChange={(event) =>
                     setEditForm((current) => ({
@@ -1100,14 +1100,14 @@ export function FileWorkspace() {
             <Button
               type="button"
               variant="outline"
-              className="h-9 rounded-[9px] border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] px-3 text-[#1c1c1e] dark:text-[#f2f2f7] shadow-none hover:bg-[#f8f8f8] dark:hover:bg-[#2c2c2e]"
+              className="h-9 rounded-[9px] border-strong bg-surface px-3 text-primary shadow-none hover:bg-surface-muted"
               onClick={() => setEditingTransactionId(null)}
             >
               Cancel
             </Button>
             <Button
               type="button"
-              className="h-9 rounded-[9px] bg-[#1c1c1e] dark:bg-[#3a3a3c] px-3 text-white shadow-none hover:bg-black dark:hover:bg-[#48484a]"
+              className="h-9 rounded-[9px] bg-[var(--text-primary)] dark:bg-surface-raised px-3 text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)] dark:hover:bg-surface-raised"
               onClick={submitTransactionEdit}
             >
               Save changes
@@ -1131,7 +1131,7 @@ export function FileWorkspace() {
               <div className="text-xs text-muted-foreground">
                 {selectedRawFile?.name ?? "File"}
               </div>
-              <div className="max-h-[72vh] overflow-auto rounded-lg border border-border bg-slate-50 dark:bg-[#1c1c1e] p-4">
+              <div className="max-h-[72vh] overflow-auto rounded-lg border border-border bg-slate-50 dark:bg-surface p-4">
                 <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-6 text-foreground">
                   {selectedRawFile?.rawText?.trim() ||
                     "Raw text belum tersedia untuk file ini."}

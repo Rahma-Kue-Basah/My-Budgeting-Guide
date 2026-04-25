@@ -60,28 +60,28 @@ function OptionCard({
       className={cn(
         "rounded-[12px] border px-4 py-3 text-left transition-colors",
         selected
-          ? "border-[#007aff]/30 bg-[#007aff]/[0.06]"
-          : "border-black/[0.06] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] hover:bg-[#ededf0] dark:hover:bg-[#3a3a3c]",
+          ? "border-accent/30 bg-[var(--accent)]/[0.06]"
+          : "border-subtle bg-surface-muted hover:bg-surface-raised",
       )}
     >
       <div className="flex items-center justify-between gap-3">
-        <p className={cn("text-[13px] font-semibold", selected ? "text-[#007aff]" : "text-[#1c1c1e] dark:text-[#f2f2f7]")}>
+        <p className={cn("text-[13px] font-semibold", selected ? "text-accent" : "text-primary")}>
           {label}
         </p>
         {selected ? (
-          <CupertinoIcon name="check" className="size-3.5 text-[#007aff]" />
+          <CupertinoIcon name="check" className="size-3.5 text-accent" />
         ) : null}
       </div>
-      <p className="mt-1 text-[11px] leading-5 text-[#8e8e93]">{note}</p>
+      <p className="mt-1 text-[11px] leading-5 text-tertiary">{note}</p>
     </button>
   );
 }
 
 function PreferenceRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-black/[0.04] dark:border-white/[0.07] py-3 last:border-0">
-      <span className="text-[11px] text-[#8e8e93]">{label}</span>
-      <span className="text-[11px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7] capitalize">{value}</span>
+    <div className="flex items-center justify-between gap-3 border-b border-subtle py-3 last:border-0">
+      <span className="text-[11px] text-tertiary">{label}</span>
+      <span className="text-[11px] font-semibold text-primary capitalize">{value}</span>
     </div>
   );
 }
@@ -106,10 +106,10 @@ export function SettingsWorkspace() {
   }
 
   return (
-    <main className="min-h-svh flex-1 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
-      <section className="sticky top-[58px] z-10 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0">
+    <main className="min-h-svh flex-1 bg-app text-primary">
+      <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
         <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
             Settings
           </h1>
         </div>
@@ -117,20 +117,20 @@ export function SettingsWorkspace() {
 
       <div className="flex w-full flex-col gap-3 px-3 py-3">
         {/* Appearance */}
-        <section className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <section className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="mb-4 flex items-center gap-2">
-            <span className="flex size-7 items-center justify-center rounded-[8px] bg-[#f2f2f4] dark:bg-[#3a3a3c]">
-              <CupertinoIcon name="home" className="size-3.5 text-[#636366] dark:text-[#8e8e93]" />
+            <span className="flex size-7 items-center justify-center rounded-[8px] bg-surface-raised">
+              <CupertinoIcon name="home" className="size-3.5 text-secondary" />
             </span>
             <div>
-              <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Appearance</h2>
-              <p className="text-[11px] text-[#8e8e93]">Atur tema dan kepadatan tampilan workspace.</p>
+              <h2 className="text-[13px] font-semibold text-primary">Appearance</h2>
+              <p className="text-[11px] text-tertiary">Atur tema dan kepadatan tampilan workspace.</p>
             </div>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <p className="text-[11px] font-medium text-[#8e8e93]">Theme</p>
+              <p className="text-[11px] font-medium text-tertiary">Theme</p>
               <div className="grid gap-2 md:grid-cols-3">
                 {themeOptions.map((option) => (
                   <OptionCard
@@ -145,7 +145,7 @@ export function SettingsWorkspace() {
             </div>
 
             <div className="space-y-2">
-              <p className="text-[11px] font-medium text-[#8e8e93]">Display density</p>
+              <p className="text-[11px] font-medium text-tertiary">Display density</p>
               <div className="grid gap-2 md:grid-cols-2">
                 {densityOptions.map((option) => (
                   <OptionCard
@@ -162,20 +162,20 @@ export function SettingsWorkspace() {
         </section>
 
         {/* Parser preferences */}
-        <section className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <section className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="mb-4 flex items-center gap-2">
-            <span className="flex size-7 items-center justify-center rounded-[8px] bg-[#f2f2f4] dark:bg-[#3a3a3c]">
-              <CupertinoIcon name="settings" className="size-3.5 text-[#636366] dark:text-[#8e8e93]" />
+            <span className="flex size-7 items-center justify-center rounded-[8px] bg-surface-raised">
+              <CupertinoIcon name="settings" className="size-3.5 text-secondary" />
             </span>
             <div>
-              <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Parser preferences</h2>
-              <p className="text-[11px] text-[#8e8e93]">Pengaturan default yang dipakai saat upload file baru.</p>
+              <h2 className="text-[13px] font-semibold text-primary">Parser preferences</h2>
+              <p className="text-[11px] text-tertiary">Pengaturan default yang dipakai saat upload file baru.</p>
             </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <p className="text-[11px] font-medium text-[#8e8e93]">Default bank</p>
+              <p className="text-[11px] font-medium text-tertiary">Default bank</p>
               <CupertinoSelect
                 icon="wallet"
                 value={settings.defaultBank}
@@ -184,13 +184,13 @@ export function SettingsWorkspace() {
                 minWidthClassName="w-full"
                 ariaLabel="Default bank"
               />
-              <p className="text-[11px] text-[#8e8e93]">
+              <p className="text-[11px] text-tertiary">
                 Bank ini akan terpilih otomatis saat membuka halaman File.
               </p>
             </div>
 
             <div className="space-y-2">
-              <p className="text-[11px] font-medium text-[#8e8e93]">Parser mode</p>
+              <p className="text-[11px] font-medium text-tertiary">Parser mode</p>
               <CupertinoSelect
                 icon="receipt"
                 value={settings.parserMode}
@@ -199,7 +199,7 @@ export function SettingsWorkspace() {
                 minWidthClassName="w-full"
                 ariaLabel="Parser mode"
               />
-              <p className="text-[11px] text-[#8e8e93]">
+              <p className="text-[11px] text-tertiary">
                 {parserModeOptions.find((o) => o.value === settings.parserMode)?.note}
               </p>
             </div>
@@ -208,9 +208,9 @@ export function SettingsWorkspace() {
 
         <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_minmax(280px,0.6fr)]">
           {/* Current preferences */}
-          <section className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
-            <h2 className="mb-3 text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Current preferences</h2>
-            <div className="rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-4">
+          <section className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+            <h2 className="mb-3 text-[13px] font-semibold text-primary">Current preferences</h2>
+            <div className="rounded-[12px] bg-surface-muted px-4">
               <PreferenceRow label="Theme" value={isHydrated ? settings.theme : "-"} />
               <PreferenceRow label="Default bank" value={isHydrated ? getBankLabel(settings.defaultBank) : "-"} />
               <PreferenceRow label="Parser mode" value={isHydrated ? settings.parserMode : "-"} />
@@ -219,9 +219,9 @@ export function SettingsWorkspace() {
           </section>
 
           {/* Workspace controls */}
-          <section className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
-            <h2 className="mb-1 text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Workspace controls</h2>
-            <p className="mb-4 text-[11px] leading-5 text-[#8e8e93]">
+          <section className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+            <h2 className="mb-1 text-[13px] font-semibold text-primary">Workspace controls</h2>
+            <p className="mb-4 text-[11px] leading-5 text-tertiary">
               Reset preferensi tampilan atau hapus seluruh data workspace lokal.
             </p>
             <div className="space-y-2">
@@ -235,7 +235,7 @@ export function SettingsWorkspace() {
               </CupertinoActionButton>
               <CupertinoActionButton
                 tone="white"
-                className="w-full justify-start gap-2 text-[#ff453a] hover:bg-[#ff453a]/10"
+                className="w-full justify-start gap-2 text-danger hover:bg-danger/10"
                 onClick={() => setConfirmAction("reset-workspace")}
               >
                 <Trash2 className="size-3.5" />

@@ -38,7 +38,7 @@ export function CupertinoModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 dark:bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[color-mix(in_srgb,var(--text-primary)_30%,transparent)] p-4 dark:bg-[color-mix(in_srgb,var(--text-primary)_50%,transparent)]"
       onClick={onClose}
     >
       <div

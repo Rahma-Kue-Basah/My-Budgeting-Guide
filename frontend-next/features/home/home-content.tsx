@@ -65,7 +65,7 @@ export function HomeContent({ title, description }: HomeContentProps) {
 
         <section className="grid gap-4 md:grid-cols-3">
           {blocks.map((block) => (
-            <Card key={block.title} className="bg-white dark:bg-[#1c1c1e]">
+            <Card key={block.title} className="bg-surface">
               <CardHeader>
                 <CardTitle>{block.title}</CardTitle>
                 <CardDescription>{block.description}</CardDescription>
@@ -74,7 +74,7 @@ export function HomeContent({ title, description }: HomeContentProps) {
           ))}
         </section>
 
-        <Card className="bg-white dark:bg-[#1c1c1e]">
+        <Card className="bg-surface">
           <CardHeader>
             <div className="flex items-center gap-2">
               <Sparkles className="size-4 text-muted-foreground" />

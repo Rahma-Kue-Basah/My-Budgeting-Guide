@@ -243,7 +243,7 @@ function Sidebar({
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="flex size-full flex-col rounded-none border-r border-black/5 bg-white shadow-none ring-0"
+          className="flex size-full flex-col rounded-none border-r border-subtle bg-surface shadow-none ring-0"
         >
           {children}
         </div>

@@ -24,8 +24,8 @@ export function CupertinoConfirmDialog({
 }: CupertinoConfirmDialogProps) {
   return (
     <CupertinoModal open={open} onClose={onClose} title={title}>
-      <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-4">
-        <p className="text-sm leading-6 text-[#636366] dark:text-[#8e8e93]">{description}</p>
+      <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-4">
+        <p className="text-sm leading-6 text-secondary">{description}</p>
       </div>
       <div className="flex justify-end gap-2">
         <CupertinoActionButton tone="white" onClick={onClose}>
@@ -34,7 +34,7 @@ export function CupertinoConfirmDialog({
         <CupertinoActionButton
           className={
             tone === "destructive"
-              ? "bg-[#ff453a] text-white hover:bg-[#e03d33]"
+              ? "bg-danger text-white hover:bg-danger/90"
               : undefined
           }
           onClick={onConfirm}

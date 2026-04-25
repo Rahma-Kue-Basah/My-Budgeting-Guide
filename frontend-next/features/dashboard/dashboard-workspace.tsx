@@ -218,21 +218,21 @@ const overviewBudgetCategories = [
     spent: "Rp 2.500",
     limit: "Rp 2.500",
     percent: 100,
-    color: "#007AFF",
+    color: "var(--accent)",
   },
   {
     name: "Groceries",
     spent: "Rp 412",
     limit: "Rp 600",
     percent: 69,
-    color: "#30d158",
+    color: "var(--success)",
   },
   {
     name: "Dining",
     spent: "Rp 531",
     limit: "Rp 400",
     percent: 100,
-    color: "#ff453a",
+    color: "var(--danger)",
     over: true,
   },
   {
@@ -240,21 +240,21 @@ const overviewBudgetCategories = [
     spent: "Rp 188",
     limit: "Rp 300",
     percent: 63,
-    color: "#ff9f0a",
+    color: "var(--warning)",
   },
   {
     name: "Subscriptions",
     spent: "Rp 96",
     limit: "Rp 120",
     percent: 80,
-    color: "#ac8cf0",
+    color: "var(--accent)",
   },
   {
     name: "Fitness",
     spent: "Rp 68",
     limit: "Rp 100",
     percent: 68,
-    color: "#32ade6",
+    color: "var(--accent)",
   },
 ];
 
@@ -363,30 +363,30 @@ function DashboardOverview({
       </section>
 
       <section className="grid gap-3 xl:grid-cols-[minmax(0,1.45fr)_minmax(300px,0.75fr)]">
-        <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="mb-4 flex flex-wrap items-center gap-3">
             <div>
               <h2 className="text-[13px] font-semibold">Cash Flow</h2>
-              <p className="mt-0.5 text-[11px] text-[#8e8e93]">
+              <p className="mt-0.5 text-[11px] text-tertiary">
                 Income vs expenses
               </p>
             </div>
-            <div className="ml-auto flex rounded-[8px] bg-[#f2f2f4] dark:bg-[#2c2c2e] p-0.5">
-              <button className="rounded-[6px] px-3 py-1 text-[11px] font-medium text-[#8e8e93]">
+            <div className="ml-auto flex rounded-[8px] bg-surface-muted p-0.5">
+              <button className="rounded-[6px] px-3 py-1 text-[11px] font-medium text-tertiary">
                 Weekly
               </button>
-              <button className="rounded-[6px] bg-white dark:bg-[#3a3a3c] px-3 py-1 text-[11px] font-medium text-[#1c1c1e] dark:text-[#f2f2f7] shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-none">
+              <button className="rounded-[6px] bg-surface dark:bg-surface-raised px-3 py-1 text-[11px] font-medium text-primary shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-none">
                 Monthly
               </button>
             </div>
           </div>
-          <div className="mb-2 flex items-center gap-4 text-[11px] text-[#8e8e93]">
+          <div className="mb-2 flex items-center gap-4 text-[11px] text-tertiary">
             <span className="inline-flex items-center gap-1.5">
-              <span className="size-2 rounded-full bg-[#30d158]" />
+              <span className="size-2 rounded-full bg-success" />
               Income
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="size-2 rounded-full bg-[#ff453a]" />
+              <span className="size-2 rounded-full bg-danger" />
               Expenses
             </span>
           </div>
@@ -406,7 +406,7 @@ function DashboardOverview({
                     dataKey="month"
                     tickLine={false}
                     axisLine={false}
-                    tick={{ fontSize: 10, fill: "#8e8e93" }}
+                    tick={{ fontSize: 10, fill: "var(--text-tertiary)" }}
                   />
                   <YAxis hide />
                   <RechartsTooltip
@@ -423,7 +423,7 @@ function DashboardOverview({
                   <Line
                     type="monotone"
                     dataKey="income"
-                    stroke="#30d158"
+                    stroke="var(--success)"
                     strokeWidth={3}
                     dot={false}
                     activeDot={{ r: 4, strokeWidth: 0 }}
@@ -431,7 +431,7 @@ function DashboardOverview({
                   <Line
                     type="monotone"
                     dataKey="expenses"
-                    stroke="#ff453a"
+                    stroke="var(--danger)"
                     strokeWidth={3}
                     dot={false}
                     activeDot={{ r: 4, strokeWidth: 0 }}
@@ -439,28 +439,28 @@ function DashboardOverview({
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full rounded-[10px] bg-[#f7f7f8] dark:bg-[#2c2c2e]" />
+              <div className="h-full rounded-[10px] bg-surface-muted" />
             )}
           </div>
         </div>
 
-        <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="mb-3">
             <h2 className="text-[13px] font-semibold">Budget Progress</h2>
-            <p className="mt-0.5 text-[11px] text-[#8e8e93]">April 2025</p>
+            <p className="mt-0.5 text-[11px] text-tertiary">April 2025</p>
           </div>
           <div className="mb-3 flex items-end justify-between gap-3">
             <div>
               <p className="text-lg font-bold">Rp 3.990.000</p>
-              <p className="text-[11px] text-[#8e8e93]">of Rp 5.120.000</p>
+              <p className="text-[11px] text-tertiary">of Rp 5.120.000</p>
             </div>
             <div className="text-right text-[11px]">
-              <p className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">78% used</p>
-              <p className="text-[#8e8e93]">7 days left</p>
+              <p className="font-semibold text-primary">78% used</p>
+              <p className="text-tertiary">7 days left</p>
             </div>
           </div>
-          <div className="mb-4 h-2 overflow-hidden rounded-full bg-[#f2f2f4] dark:bg-[#2c2c2e]">
-            <div className="h-full w-[78%] rounded-full bg-[#007AFF]" />
+          <div className="mb-4 h-2 overflow-hidden rounded-full bg-surface-muted">
+            <div className="h-full w-[78%] rounded-full bg-[var(--accent)]" />
           </div>
           <div className="space-y-3">
             {overviewBudgetCategories.map((category) => (
@@ -468,15 +468,15 @@ function DashboardOverview({
                 <div className="mb-1.5 flex items-center gap-2 text-[11px]">
                   <span className="font-medium">{category.name}</span>
                   {category.over ? (
-                    <span className="rounded-[4px] bg-[#ff453a]/10 px-1.5 py-0.5 text-[9px] font-bold text-[#ff453a]">
+                    <span className="rounded-[4px] bg-danger/10 px-1.5 py-0.5 text-[9px] font-bold text-danger">
                       OVER
                     </span>
                   ) : null}
-                  <span className="ml-auto text-[#8e8e93]">
+                  <span className="ml-auto text-tertiary">
                     {category.spent} / {category.limit}
                   </span>
                 </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-[#f2f2f4] dark:bg-[#2c2c2e]">
+                <div className="h-1.5 overflow-hidden rounded-full bg-surface-muted">
                   <div
                     className="h-full rounded-full"
                     style={{
@@ -492,33 +492,33 @@ function DashboardOverview({
       </section>
 
       <section className="grid gap-3 xl:grid-cols-[0.85fr_0.9fr_1fr]">
-        <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <h2 className="text-[13px] font-semibold">Income vs Expense</h2>
-          <p className="mt-0.5 text-[11px] text-[#8e8e93]">April 2025</p>
-          <p className="mt-4 text-2xl font-bold text-[#30d158]">+Rp 3,11jt</p>
-          <p className="text-[11px] text-[#8e8e93]">net this month</p>
-          <div className="mt-5 h-2 overflow-hidden rounded-full bg-[#ff453a]">
-            <div className="h-full w-[64%] rounded-r-full bg-[#30d158]" />
+          <p className="mt-0.5 text-[11px] text-tertiary">April 2025</p>
+          <p className="mt-4 text-2xl font-bold text-success">+Rp 3,11jt</p>
+          <p className="text-[11px] text-tertiary">net this month</p>
+          <div className="mt-5 h-2 overflow-hidden rounded-full bg-danger">
+            <div className="h-full w-[64%] rounded-r-full bg-success" />
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
-            <div className="rounded-[9px] bg-[#30d158]/10 px-3 py-2">
-              <p className="font-semibold text-[#30d158]">Income</p>
-              <p className="text-[#1c1c1e] dark:text-[#f2f2f7]">64%</p>
+            <div className="rounded-[9px] bg-success/10 px-3 py-2">
+              <p className="font-semibold text-success">Income</p>
+              <p className="text-primary">64%</p>
             </div>
-            <div className="rounded-[9px] bg-[#ff453a]/10 px-3 py-2">
-              <p className="font-semibold text-[#ff453a]">Expense</p>
-              <p className="text-[#1c1c1e] dark:text-[#f2f2f7]">36%</p>
+            <div className="rounded-[9px] bg-danger/10 px-3 py-2">
+              <p className="font-semibold text-danger">Expense</p>
+              <p className="text-primary">36%</p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <h2 className="text-[13px] font-semibold">Top Merchants</h2>
-          <p className="mt-0.5 text-[11px] text-[#8e8e93]">by total spend</p>
+          <p className="mt-0.5 text-[11px] text-tertiary">by total spend</p>
           <div className="mt-3 space-y-2">
             {overviewMerchants.map((merchant) => (
               <div key={merchant.name} className="flex items-center gap-2">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-[9px] bg-[#f2f2f4] dark:bg-[#3a3a3c] text-base">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-[9px] bg-surface-raised text-base">
                   {merchant.icon}
                 </span>
                 <span className="min-w-0 flex-1 truncate text-xs font-medium">
@@ -529,10 +529,10 @@ function DashboardOverview({
                   className={cn(
                     "w-8 text-right text-[10px] font-semibold",
                     merchant.change.startsWith("+")
-                      ? "text-[#ff453a]"
+                      ? "text-danger"
                       : merchant.change.startsWith("-")
-                        ? "text-[#30d158]"
-                        : "text-[#8e8e93]",
+                        ? "text-success"
+                        : "text-tertiary",
                   )}
                 >
                   {merchant.change}
@@ -542,11 +542,11 @@ function DashboardOverview({
           </div>
         </div>
 
-        <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="mb-3 flex items-center justify-between">
             <div>
               <h2 className="text-[13px] font-semibold">Alerts</h2>
-              <p className="mt-0.5 text-[11px] text-[#8e8e93]">3</p>
+              <p className="mt-0.5 text-[11px] text-tertiary">3</p>
             </div>
           </div>
           <div className="space-y-2.5">
@@ -555,24 +555,24 @@ function DashboardOverview({
                 key={alert.title}
                 className={cn(
                   "flex gap-2 rounded-[10px] p-2.5",
-                  alert.type === "info" ? "bg-[#007AFF]/10" : "bg-[#ff453a]/10",
+                  alert.type === "info" ? "bg-[var(--accent)]/10" : "bg-danger/10",
                 )}
               >
                 <span
                   className={cn(
-                    "flex size-7 shrink-0 items-center justify-center rounded-[8px] bg-white dark:bg-[#2c2c2e] text-[10px] font-bold",
-                    alert.type === "info" ? "text-[#007AFF]" : "text-[#ff453a]",
+                    "flex size-7 shrink-0 items-center justify-center rounded-[8px] bg-surface dark:bg-surface-muted text-[10px] font-bold",
+                    alert.type === "info" ? "text-accent" : "text-danger",
                   )}
                 >
                   {alert.marker}
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-semibold">{alert.title}</p>
-                  <p className="mt-0.5 text-[10px] text-[#8e8e93]">
+                  <p className="mt-0.5 text-[10px] text-tertiary">
                     {alert.description}
                   </p>
                 </div>
-                <Button className="h-7 rounded-[7px] bg-[#1c1c1e] px-2 text-[10px] text-white shadow-none hover:bg-black">
+                <Button className="h-7 rounded-[7px] bg-[var(--text-primary)] px-2 text-[10px] text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)]">
                   Review
                 </Button>
               </div>
@@ -582,14 +582,14 @@ function DashboardOverview({
       </section>
 
       <section className="grid gap-3 xl:grid-cols-[300px_minmax(0,1fr)]">
-        <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <h2 className="text-[13px] font-semibold">Quick Actions</h2>
           <div className="mt-3 grid gap-2">
             {overviewQuickActions.map((action) => (
               <Button
                 key={action.title}
                 variant="outline"
-                className="h-9 justify-start rounded-[9px] border-black/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] px-3 text-xs shadow-none"
+                className="h-9 justify-start rounded-[9px] border-strong bg-surface-muted px-3 text-xs shadow-none"
                 render={<Link href={action.href} />}
               >
                 <CupertinoIcon name={action.icon} className="size-3.5" />
@@ -599,20 +599,20 @@ function DashboardOverview({
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-[13px] bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
-          <div className="flex flex-wrap items-center gap-2 border-b border-black/5 px-[18px] py-3.5">
+        <div className="overflow-hidden rounded-[13px] bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+          <div className="flex flex-wrap items-center gap-2 border-b border-subtle px-[18px] py-3.5">
             <div>
               <h2 className="text-[13px] font-semibold">Recent Transactions</h2>
             </div>
             <Button
               variant="outline"
-              className="ml-auto h-8 rounded-[8px] border-black/10 dark:border-white/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] dark:bg-[#2c2c2e] px-3 text-xs shadow-none"
+              className="ml-auto h-8 rounded-[8px] border-strong bg-surface-muted px-3 text-xs shadow-none"
             >
               Filter
             </Button>
             <Button
               variant="ghost"
-              className="h-8 px-2 text-xs text-[#007AFF]"
+              className="h-8 px-2 text-xs text-accent"
               render={<Link href="/transactions" />}
             >
               See all →
@@ -636,12 +636,12 @@ function DashboardOverview({
               <button
                 key={transaction.id}
                 className={cn(
-                  "grid w-full grid-cols-[70px_minmax(0,1fr)_118px_112px_116px_96px_34px] items-center gap-3 px-[18px] text-left transition hover:bg-black/[0.014] dark:hover:bg-white/5",
+                  "grid w-full grid-cols-[70px_minmax(0,1fr)_118px_112px_116px_96px_34px] items-center gap-3 px-[18px] text-left transition hover:bg-surface-muted",
                   CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
                 )}
                 onClick={() => onSelectTransaction(transaction)}
               >
-                <span className="text-[10px] text-[#8e8e93]">
+                <span className="text-[10px] text-tertiary">
                   {formatDate(transaction.date).replace(" 2026", "")}
                 </span>
                 <span className="min-w-0 pr-3">
@@ -649,21 +649,21 @@ function DashboardOverview({
                     {transaction.merchant}
                   </span>
                   {transaction.note ? (
-                    <span className="mt-0.5 block truncate text-[10px] text-[#8e8e93]">
+                    <span className="mt-0.5 block truncate text-[10px] text-tertiary">
                       {transaction.note}
                     </span>
                   ) : null}
                 </span>
-                <span className="truncate pr-2 text-[10px] text-[#636366] dark:text-[#8e8e93]">
+                <span className="truncate pr-2 text-[10px] text-secondary">
                   {transaction.category}
                 </span>
-                <span className="truncate pr-2 text-[10px] text-[#636366] dark:text-[#8e8e93]">
+                <span className="truncate pr-2 text-[10px] text-secondary">
                   {transaction.wallet}
                 </span>
                 <span
                   className={cn(
                     "text-[11px] font-semibold",
-                    transaction.amount > 0 ? "text-[#30d158]" : "text-[#1c1c1e] dark:text-[#f2f2f7]",
+                    transaction.amount > 0 ? "text-success" : "text-primary",
                   )}
                 >
                   {transaction.amount > 0 ? "+" : "-"}
@@ -671,7 +671,7 @@ function DashboardOverview({
                 </span>
                 <StatusBadge status={transaction.status} compact />
                 <span className="flex justify-center">
-                  <CupertinoIcon name="more" className="size-3.5 text-[#8e8e93]" />
+                  <CupertinoIcon name="more" className="size-3.5 text-tertiary" />
                 </span>
               </button>
             ))}
@@ -889,8 +889,8 @@ export function DashboardWorkspace({
   ];
 
   return (
-    <main className="min-h-svh bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
-      <header className="fixed top-[58px] right-0 left-0 z-20 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0 md:left-[232px] md:w-[calc(100%-232px)]">
+    <main className="min-h-svh bg-app text-primary">
+      <header className="fixed top-[58px] right-0 left-0 z-20 border-b border-subtle bg-surface md:top-0 md:left-[232px] md:w-[calc(100%-232px)]">
         <div className="flex h-[58px] w-full items-center gap-3 px-3">
           <div className="min-w-0">
             <h1 className="truncate text-xl font-semibold tracking-normal">
@@ -905,7 +905,7 @@ export function DashboardWorkspace({
               onChange={setActiveWallet}
               ariaLabel="Select wallet"
               options={[
-                { value: "all", label: "All wallets", leadingIcon: "wallet", leadingColor: "#007aff" },
+                { value: "all", label: "All wallets", leadingIcon: "wallet", leadingColor: "var(--accent)" },
                 ...wallets.map((wallet) => ({
                   value: wallet.name,
                   label: wallet.name,
@@ -916,7 +916,7 @@ export function DashboardWorkspace({
             />
 
             <Button
-              className="h-9 rounded-[9px] bg-[#1c1c1e] px-3 text-white shadow-none hover:bg-black"
+              className="h-9 rounded-[9px] bg-[var(--text-primary)] px-3 text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)]"
               onClick={() => setIsWalletDialogOpen(true)}
             >
               <CupertinoIcon name="plus" className="size-3.5" />
@@ -943,17 +943,17 @@ export function DashboardWorkspace({
             </section>
 
             <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_316px]">
-              <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+              <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                 <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center">
                   <div>
                     <h2 className="text-[13px] font-semibold">
                       Daily Activity
                     </h2>
-                    <p className="mt-0.5 text-[11px] text-[#8e8e93]">
+                    <p className="mt-0.5 text-[11px] text-tertiary">
                       Apr 8 - Apr 22
                     </p>
                   </div>
-                  <div className="flex rounded-[8px] bg-[#f2f2f4] dark:bg-[#2c2c2e] p-0.5 sm:ml-auto">
+                  <div className="flex rounded-[8px] bg-surface-muted p-0.5 sm:ml-auto">
                     {[
                       ["expense", "Expenses"],
                       ["income", "Income"],
@@ -964,8 +964,8 @@ export function DashboardWorkspace({
                         className={cn(
                           "rounded-[6px] px-3 py-1 text-[11px] font-medium transition",
                           chartMode === key
-                            ? "bg-white dark:bg-[#3a3a3c] text-[#1c1c1e] dark:text-[#f2f2f7] shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-none"
-                            : "text-[#8e8e93]",
+                            ? "bg-surface dark:bg-surface-raised text-primary shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-none"
+                            : "text-tertiary",
                         )}
                         onClick={() => setChartMode(key as ChartMode)}
                       >
@@ -995,7 +995,7 @@ export function DashboardWorkspace({
                           dataKey="label"
                           tickLine={false}
                           axisLine={false}
-                          tick={{ fontSize: 10, fill: "#8e8e93" }}
+                          tick={{ fontSize: 10, fill: "var(--text-tertiary)" }}
                         />
                         <YAxis hide domain={["auto", "auto"]} />
                         <RechartsTooltip
@@ -1016,10 +1016,10 @@ export function DashboardWorkspace({
                           dataKey={chartMode}
                           stroke={
                             chartMode === "income"
-                              ? "#30d158"
+                              ? "var(--success)"
                               : chartMode === "expense"
-                                ? "#ff453a"
-                                : "#007aff"
+                                ? "var(--danger)"
+                                : "var(--accent)"
                           }
                           strokeWidth={3}
                           dot={false}
@@ -1028,29 +1028,29 @@ export function DashboardWorkspace({
                       </LineChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="h-full rounded-[10px] bg-[#f7f7f8] dark:bg-[#2c2c2e]" />
+                    <div className="h-full rounded-[10px] bg-surface-muted" />
                   )}
                 </div>
               </div>
 
-              <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+              <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                 <h2 className="text-[13px] font-semibold">Budget Progress</h2>
-                <p className="mt-0.5 text-[11px] text-[#8e8e93]">
+                <p className="mt-0.5 text-[11px] text-tertiary">
                   April category limits
                 </p>
                 <div className="mt-4 space-y-4">
                   {[
-                    ["Food", 78, "#007aff"],
-                    ["Transport", 64, "#30d158"],
-                    ["Shopping", 100, "#ff453a"],
-                    ["Utilities", 46, "#ff9f0a"],
+                    ["Food", 78, "var(--accent)"],
+                    ["Transport", 64, "var(--success)"],
+                    ["Shopping", 100, "var(--danger)"],
+                    ["Utilities", 46, "var(--warning)"],
                   ].map(([label, value, color]) => (
                     <div key={label as string}>
                       <div className="mb-1.5 flex justify-between text-[11px]">
                         <span className="font-medium">{label}</span>
-                        <span className="text-[#8e8e93]">{value}%</span>
+                        <span className="text-tertiary">{value}%</span>
                       </div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-[#f2f2f4] dark:bg-[#2c2c2e]">
+                      <div className="h-1.5 overflow-hidden rounded-full bg-surface-muted">
                         <div
                           className="h-full rounded-full"
                           style={{
@@ -1066,9 +1066,9 @@ export function DashboardWorkspace({
             </section>
 
             {isTransactionsPage ? (
-              <section className="overflow-hidden rounded-[13px] bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
-                <div className="flex flex-wrap items-center gap-2 border-b border-black/5 px-[18px] py-3.5">
-                  <div className="flex rounded-[9px] bg-[#f2f2f4] dark:bg-[#2c2c2e] p-[3px]">
+              <section className="overflow-hidden rounded-[13px] bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+                <div className="flex flex-wrap items-center gap-2 border-b border-subtle px-[18px] py-3.5">
+                  <div className="flex rounded-[9px] bg-surface-muted p-[3px]">
                     {(["all", "cleared", "pending", "review"] as const).map(
                       (status) => (
                         <button
@@ -1076,8 +1076,8 @@ export function DashboardWorkspace({
                           className={cn(
                             "rounded-[7px] px-2.5 py-1 text-[11px] font-medium capitalize",
                             filterStatus === status
-                              ? "bg-white dark:bg-[#3a3a3c] text-[#1c1c1e] dark:text-[#f2f2f7] shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-none"
-                              : "text-[#8e8e93]",
+                              ? "bg-surface dark:bg-surface-raised text-primary shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-none"
+                              : "text-tertiary",
                           )}
                           onClick={() => setFilterStatus(status)}
                         >
@@ -1087,26 +1087,26 @@ export function DashboardWorkspace({
                     )}
                   </div>
 
-                  <div className="ml-auto flex min-w-[210px] items-center gap-2 rounded-[8px] border border-black/10 dark:border-white/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] dark:bg-[#2c2c2e] px-2.5 py-1.5">
+                  <div className="ml-auto flex min-w-[210px] items-center gap-2 rounded-[8px] border border-strong bg-surface-muted px-2.5 py-1.5">
                     <CupertinoIcon
                       name="search"
-                      className="size-3.5 text-[#8e8e93]"
+                      className="size-3.5 text-tertiary"
                     />
                     <input
                       value={search}
                       onChange={(event) => setSearch(event.target.value)}
                       placeholder="Search..."
-                      className="w-full border-0 bg-transparent text-xs outline-none placeholder:text-[#8e8e93]"
+                      className="w-full border-0 bg-transparent text-xs outline-none placeholder:text-tertiary"
                     />
                   </div>
 
-                  <Button className="h-8 rounded-[8px] bg-[#1c1c1e] px-3 text-white shadow-none hover:bg-black">
+                  <Button className="h-8 rounded-[8px] bg-[var(--text-primary)] px-3 text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)]">
                     <CupertinoIcon name="plus" className="size-3.5" />
                     Add
                   </Button>
                   <Button
                     variant="outline"
-                    className="h-8 rounded-[8px] border-black/10 dark:border-white/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] dark:bg-[#2c2c2e] px-3 shadow-none"
+                    className="h-8 rounded-[8px] border-strong bg-surface-muted px-3 shadow-none"
                     render={<Link href="/file" />}
                   >
                     <CupertinoIcon name="upload" className="size-3.5" />
@@ -1213,7 +1213,7 @@ export function DashboardWorkspace({
                   ]}
                   hasRows={filteredTransactions.length > 0}
                   emptyState={
-                    <div className="px-5 py-14 text-center text-sm text-[#8e8e93]">
+                    <div className="px-5 py-14 text-center text-sm text-tertiary">
                       No transactions found
                     </div>
                   }
@@ -1222,12 +1222,12 @@ export function DashboardWorkspace({
                     <button
                       key={transaction.id}
                       className={cn(
-                        "grid w-full grid-cols-[78px_minmax(0,1fr)_130px_120px_120px_110px_40px] items-center gap-3 px-[18px] text-left transition hover:bg-black/[0.014] dark:hover:bg-white/5",
+                        "grid w-full grid-cols-[78px_minmax(0,1fr)_130px_120px_120px_110px_40px] items-center gap-3 px-[18px] text-left transition hover:bg-surface-muted",
                         CUPERTINO_TABLE_ROW_HEIGHT_CLASS,
                       )}
                       onClick={() => setSelectedTx(transaction)}
                     >
-                      <span className="text-[11px] text-[#8e8e93]">
+                      <span className="text-[11px] text-tertiary">
                         {formatDate(transaction.date).replace(" 2026", "")}
                       </span>
                       <span className="min-w-0 pr-3">
@@ -1235,21 +1235,21 @@ export function DashboardWorkspace({
                           {transaction.merchant}
                         </span>
                         {transaction.note ? (
-                          <span className="mt-0.5 block truncate text-[10px] text-[#8e8e93]">
+                          <span className="mt-0.5 block truncate text-[10px] text-tertiary">
                             {transaction.note}
                           </span>
                         ) : null}
                       </span>
-                      <span className="truncate pr-2 text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                      <span className="truncate pr-2 text-[11px] text-secondary">
                         {transaction.category}
                       </span>
-                      <span className="truncate pr-2 text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                      <span className="truncate pr-2 text-[11px] text-secondary">
                         {transaction.wallet}
                       </span>
                       <span
                         className={cn(
                           "text-xs font-semibold",
-                          transaction.amount > 0 ? "text-[#30d158]" : "text-[#1c1c1e] dark:text-[#f2f2f7]",
+                          transaction.amount > 0 ? "text-success" : "text-primary",
                         )}
                       >
                         {transaction.amount > 0 ? "+" : "-"}
@@ -1257,7 +1257,7 @@ export function DashboardWorkspace({
                       </span>
                       <StatusBadge status={transaction.status} />
                       <span className="flex justify-center">
-                        <CupertinoIcon name="more" className="size-4 text-[#8e8e93]" />
+                        <CupertinoIcon name="more" className="size-4 text-tertiary" />
                       </span>
                     </button>
                   ))}
@@ -1265,42 +1265,42 @@ export function DashboardWorkspace({
               </section>
             ) : (
               <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_316px]">
-                <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+                <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <div>
                       <h2 className="text-[13px] font-semibold">
                         Recent Activity
                       </h2>
-                      <p className="mt-0.5 text-[11px] text-[#8e8e93]">
+                      <p className="mt-0.5 text-[11px] text-tertiary">
                         Latest wallet movements
                       </p>
                     </div>
                     <Button
                       variant="outline"
-                      className="h-8 rounded-[8px] border-black/10 dark:border-white/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] dark:bg-[#2c2c2e] px-3 shadow-none"
+                      className="h-8 rounded-[8px] border-strong bg-surface-muted px-3 shadow-none"
                       render={<Link href="/transactions" />}
                     >
                       View all
                     </Button>
                   </div>
-                  <div className="divide-y divide-black/[0.04]">
+                  <div className="divide-y divide-[var(--border-subtle)]">
                     {filteredTransactions.slice(0, 6).map((transaction) => (
                       <button
                         key={transaction.id}
                         className="flex w-full items-center gap-3 py-2.5 text-left"
                         onClick={() => setSelectedTx(transaction)}
                       >
-                        <div className="flex size-8 shrink-0 items-center justify-center rounded-[9px] bg-[#f2f2f4] dark:bg-[#2c2c2e]">
+                        <div className="flex size-8 shrink-0 items-center justify-center rounded-[9px] bg-surface-muted">
                           <CupertinoIcon
                             name={transaction.amount > 0 ? "download" : "upload"}
-                            className="size-3.5 text-[#636366] dark:text-[#8e8e93]"
+                            className="size-3.5 text-secondary"
                           />
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-xs font-medium">
                             {transaction.merchant}
                           </p>
-                          <p className="mt-0.5 truncate text-[10px] text-[#8e8e93]">
+                          <p className="mt-0.5 truncate text-[10px] text-tertiary">
                             {transaction.category} · {transaction.wallet}
                           </p>
                         </div>
@@ -1309,14 +1309,14 @@ export function DashboardWorkspace({
                             className={cn(
                               "text-xs font-semibold",
                               transaction.amount > 0
-                                ? "text-[#30d158]"
-                                : "text-[#1c1c1e] dark:text-[#f2f2f7]",
+                                ? "text-success"
+                                : "text-primary",
                             )}
                           >
                             {transaction.amount > 0 ? "+" : "-"}
                             {formatCurrency(Math.abs(transaction.amount))}
                           </p>
-                          <p className="mt-0.5 text-[10px] text-[#8e8e93]">
+                          <p className="mt-0.5 text-[10px] text-tertiary">
                             {formatDate(transaction.date).replace(" 2026", "")}
                           </p>
                         </div>
@@ -1325,16 +1325,16 @@ export function DashboardWorkspace({
                   </div>
                 </div>
 
-                <div className="rounded-[13px] bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+                <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
                   <h2 className="text-[13px] font-semibold">Wallet Mix</h2>
-                  <p className="mt-0.5 text-[11px] text-[#8e8e93]">
+                  <p className="mt-0.5 text-[11px] text-tertiary">
                     Active balance sources
                   </p>
                   <div className="mt-4 space-y-2">
                     {wallets.slice(0, 5).map((wallet) => (
                       <div
                         key={wallet.id}
-                        className="flex items-center gap-2 rounded-[10px] bg-[#f2f2f4] dark:bg-[#2c2c2e] px-2.5 py-2"
+                        className="flex items-center gap-2 rounded-[10px] bg-surface-muted px-2.5 py-2"
                       >
                         <span
                           className="size-3 rounded-full"
@@ -1343,7 +1343,7 @@ export function DashboardWorkspace({
                         <span className="min-w-0 flex-1 truncate text-xs font-medium">
                           {wallet.name}
                         </span>
-                        <span className="text-[11px] text-[#8e8e93]">
+                        <span className="text-[11px] text-tertiary">
                           {wallet.institution}
                         </span>
                       </div>
@@ -1365,33 +1365,33 @@ export function DashboardWorkspace({
 
       {selectedTx ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[color-mix(in_srgb,var(--text-primary)_30%,transparent)] p-4"
           onClick={() => setSelectedTx(null)}
         >
           <div
-            className="max-h-[90vh] w-full max-w-[460px] overflow-y-auto rounded-[20px] bg-[#f2f2f4] dark:bg-[#1c1c1e] shadow-[0_32px_100px_rgba(0,0,0,0.2)] dark:shadow-[0_32px_100px_rgba(0,0,0,0.6)]"
+            className="max-h-[90vh] w-full max-w-[460px] overflow-y-auto rounded-[20px] bg-app dark:bg-surface shadow-[0_32px_100px_rgba(0,0,0,0.2)] dark:shadow-[0_32px_100px_rgba(0,0,0,0.6)]"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="relative flex items-center justify-center px-5 pt-[18px] pb-3">
               <span className="text-[15px] font-semibold">Transaction</span>
               <button
-                className="absolute top-3.5 right-4 flex size-7 items-center justify-center rounded-full bg-black/10"
+                className="absolute top-3.5 right-4 flex size-7 items-center justify-center rounded-full bg-surface-raised"
                 onClick={() => setSelectedTx(null)}
               >
                 <CupertinoIcon
                   name="close"
-                  className="size-3.5 text-[#636366] dark:text-[#8e8e93]"
+                  className="size-3.5 text-secondary"
                 />
               </button>
             </div>
 
             <div className="flex flex-col gap-2.5 px-4 pb-5">
-              <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-3">
-                <p className="mb-1.5 text-[11px] text-[#636366] dark:text-[#8e8e93]">Amount</p>
+              <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3">
+                <p className="mb-1.5 text-[11px] text-secondary">Amount</p>
                 <p
                   className={cn(
                     "text-[26px] font-bold",
-                    selectedTx.amount > 0 ? "text-[#30d158]" : "text-[#1c1c1e] dark:text-[#f2f2f7]",
+                    selectedTx.amount > 0 ? "text-success" : "text-primary",
                   )}
                 >
                   {selectedTx.amount > 0 ? "+" : "-"}
@@ -1399,54 +1399,54 @@ export function DashboardWorkspace({
                 </p>
               </div>
 
-              <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-3">
-                <p className="mb-1.5 text-[11px] text-[#636366] dark:text-[#8e8e93]">Your note</p>
-                <p className="text-[13px] text-[#1c1c1e] dark:text-[#f2f2f7]">
+              <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3">
+                <p className="mb-1.5 text-[11px] text-secondary">Your note</p>
+                <p className="text-[13px] text-primary">
                   {selectedTx.note || "Add note"}
                 </p>
               </div>
 
-              <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-3.5">
+              <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3.5">
                 <div className="mb-3.5 grid gap-3 sm:grid-cols-3">
                   <div className="flex items-center gap-2">
-                    <div className="flex size-8 items-center justify-center rounded-[8px] bg-black/5">
+                    <div className="flex size-8 items-center justify-center rounded-[8px] bg-surface-raised">
                       <CupertinoIcon
                         name="wallet"
-                        className="size-4 text-[#636366] dark:text-[#8e8e93]"
+                        className="size-4 text-secondary"
                       />
                     </div>
                     <div className="min-w-0">
                       <p className="truncate text-[13px] font-semibold">
                         {selectedTx.category}
                       </p>
-                      <p className="truncate text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                      <p className="truncate text-[11px] text-secondary">
                         {selectedTx.merchant}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="flex size-6 items-center justify-center rounded-full bg-black/5">
+                    <div className="flex size-6 items-center justify-center rounded-full bg-surface-raised">
                       <span className="text-[11px] font-semibold">AR</span>
                     </div>
                     <div className="min-w-0">
                       <p className="truncate text-xs font-medium">
                         Alex Rahmad
                       </p>
-                      <p className="text-[10px] text-[#636366] dark:text-[#8e8e93]">Created by</p>
+                      <p className="text-[10px] text-secondary">Created by</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="flex size-6 items-center justify-center rounded-[7px] bg-black/5">
+                    <div className="flex size-6 items-center justify-center rounded-[7px] bg-surface-raised">
                       <CupertinoIcon
                         name="calendar"
-                        className="size-3.5 text-[#636366] dark:text-[#8e8e93]"
+                        className="size-3.5 text-secondary"
                       />
                     </div>
                     <div>
                       <p className="text-xs font-medium">
                         {formatDate(selectedTx.date).replace(" 2026", "")}
                       </p>
-                      <p className="text-[10px] text-[#636366] dark:text-[#8e8e93]">at 08.00</p>
+                      <p className="text-[10px] text-secondary">at 08.00</p>
                     </div>
                   </div>
                 </div>
@@ -1462,21 +1462,21 @@ export function DashboardWorkspace({
                   <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">
                     {selectedTx.wallet}
                   </span>
-                  <span className="inline-flex items-center rounded-full border border-black/10 px-2.5 py-1 text-[11px] font-medium text-[#636366] dark:text-[#8e8e93]">
+                  <span className="inline-flex items-center rounded-full border border-strong px-2.5 py-1 text-[11px] font-medium text-secondary">
                     # No tags
                   </span>
                 </div>
 
-                <button className="flex items-center gap-2 rounded-[10px] border border-black/10 bg-[#f2f2f4] dark:bg-[#2c2c2e] px-3.5 py-2.5">
-                  <span className="flex size-[22px] items-center justify-center rounded-[6px] bg-[#1c1c1e]">
+                <button className="flex items-center gap-2 rounded-[10px] border border-strong bg-surface-muted px-3.5 py-2.5">
+                  <span className="flex size-[22px] items-center justify-center rounded-[6px] bg-[var(--text-primary)]">
                     <CupertinoIcon name="paperclip" className="size-3 text-white" />
                   </span>
                   <span className="text-xs font-medium">Add attachment</span>
                 </button>
               </div>
 
-              <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-3.5">
-                <p className="mb-3 text-[11px] text-[#636366] dark:text-[#8e8e93]">
+              <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3.5">
+                <p className="mb-3 text-[11px] text-secondary">
                   Total {selectedTx.amount > 0 ? "income" : "expense"}{" "}
                   {formatCurrency(Math.abs(selectedTx.amount))} for last 12
                   months
@@ -1504,29 +1504,29 @@ export function DashboardWorkspace({
                         <YAxis hide />
                         <Bar
                           dataKey="total"
-                          fill={selectedTx.amount > 0 ? "#30d158" : "#ff453a"}
+                          fill={selectedTx.amount > 0 ? "var(--success)" : "var(--danger)"}
                           radius={[3, 3, 0, 0]}
                         />
                       </BarChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="h-full rounded-[10px] bg-[#f7f7f8] dark:bg-[#2c2c2e]" />
+                    <div className="h-full rounded-[10px] bg-surface-muted" />
                   )}
                 </div>
               </div>
 
               <div className="flex justify-end gap-2">
-                <button className="flex size-[38px] items-center justify-center rounded-[10px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e]">
-                  <CupertinoIcon name="upload" className="size-4 text-[#636366] dark:text-[#8e8e93]" />
+                <button className="flex size-[38px] items-center justify-center rounded-[10px] border border-strong bg-surface">
+                  <CupertinoIcon name="upload" className="size-4 text-secondary" />
                 </button>
-                <button className="relative flex size-[38px] items-center justify-center rounded-[10px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e]">
-                  <CupertinoIcon name="download" className="size-4 text-[#636366] dark:text-[#8e8e93]" />
-                  <span className="absolute -top-1.5 -right-1.5 rounded-[3px] bg-[#007aff] px-1 text-[7px] font-bold text-white">
+                <button className="relative flex size-[38px] items-center justify-center rounded-[10px] border border-strong bg-surface">
+                  <CupertinoIcon name="download" className="size-4 text-secondary" />
+                  <span className="absolute -top-1.5 -right-1.5 rounded-[3px] bg-[var(--accent)] px-1 text-[7px] font-bold text-white">
                     CSV
                   </span>
                 </button>
-                <button className="flex size-[38px] items-center justify-center rounded-[10px] bg-[#ff453a]/10">
-                  <CupertinoIcon name="close" className="size-4 text-[#ff453a]" />
+                <button className="flex size-[38px] items-center justify-center rounded-[10px] bg-danger/10">
+                  <CupertinoIcon name="close" className="size-4 text-danger" />
                 </button>
               </div>
             </div>

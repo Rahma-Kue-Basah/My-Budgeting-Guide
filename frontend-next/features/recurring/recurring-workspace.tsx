@@ -101,35 +101,35 @@ function PatternHistoryInline({
   pattern: DetectedRecurringPattern;
 }) {
   return (
-    <div className="space-y-3 bg-[#f7f7f8] dark:bg-[#2c2c2e] p-3">
+    <div className="space-y-3 bg-surface-muted p-3">
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-3 py-3">
-          <p className="text-[11px] font-medium text-[#8e8e93]">Occurrences</p>
-          <p className="mt-2 text-[20px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+        <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-3 py-3">
+          <p className="text-[11px] font-medium text-tertiary">Occurrences</p>
+          <p className="mt-2 text-[20px] font-semibold text-primary">
             {pattern.count}
           </p>
         </div>
-        <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-3 py-3">
-          <p className="text-[11px] font-medium text-[#8e8e93]">Average interval</p>
-          <p className="mt-2 text-[20px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+        <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-3 py-3">
+          <p className="text-[11px] font-medium text-tertiary">Average interval</p>
+          <p className="mt-2 text-[20px] font-semibold text-primary">
             {formatInterval(pattern.averageIntervalDays)}
           </p>
         </div>
-        <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-3 py-3">
-          <p className="text-[11px] font-medium text-[#8e8e93]">Match rate</p>
-          <p className="mt-2 text-[20px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+        <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-3 py-3">
+          <p className="text-[11px] font-medium text-tertiary">Match rate</p>
+          <p className="mt-2 text-[20px] font-semibold text-primary">
             {Math.round(pattern.matchRate * 100)}%
           </p>
         </div>
-        <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-3 py-3">
-          <p className="text-[11px] font-medium text-[#8e8e93]">Monthly effect</p>
-          <p className="mt-2 text-[20px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+        <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-3 py-3">
+          <p className="text-[11px] font-medium text-tertiary">Monthly effect</p>
+          <p className="mt-2 text-[20px] font-semibold text-primary">
             {formatCurrency(Math.round(pattern.monthlyEstimate))}
           </p>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-[12px] border border-black/[0.05] dark:border-white/8 bg-white">
+      <div className="overflow-hidden rounded-[12px] border border-subtle bg-surface">
         <CupertinoTable
           columnsClassName="grid-cols-[110px_90px_130px_110px_170px_minmax(260px,1fr)]"
           minWidthClassName="min-w-[980px]"
@@ -146,7 +146,7 @@ function PatternHistoryInline({
           {pattern.transactions.map((transaction) => (
             <div
               key={transaction.id}
-              className={`grid grid-cols-[110px_90px_130px_110px_170px_minmax(260px,1fr)] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+              className={`grid grid-cols-[110px_90px_130px_110px_170px_minmax(260px,1fr)] items-center gap-3 px-[18px] text-[11px] text-secondary ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
             >
               <span>{formatDate(transaction.date)}</span>
               <span>
@@ -154,12 +154,12 @@ function PatternHistoryInline({
                   ? "-"
                   : `${transaction.intervalFromPrevious} hari`}
               </span>
-              <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+              <span className="font-semibold text-primary">
                 {formatCurrency(transaction.amount)}
               </span>
               <span>{transaction.bank}</span>
               <span className="truncate">{transaction.sourceFile}</span>
-              <span className="truncate text-[#1c1c1e] dark:text-[#f2f2f7]">{transaction.description}</span>
+              <span className="truncate text-primary">{transaction.description}</span>
             </div>
           ))}
         </CupertinoTable>
@@ -289,10 +289,10 @@ export function RecurringWorkspace() {
 
   return (
     <TooltipProvider>
-      <main className="min-h-svh flex-1 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
-        <section className="sticky top-[58px] z-10 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0">
+      <main className="min-h-svh flex-1 bg-app text-primary">
+        <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
           <div className="flex w-full items-center gap-3 px-3 py-2.5">
-            <h1 className="text-[22px] font-semibold tracking-tight text-[#1c1c1e] dark:text-[#f2f2f7]">
+            <h1 className="text-[22px] font-semibold tracking-tight text-primary">
               Recurring
             </h1>
           </div>
@@ -311,13 +311,13 @@ export function RecurringWorkspace() {
             ))}
           </section>
 
-          <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+          <section className="rounded-[13px] border-0 bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
             <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
               <div className="space-y-1">
-                <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                <h2 className="text-[13px] font-semibold text-primary">
                   Detected patterns
                 </h2>
-                <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+                <p className="max-w-3xl text-[11px] leading-5 text-tertiary">
                   Klik row untuk membuka transaksi serupa di halaman Transactions atau tampilkan history di bawah row.
                 </p>
               </div>
@@ -340,7 +340,7 @@ export function RecurringWorkspace() {
               ]}
               hasRows={isHydrated && filteredPatterns.length > 0}
               emptyState={
-                <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+                <div className="px-[18px] py-10 text-center text-sm text-tertiary">
                   {!isHydrated
                     ? "Memuat recurring patterns..."
                     : "Belum ada recurring pattern yang memenuhi threshold deteksi."}
@@ -352,14 +352,14 @@ export function RecurringWorkspace() {
                   <button
                     type="button"
                     className={cn(
-                      `grid w-full grid-cols-[minmax(320px,1.6fr)_120px_150px_72px_170px_150px_96px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] text-left transition hover:bg-black/[0.014] dark:hover:bg-white/5 ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`,
-                      pattern.id === activePatternId ? "bg-[#007aff]/[0.05]" : "",
+                      `grid w-full grid-cols-[minmax(320px,1.6fr)_120px_150px_72px_170px_150px_96px] items-center gap-3 px-[18px] text-[11px] text-secondary text-left transition hover:bg-surface-muted ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`,
+                      pattern.id === activePatternId ? "bg-[color-mix(in_srgb,var(--accent)_5%,transparent)]" : "",
                     )}
                     onClick={() => openPatternTransactions(pattern)}
                   >
                     <div className="min-w-0 space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="truncate text-[11px] font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">
+                        <span className="truncate text-[11px] font-medium text-primary">
                           {pattern.merchantName}
                         </span>
                         <TypeChip type={pattern.type} />
@@ -369,22 +369,22 @@ export function RecurringWorkspace() {
                               "inline-flex h-6 items-center rounded-full border px-2 text-[11px] font-medium",
                               pattern.categoryColor
                                 ? CATEGORY_COLOR_STYLES[pattern.categoryColor].badge
-                                : "border-black/10 dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] text-[#636366] dark:text-[#8e8e93]",
+                                : "border-strong bg-surface-muted text-secondary",
                             )}
                           >
                             {pattern.categoryName}
                           </span>
                         ) : null}
                       </div>
-                      <p className="truncate text-[11px] text-[#8e8e93]">
+                      <p className="truncate text-[11px] text-tertiary">
                         {pattern.descriptionSample}
                       </p>
                     </div>
                     <span className="truncate">{pattern.cadenceLabel}</span>
-                    <span className="truncate font-semibold text-[#1c1c1e] dark:text-[#f2f2f7] tabular-nums">
+                    <span className="truncate font-semibold text-primary tabular-nums">
                       {formatCurrency(pattern.typicalAmount)}
                     </span>
-                    <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7] tabular-nums">{pattern.count}</span>
+                    <span className="font-semibold text-primary tabular-nums">{pattern.count}</span>
                     <div className="min-w-0 space-y-1">
                       <p className="truncate">{formatDate(pattern.nextExpected)}</p>
                       <DueChip daysUntilNext={pattern.daysUntilNext} />
@@ -401,7 +401,7 @@ export function RecurringWorkspace() {
                           render={
                             <button
                               type="button"
-                              className="flex size-7 items-center justify-center rounded-[7px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] text-[#636366] dark:text-[#8e8e93] transition-colors hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+                              className="flex size-7 items-center justify-center rounded-[7px] border border-strong bg-surface text-secondary transition-colors hover:bg-surface-muted"
                             />
                           }
                           onClick={(event) => {
@@ -422,7 +422,7 @@ export function RecurringWorkspace() {
                           render={
                             <button
                               type="button"
-                              className="flex size-7 items-center justify-center rounded-[7px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] text-[#636366] dark:text-[#8e8e93] transition-colors hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+                              className="flex size-7 items-center justify-center rounded-[7px] border border-strong bg-surface text-secondary transition-colors hover:bg-surface-muted"
                             />
                           }
                           onClick={(event) => {
@@ -438,7 +438,7 @@ export function RecurringWorkspace() {
                   </button>
 
                   {pattern.id === activePatternId ? (
-                    <div className="border-t border-black/[0.04]">
+                    <div className="border-t border-subtle">
                       <PatternHistoryInline pattern={pattern} />
                     </div>
                   ) : null}
@@ -448,18 +448,18 @@ export function RecurringWorkspace() {
           </section>
 
           <div className="grid gap-3 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-            <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+            <section className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
               <div className="space-y-1">
-                <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                <h2 className="text-[13px] font-semibold text-primary">
                   Upcoming recurring
                 </h2>
-                <p className="text-[11px] leading-5 text-[#8e8e93]">
+                <p className="text-[11px] leading-5 text-tertiary">
                   Pattern yang diperkirakan jatuh tempo dalam waktu dekat.
                 </p>
               </div>
               <div className="mt-4 space-y-3">
                 {upcomingPatterns.length === 0 ? (
-                  <div className="rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-4 py-10 text-center text-sm text-[#8e8e93]">
+                  <div className="rounded-[12px] bg-surface-muted px-4 py-10 text-center text-sm text-tertiary">
                     Belum ada pattern recurring yang dekat dengan due date.
                   </div>
                 ) : (
@@ -468,14 +468,14 @@ export function RecurringWorkspace() {
                       key={pattern.id}
                       type="button"
                       onClick={() => openPatternTransactions(pattern)}
-                      className="flex w-full flex-col items-start gap-2 rounded-[12px] bg-[#f7f7f8] dark:bg-[#2c2c2e] px-3 py-3 text-left transition hover:bg-[#ededf0] dark:hover:bg-[#3a3a3c]"
+                      className="flex w-full flex-col items-start gap-2 rounded-[12px] bg-surface-muted px-3 py-3 text-left transition hover:bg-surface-raised"
                     >
                       <div className="flex w-full items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="truncate text-[11px] font-medium text-[#1c1c1e] dark:text-[#f2f2f7]">
+                          <p className="truncate text-[11px] font-medium text-primary">
                             {pattern.merchantName}
                           </p>
-                          <p className="mt-0.5 truncate text-[11px] text-[#8e8e93]">
+                          <p className="mt-0.5 truncate text-[11px] text-tertiary">
                             {pattern.cadenceLabel} · {formatCurrency(pattern.typicalAmount)}
                           </p>
                         </div>
@@ -494,13 +494,13 @@ export function RecurringWorkspace() {
               </div>
             </section>
 
-            <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+            <section className="rounded-[13px] border-0 bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
               <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
                 <div className="space-y-1">
-                  <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                  <h2 className="text-[13px] font-semibold text-primary">
                     Repeated exact transactions
                   </h2>
-                  <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+                  <p className="max-w-3xl text-[11px] leading-5 text-tertiary">
                     Deskripsi dan nominal identik yang muncul berulang tanpa heuristik cadence.
                   </p>
                 </div>
@@ -522,7 +522,7 @@ export function RecurringWorkspace() {
                 ]}
                 hasRows={isHydrated && repeatedPatterns.length > 0}
                 emptyState={
-                  <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+                  <div className="px-[18px] py-10 text-center text-sm text-tertiary">
                     {!isHydrated
                       ? "Memuat repeated transactions..."
                       : "Belum ada transaksi exact match yang berulang."}
@@ -533,17 +533,17 @@ export function RecurringWorkspace() {
                   <button
                     key={`${item.type}-${item.amount}-${item.description}`}
                     type="button"
-                    className={`grid w-full grid-cols-[minmax(320px,1.5fr)_80px_130px_80px_110px_70px_70px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] text-left transition hover:bg-black/[0.014] dark:hover:bg-white/5 ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                    className={`grid w-full grid-cols-[minmax(320px,1.5fr)_80px_130px_80px_110px_70px_70px] items-center gap-3 px-[18px] text-[11px] text-secondary text-left transition hover:bg-surface-muted ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
                     onClick={() => openRepeatedTransactions(item)}
                   >
-                    <span className="truncate text-[11px] text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    <span className="truncate text-[11px] text-primary">
                       {item.description}
                     </span>
                     <span className="capitalize">{item.type}</span>
-                    <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    <span className="font-semibold text-primary">
                       {formatCurrency(item.amount)}
                     </span>
-                    <span className="font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">{item.count}</span>
+                    <span className="font-semibold text-primary">{item.count}</span>
                     <span>{formatDate(item.lastDate)}</span>
                     <span>{item.sourceFiles.length}</span>
                     <span className="flex justify-end">
@@ -552,7 +552,7 @@ export function RecurringWorkspace() {
                           render={
                             <button
                               type="button"
-                              className="flex size-7 items-center justify-center rounded-[7px] border border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] text-[#636366] dark:text-[#8e8e93] transition-colors hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+                              className="flex size-7 items-center justify-center rounded-[7px] border border-strong bg-surface text-secondary transition-colors hover:bg-surface-muted"
                             />
                           }
                           onClick={(event) => {

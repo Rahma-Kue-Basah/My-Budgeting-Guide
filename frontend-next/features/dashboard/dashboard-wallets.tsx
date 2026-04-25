@@ -37,7 +37,7 @@ export const defaultDashboardWallets: DashboardWallet[] = [
     balance: 18450000,
     tone: "blue",
     abbr: "BK",
-    color: "#1155cc",
+    color: "var(--accent)",
   },
   {
     id: "wallet-mandiri",
@@ -46,7 +46,7 @@ export const defaultDashboardWallets: DashboardWallet[] = [
     balance: 5230000,
     tone: "orange",
     abbr: "MD",
-    color: "#e8a900",
+    color: "var(--warning)",
   },
   {
     id: "wallet-chase",
@@ -55,7 +55,7 @@ export const defaultDashboardWallets: DashboardWallet[] = [
     balance: 1260000,
     tone: "slate",
     abbr: "CH",
-    color: "#0a2e6b",
+    color: "var(--accent)",
   },
   {
     id: "wallet-amex",
@@ -64,7 +64,7 @@ export const defaultDashboardWallets: DashboardWallet[] = [
     balance: 3120000,
     tone: "orange",
     abbr: "AM",
-    color: "#b8860b",
+    color: "var(--warning)",
   },
 ];
 
@@ -115,7 +115,7 @@ function normalizeWallet(value: unknown): DashboardWallet | null {
     balance: walletBalance,
     tone: walletTone,
     abbr: wallet.abbr || initials || "WL",
-    color: wallet.color || "#636366",
+    color: wallet.color || "var(--text-secondary)",
   };
 }
 
@@ -249,10 +249,10 @@ export function WalletDot({ tone }: { tone: WalletTone }) {
     <span
       className={cn(
         "size-2.5 rounded-full",
-        tone === "blue" && "bg-[#007aff]",
-        tone === "green" && "bg-[#30d158]",
-        tone === "orange" && "bg-[#ff9f0a]",
-        tone === "slate" && "bg-[#1c1c1e] dark:bg-[#636366]",
+        tone === "blue" && "bg-[var(--accent)]",
+        tone === "green" && "bg-success",
+        tone === "orange" && "bg-warning",
+        tone === "slate" && "bg-[var(--text-primary)] dark:bg-surface-raised",
       )}
     />
   );
@@ -277,14 +277,14 @@ export function WalletList({
 
   return (
     <div className={cn("relative", className)}>
-      <div className="pl-2.5 pb-0.75 text-[10px] font-semibold tracking-[0.07em] text-[#aeaeb2] dark:text-[#636366] dark:text-[#8e8e93] uppercase">
+      <div className="pl-2.5 pb-0.75 text-[10px] font-semibold tracking-[0.07em] text-[var(--text-tertiary)] dark:text-[var(--text-secondary)] uppercase">
         Wallets
       </div>
 
       <button
         className={cn(
           "mb-px flex h-[36px] w-full items-center gap-[9px] rounded-[8px] border-0 px-2.5 text-left",
-          "bg-[#f2f2f4] dark:bg-[#2c2c2e] hover:bg-black/6 dark:hover:bg-white/8",
+          "bg-surface-muted hover:bg-surface-muted",
         )}
         onClick={() => setIsOpen((current) => !current)}
         type="button"
@@ -298,24 +298,24 @@ export function WalletList({
             {selectedWallet.abbr}
           </span>
         ) : (
-          <span className="flex size-5 shrink-0 items-center justify-center rounded-[6px] bg-[#007aff]">
+          <span className="flex size-5 shrink-0 items-center justify-center rounded-[6px] bg-[var(--accent)]">
             <CupertinoIcon name="wallet" className="size-3 text-white" />
           </span>
         )}
-        <span className="min-w-0 flex-1 truncate text-[13px] font-normal text-[#1c1c1e] dark:text-[#f2f2f7]">
+        <span className="min-w-0 flex-1 truncate text-[13px] font-normal text-primary">
           {selectedLabel}
         </span>
         {iconEnd ? <span className="ml-auto flex size-3.5 items-center">{iconEnd}</span> : null}
       </button>
 
       {isOpen ? (
-        <div className="absolute top-[calc(100%+4px)] right-0 left-0 z-40 rounded-[10px] border border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#2c2c2e] p-1 shadow-[0_12px_28px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_28px_rgba(0,0,0,0.4)]">
+        <div className="absolute top-[calc(100%+4px)] right-0 left-0 z-40 rounded-[10px] border border-subtle bg-surface dark:bg-surface-muted p-1 shadow-[0_12px_28px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_28px_rgba(0,0,0,0.4)]">
           <button
             className={cn(
               "flex w-full items-center gap-2.5 rounded-[8px] border-0 px-2 py-1.5 text-left",
               activeWallet === "all"
-                ? "bg-[#007aff]/10"
-                : "hover:bg-black/3 dark:hover:bg-white/8",
+                ? "bg-[color-mix(in_srgb,var(--accent)_10%,transparent)]"
+                : "hover:bg-surface-muted",
             )}
             onClick={() => {
               setActiveWallet("all");
@@ -323,19 +323,19 @@ export function WalletList({
             }}
             type="button"
           >
-            <span className="flex size-7 shrink-0 items-center justify-center rounded-[7px] bg-[#007aff]">
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-[7px] bg-[var(--accent)]">
               <CupertinoIcon name="wallet" className="size-3.5 text-white" />
             </span>
             <span
               className={cn(
                 "min-w-0 flex-1 truncate text-xs font-medium",
-                activeWallet === "all" ? "text-[#007aff]" : "text-[#1c1c1e] dark:text-[#f2f2f7]",
+                activeWallet === "all" ? "text-accent" : "text-primary",
               )}
             >
               All Wallets
             </span>
             {activeWallet === "all" ? (
-              <CupertinoIcon name="check" className="size-3.5 text-[#007aff]" />
+              <CupertinoIcon name="check" className="size-3.5 text-accent" />
             ) : null}
           </button>
 
@@ -345,8 +345,8 @@ export function WalletList({
               className={cn(
                 "flex w-full items-center gap-2.5 rounded-[8px] border-0 px-2 py-1.5 text-left",
                 activeWallet === wallet.name
-                  ? "bg-[#007aff]/10"
-                  : "hover:bg-black/3 dark:hover:bg-white/8",
+                  ? "bg-[color-mix(in_srgb,var(--accent)_10%,transparent)]"
+                  : "hover:bg-surface-muted",
               )}
               onClick={() => {
                 setActiveWallet(wallet.name);
@@ -364,32 +364,32 @@ export function WalletList({
                 className={cn(
                   "min-w-0 flex-1 truncate text-xs font-medium",
                   activeWallet === wallet.name
-                    ? "text-[#007aff]"
-                    : "text-[#1c1c1e] dark:text-[#f2f2f7]",
+                    ? "text-accent"
+                    : "text-primary",
                 )}
               >
                 {wallet.name}
               </span>
               {activeWallet === wallet.name ? (
-                <CupertinoIcon name="check" className="size-3.5 text-[#007aff]" />
+                <CupertinoIcon name="check" className="size-3.5 text-accent" />
               ) : null}
             </button>
           ))}
 
-          <div className="my-1 h-px bg-black/[0.06] dark:bg-white/10" />
+          <div className="my-1 h-px bg-surface-muted" />
 
           <button
-            className="flex w-full items-center gap-2.5 rounded-[8px] border-0 bg-transparent px-2 py-1.5 text-left hover:bg-black/3 dark:hover:bg-white/8"
+            className="flex w-full items-center gap-2.5 rounded-[8px] border-0 bg-transparent px-2 py-1.5 text-left hover:bg-surface-muted"
             onClick={() => {
               setIsOpen(false);
               onAddWallet();
             }}
             type="button"
           >
-            <span className="flex size-7 shrink-0 items-center justify-center rounded-[7px] border border-dashed border-black/20 dark:border-white/20">
-              <CupertinoIcon name="plus" className="size-3.5 text-[#aeaeb2] dark:text-[#636366] dark:text-[#8e8e93]" />
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-[7px] border border-dashed border-strong">
+              <CupertinoIcon name="plus" className="size-3.5 text-tertiary dark:text-secondary" />
             </span>
-            <span className="text-xs text-[#aeaeb2] dark:text-[#636366] dark:text-[#8e8e93]">Add wallet</span>
+            <span className="text-xs text-tertiary dark:text-secondary">Add wallet</span>
           </button>
         </div>
       ) : null}
@@ -419,11 +419,11 @@ export function AddWalletDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[color-mix(in_srgb,var(--text-primary)_30%,transparent)] p-4"
       onClick={() => onOpenChange(false)}
     >
       <form
-        className="w-full max-w-[380px] rounded-[18px] bg-[#f2f2f4] dark:bg-[#1c1c1e] p-4 shadow-[0_32px_100px_rgba(0,0,0,0.2)] dark:shadow-[0_32px_100px_rgba(0,0,0,0.6)]"
+        className="w-full max-w-[380px] rounded-[18px] bg-app dark:bg-surface p-4 shadow-[0_32px_100px_rgba(0,0,0,0.2)] dark:shadow-[0_32px_100px_rgba(0,0,0,0.6)]"
         onSubmit={(event) => {
           event.preventDefault();
           addWallet({
@@ -446,21 +446,21 @@ export function AddWalletDialog({
       >
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <p className="text-[11px] text-[#8e8e93]">Wallet</p>
-            <h2 className="text-[15px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">Add wallet</h2>
+            <p className="text-[11px] text-tertiary">Wallet</p>
+            <h2 className="text-[15px] font-semibold text-primary">Add wallet</h2>
           </div>
           <button
             type="button"
-            className="flex size-7 items-center justify-center rounded-full bg-black/10 dark:bg-white/10"
+            className="flex size-7 items-center justify-center rounded-full bg-surface-raised"
             onClick={() => onOpenChange(false)}
           >
-            <CupertinoIcon name="close" className="size-3.5 text-[#636366] dark:text-[#8e8e93]" />
+            <CupertinoIcon name="close" className="size-3.5 text-secondary" />
           </button>
         </div>
 
         <div className="space-y-2.5">
-          <label className="block rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-3">
-            <span className="mb-1.5 flex items-center gap-1.5 text-[11px] text-[#636366] dark:text-[#8e8e93]">
+          <label className="block rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3">
+            <span className="mb-1.5 flex items-center gap-1.5 text-[11px] text-secondary">
               <CupertinoIcon name="wallet" className="size-3" />
               Wallet name
             </span>
@@ -473,11 +473,11 @@ export function AddWalletDialog({
                 }))
               }
               placeholder="e.g. BCA Everyday"
-              className="w-full border-0 bg-transparent text-sm font-medium text-[#1c1c1e] dark:text-[#f2f2f7] outline-none placeholder:text-[#c7c7cc] dark:placeholder:text-[#48484a]"
+              className="w-full border-0 bg-transparent text-sm font-medium text-primary outline-none placeholder:text-tertiary"
             />
           </label>
-          <label className="block rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-3">
-            <span className="mb-1.5 block text-[11px] text-[#636366] dark:text-[#8e8e93]">
+          <label className="block rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3">
+            <span className="mb-1.5 block text-[11px] text-secondary">
               Institution
             </span>
             <input
@@ -489,11 +489,11 @@ export function AddWalletDialog({
                 }))
               }
               placeholder="Bank or wallet provider"
-              className="w-full border-0 bg-transparent text-sm font-medium text-[#1c1c1e] dark:text-[#f2f2f7] outline-none placeholder:text-[#c7c7cc] dark:placeholder:text-[#48484a]"
+              className="w-full border-0 bg-transparent text-sm font-medium text-primary outline-none placeholder:text-tertiary"
             />
           </label>
-          <label className="block rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-3">
-            <span className="mb-1.5 block text-[11px] text-[#636366] dark:text-[#8e8e93]">
+          <label className="block rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3">
+            <span className="mb-1.5 block text-[11px] text-secondary">
               Current balance
             </span>
             <input
@@ -506,11 +506,11 @@ export function AddWalletDialog({
               }
               inputMode="numeric"
               placeholder="18500000"
-              className="w-full border-0 bg-transparent text-sm font-medium text-[#1c1c1e] dark:text-[#f2f2f7] outline-none placeholder:text-[#c7c7cc] dark:placeholder:text-[#48484a]"
+              className="w-full border-0 bg-transparent text-sm font-medium text-primary outline-none placeholder:text-tertiary"
             />
           </label>
-          <div className="rounded-[12px] bg-white dark:bg-[#2c2c2e] px-4 py-3">
-            <span className="mb-2 block text-[11px] text-[#636366] dark:text-[#8e8e93]">
+          <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3">
+            <span className="mb-2 block text-[11px] text-secondary">
               Wallet color
             </span>
             <div className="grid grid-cols-6 gap-2">
@@ -519,8 +519,8 @@ export function AddWalletDialog({
                   key={option.name}
                   type="button"
                   className={cn(
-                    "flex size-8 items-center justify-center rounded-[8px] ring-offset-2 ring-offset-white dark:ring-offset-[#2c2c2e]",
-                    walletDraft.color === option.color && "ring-2 ring-[#007aff]",
+                    "flex size-8 items-center justify-center rounded-[8px] ring-offset-2 ring-offset-surface dark:ring-offset-surface-muted",
+                    walletDraft.color === option.color && "ring-2 ring-[var(--accent)]",
                   )}
                   style={{ background: option.color }}
                   onClick={() =>
@@ -533,7 +533,7 @@ export function AddWalletDialog({
                   aria-label={option.name}
                 >
                   {walletDraft.color === option.color ? (
-                    <span className="size-2 rounded-full bg-white" />
+                    <span className="size-2 rounded-full bg-surface" />
                   ) : null}
                 </button>
               ))}
@@ -545,14 +545,14 @@ export function AddWalletDialog({
           <Button
             type="button"
             variant="outline"
-            className="rounded-[10px] border-black/10 dark:border-white/10 bg-white dark:bg-[#2c2c2e] dark:text-[#f2f2f7] shadow-none dark:hover:bg-[#3a3a3c]"
+            className="rounded-[10px] border-strong bg-surface dark:bg-surface-muted dark:text-primary shadow-none dark:hover:bg-surface-raised"
             onClick={() => onOpenChange(false)}
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            className="rounded-[10px] bg-[#1c1c1e] dark:bg-[#3a3a3c] text-white shadow-none hover:bg-black dark:hover:bg-[#48484a]"
+            className="rounded-[10px] bg-[var(--text-primary)] dark:bg-surface-raised text-white shadow-none hover:bg-[color-mix(in_srgb,var(--text-primary)_88%,black)] dark:hover:bg-surface-raised"
           >
             Add wallet
           </Button>

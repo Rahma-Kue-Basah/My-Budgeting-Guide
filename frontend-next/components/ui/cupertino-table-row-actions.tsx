@@ -39,10 +39,10 @@ export function CupertinoTableRowActions({
           }}
           disabled={action.disabled}
           className={cn(
-            "flex size-7 items-center justify-center rounded-[7px] border bg-white dark:bg-[#1c1c1e] transition-colors disabled:pointer-events-none disabled:opacity-50",
+            "flex size-7 items-center justify-center rounded-[7px] border bg-surface transition-colors disabled:pointer-events-none disabled:opacity-50",
             action.tone === "destructive"
-              ? "border-[#ff453a]/20 text-[#ff453a] hover:bg-[#fff5f5] dark:hover:bg-[#ff453a]/10"
-              : "border-black/10 dark:border-white/10 text-[#636366] dark:text-[#8e8e93] hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]",
+              ? "border-danger/20 text-danger hover:bg-danger/10 dark:hover:bg-danger/10"
+              : "border-strong text-secondary hover:bg-surface-muted",
           )}
         >
           {action.children ?? (

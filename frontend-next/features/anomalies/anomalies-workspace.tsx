@@ -92,21 +92,21 @@ function SummaryCard({
   icon: "alert" | "tag" | "search";
 }) {
   return (
-    <div className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+    <div className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
-          <p className="text-[11px] font-medium tracking-[0.02em] text-[#8e8e93]">
+          <p className="text-[11px] font-medium tracking-[0.02em] text-tertiary">
             {title}
           </p>
-          <p className="text-[24px] font-semibold tracking-[-0.03em] text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <p className="text-[24px] font-semibold tracking-[-0.03em] text-primary">
             {value}
           </p>
         </div>
-        <span className="flex size-9 items-center justify-center rounded-[10px] bg-[#f2f2f4] dark:bg-[#3a3a3c]">
-          <CupertinoIcon name={icon} className="size-4 text-[#636366] dark:text-[#8e8e93]" />
+        <span className="flex size-9 items-center justify-center rounded-[10px] bg-surface-raised">
+          <CupertinoIcon name={icon} className="size-4 text-secondary" />
         </span>
       </div>
-      <p className="mt-3 text-[11px] leading-5 text-[#8e8e93]">{note}</p>
+      <p className="mt-3 text-[11px] leading-5 text-tertiary">{note}</p>
     </div>
   );
 }
@@ -505,10 +505,10 @@ export function ReviewAlertsWorkspace() {
   }
 
   return (
-    <main className="min-h-svh flex-1 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
-      <section className="sticky top-[58px] z-10 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0">
+    <main className="min-h-svh flex-1 bg-app text-primary">
+      <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
         <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
             Anomalies
           </h1>
         </div>
@@ -527,34 +527,34 @@ export function ReviewAlertsWorkspace() {
           ))}
         </section>
 
-        <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <section className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="space-y-1">
-            <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+            <h2 className="text-[13px] font-semibold text-primary">
               Alert filters
             </h2>
-            <p className="text-[11px] leading-5 text-[#8e8e93]">
+            <p className="text-[11px] leading-5 text-tertiary">
               Saring anomali berdasarkan source, kategori, tipe transaksi, dan rentang nominal.
             </p>
           </div>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">Search</span>
+              <span className="text-[11px] font-medium text-tertiary">Search</span>
               <div className="relative">
                 <CupertinoIcon
                   name="search"
-                  className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-[#8e8e93]"
+                  className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-tertiary"
                 />
                 <Input
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Cari deskripsi, source, atau kategori"
-                  className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] pl-9 shadow-none focus-visible:ring-[#007aff]/30"
+                  className="h-10 rounded-[10px] border-subtle bg-surface-muted pl-9 shadow-none focus-visible:ring-[var(--accent)]/30"
                 />
               </div>
             </label>
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">Type</span>
+              <span className="text-[11px] font-medium text-tertiary">Type</span>
               <CupertinoSelect
                 icon="repeat"
                 value={typeFilter}
@@ -565,7 +565,7 @@ export function ReviewAlertsWorkspace() {
               />
             </label>
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">Source</span>
+              <span className="text-[11px] font-medium text-tertiary">Source</span>
               <CupertinoSelect
                 icon="wallet"
                 value={bankFilter}
@@ -576,7 +576,7 @@ export function ReviewAlertsWorkspace() {
               />
             </label>
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">Category</span>
+              <span className="text-[11px] font-medium text-tertiary">Category</span>
               <CupertinoSelect
                 icon="tag"
                 value={categoryFilter}
@@ -590,30 +590,30 @@ export function ReviewAlertsWorkspace() {
 
           <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">Minimum amount</span>
+              <span className="text-[11px] font-medium text-tertiary">Minimum amount</span>
               <Input
                 inputMode="numeric"
                 placeholder="Nominal minimum"
                 value={amountMin}
                 onChange={(event) => setAmountMin(event.target.value)}
-                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
               />
             </label>
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">Maximum amount</span>
+              <span className="text-[11px] font-medium text-tertiary">Maximum amount</span>
               <Input
                 inputMode="numeric"
                 placeholder="Nominal maksimum"
                 value={amountMax}
                 onChange={(event) => setAmountMax(event.target.value)}
-                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
               />
             </label>
             <div className="flex items-end">
               <Button
                 variant="outline"
                 onClick={resetFilters}
-                className="h-10 rounded-[10px] border-black/[0.08] bg-[#f7f7f8] px-3 text-[#1c1c1e] dark:text-[#f2f2f7] shadow-none hover:bg-[#ededf0] dark:hover:bg-[#3a3a3c]"
+                className="h-10 rounded-[10px] border-subtle bg-surface-muted px-3 text-primary shadow-none hover:bg-surface-raised"
               >
                 Reset filters
               </Button>
@@ -633,12 +633,12 @@ export function ReviewAlertsWorkspace() {
           onOpenSelectedRange={openSelectedAmountRangeInTransactions}
         />
 
-        <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <section className="rounded-[13px] border-0 bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="space-y-1 px-[18px] pt-[18px] pb-3">
-            <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+            <h2 className="text-[13px] font-semibold text-primary">
               Possible duplicate
             </h2>
-            <p className="text-[11px] leading-5 text-[#8e8e93]">
+            <p className="text-[11px] leading-5 text-tertiary">
               Transaksi identik di hari yang sama yang layak dicek ulang.
             </p>
           </div>
@@ -654,7 +654,7 @@ export function ReviewAlertsWorkspace() {
             ]}
             hasRows={isHydrated && filteredSameDayClusters.length > 0}
             emptyState={
-              <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+              <div className="px-[18px] py-10 text-center text-sm text-tertiary">
                 {!isHydrated
                   ? "Memuat potensi duplikasi..."
                   : "Belum ada cluster transaksi yang mencurigakan."}
@@ -664,7 +664,7 @@ export function ReviewAlertsWorkspace() {
             {filteredSameDayClusters.map((item) => (
                   <button
                     key={`${item.date}-${item.type}-${item.amount}-${item.description}`}
-                    className={`grid w-full grid-cols-[110px_minmax(0,1fr)_90px_140px_90px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] text-left transition hover:bg-black/[0.014] dark:hover:bg-white/5 ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                    className={`grid w-full grid-cols-[110px_minmax(0,1fr)_90px_140px_90px] items-center gap-3 px-[18px] text-[11px] text-secondary text-left transition hover:bg-surface-muted ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
                     onClick={() =>
                       router.push(
                         buildTransactionsHref({
@@ -685,24 +685,24 @@ export function ReviewAlertsWorkspace() {
                       )
                     }
                   >
-                    <span className="text-[11px] text-[#636366] dark:text-[#8e8e93]">{formatDate(item.date)}</span>
-                    <span className="truncate text-[11px] text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    <span className="text-[11px] text-secondary">{formatDate(item.date)}</span>
+                    <span className="truncate text-[11px] text-primary">
                       {item.description}
                     </span>
-                    <span className="capitalize text-[11px] text-[#636366] dark:text-[#8e8e93]">{item.type}</span>
-                    <span className="text-[11px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">{formatCurrency(item.amount)}</span>
-                    <span className="text-[11px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">{item.count}</span>
+                    <span className="capitalize text-[11px] text-secondary">{item.type}</span>
+                    <span className="text-[11px] font-semibold text-primary">{formatCurrency(item.amount)}</span>
+                    <span className="text-[11px] font-semibold text-primary">{item.count}</span>
                   </button>
                 ))}
           </CupertinoTable>
         </section>
 
-        <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <section className="rounded-[13px] border-0 bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="space-y-1 px-[18px] pt-[18px] pb-3">
-            <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+            <h2 className="text-[13px] font-semibold text-primary">
               Large amount alerts
             </h2>
-            <p className="text-[11px] leading-5 text-[#8e8e93]">
+            <p className="text-[11px] leading-5 text-tertiary">
               Transaksi yang jauh lebih besar dari pola nominal umum.
             </p>
             <div className="flex flex-wrap gap-2 pt-2">
@@ -728,7 +728,7 @@ export function ReviewAlertsWorkspace() {
             ]}
             hasRows={isHydrated && filteredAmountOutliers.length > 0}
             emptyState={
-              <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+              <div className="px-[18px] py-10 text-center text-sm text-tertiary">
                 {!isHydrated
                   ? "Memuat alert nominal besar..."
                   : "Belum ada transaksi yang melewati threshold nominal besar."}
@@ -738,7 +738,7 @@ export function ReviewAlertsWorkspace() {
             {filteredAmountOutliers.map((transaction) => (
                   <button
                     key={transaction.id}
-                    className={`grid w-full grid-cols-[110px_minmax(0,1.3fr)_150px_minmax(220px,1fr)_130px_90px_140px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] text-left transition hover:bg-black/[0.014] dark:hover:bg-white/5 ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                    className={`grid w-full grid-cols-[110px_minmax(0,1.3fr)_150px_minmax(220px,1fr)_130px_90px_140px] items-center gap-3 px-[18px] text-[11px] text-secondary text-left transition hover:bg-surface-muted ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
                     onClick={() =>
                       router.push(
                         buildTransactionsHref({
@@ -747,8 +747,8 @@ export function ReviewAlertsWorkspace() {
                       )
                     }
                   >
-                    <span className="text-[11px] text-[#636366] dark:text-[#8e8e93]">{formatDate(transaction.date)}</span>
-                    <span className="truncate text-[11px] text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    <span className="text-[11px] text-secondary">{formatDate(transaction.date)}</span>
+                    <span className="truncate text-[11px] text-primary">
                       {transaction.description}
                     </span>
                     <span>
@@ -759,28 +759,28 @@ export function ReviewAlertsWorkspace() {
                           {transaction.category.name}
                         </span>
                       ) : (
-                        <span className="text-xs text-[#8e8e93]">-</span>
+                        <span className="text-xs text-tertiary">-</span>
                       )}
                     </span>
-                    <span className="text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                    <span className="text-[11px] text-secondary">
                       {transaction.anomalyBasis}
                     </span>
-                    <span className="text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                    <span className="text-[11px] text-secondary">
                       {formatDeltaCurrency(transaction.amount - anomalyStats.mean)}
                     </span>
-                    <span className="capitalize text-[11px] text-[#636366] dark:text-[#8e8e93]">{transaction.type}</span>
-                    <span className="text-[11px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">{formatCurrency(transaction.amount)}</span>
+                    <span className="capitalize text-[11px] text-secondary">{transaction.type}</span>
+                    <span className="text-[11px] font-semibold text-primary">{formatCurrency(transaction.amount)}</span>
                   </button>
                 ))}
           </CupertinoTable>
         </section>
 
-        <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <section className="rounded-[13px] border-0 bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="space-y-1 px-[18px] pt-[18px] pb-3">
-            <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+            <h2 className="text-[13px] font-semibold text-primary">
               Off-category alerts
             </h2>
-            <p className="text-[11px] leading-5 text-[#8e8e93]">
+            <p className="text-[11px] leading-5 text-tertiary">
               Transaksi yang nominalnya jauh di atas pola kategori yang sama.
             </p>
           </div>
@@ -797,7 +797,7 @@ export function ReviewAlertsWorkspace() {
             ]}
             hasRows={isHydrated && filteredCategoryAlerts.length > 0}
             emptyState={
-              <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+              <div className="px-[18px] py-10 text-center text-sm text-tertiary">
                 {!isHydrated
                   ? "Memuat alert per kategori..."
                   : "Belum ada transaksi yang terlihat menyimpang dalam kategorinya."}
@@ -807,7 +807,7 @@ export function ReviewAlertsWorkspace() {
             {filteredCategoryAlerts.map((transaction) => (
                   <button
                     key={`${transaction.id}-category-alert`}
-                    className={`grid w-full grid-cols-[110px_minmax(0,1.4fr)_150px_150px_150px_140px] items-center gap-3 px-[18px] text-[11px] text-[#636366] dark:text-[#8e8e93] text-left transition hover:bg-black/[0.014] dark:hover:bg-white/5 ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
+                    className={`grid w-full grid-cols-[110px_minmax(0,1.4fr)_150px_150px_150px_140px] items-center gap-3 px-[18px] text-[11px] text-secondary text-left transition hover:bg-surface-muted ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
                     onClick={() =>
                       router.push(
                         buildTransactionsHref({
@@ -816,8 +816,8 @@ export function ReviewAlertsWorkspace() {
                       )
                     }
                   >
-                    <span className="text-[11px] text-[#636366] dark:text-[#8e8e93]">{formatDate(transaction.date)}</span>
-                    <span className="truncate text-[11px] text-[#1c1c1e] dark:text-[#f2f2f7]">
+                    <span className="text-[11px] text-secondary">{formatDate(transaction.date)}</span>
+                    <span className="truncate text-[11px] text-primary">
                       {transaction.description}
                     </span>
                     <span>
@@ -831,15 +831,15 @@ export function ReviewAlertsWorkspace() {
                         {transaction.category?.name ?? "-"}
                       </span>
                     </span>
-                    <span className="text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                    <span className="text-[11px] text-secondary">
                       {formatCurrency(Math.round(transaction.categoryMean))}
                     </span>
-                    <span className="text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                    <span className="text-[11px] text-secondary">
                       {formatDeltaCurrency(
                         transaction.amount - transaction.categoryMean,
                       )}
                     </span>
-                    <span className="text-[11px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">{formatCurrency(transaction.amount)}</span>
+                    <span className="text-[11px] font-semibold text-primary">{formatCurrency(transaction.amount)}</span>
                   </button>
                 ))}
           </CupertinoTable>

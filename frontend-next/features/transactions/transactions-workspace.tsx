@@ -53,21 +53,21 @@ function SummaryCard({
   icon: "database" | "download" | "upload";
 }) {
   return (
-    <div className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+    <div className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
-          <p className="text-[11px] font-medium tracking-[0.02em] text-[#8e8e93]">
+          <p className="text-[11px] font-medium tracking-[0.02em] text-tertiary">
             {title}
           </p>
-          <p className="text-[24px] font-semibold tracking-[-0.03em] text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <p className="text-[24px] font-semibold tracking-[-0.03em] text-primary">
             {value}
           </p>
         </div>
-        <span className="flex size-9 items-center justify-center rounded-[10px] bg-[#f2f2f4] dark:bg-[#3a3a3c]">
-          <CupertinoIcon name={icon} className="size-4 text-[#636366] dark:text-[#8e8e93]" />
+        <span className="flex size-9 items-center justify-center rounded-[10px] bg-surface-raised">
+          <CupertinoIcon name={icon} className="size-4 text-secondary" />
         </span>
       </div>
-      <p className="mt-3 text-[11px] leading-5 text-[#8e8e93]">{description}</p>
+      <p className="mt-3 text-[11px] leading-5 text-tertiary">{description}</p>
     </div>
   );
 }
@@ -78,7 +78,7 @@ function CategoryChip({
   category: WorkspaceCategory | null;
 }) {
   if (!category) {
-    return <span className="text-[11px] text-[#8e8e93]">Uncategorized</span>;
+    return <span className="text-[11px] text-tertiary">Uncategorized</span>;
   }
 
   return <CupertinoChip tone={category.color}>{category.name}</CupertinoChip>;
@@ -184,7 +184,7 @@ function TransactionsWorkspaceContent({
       value: bank,
       label: bank,
       leadingLabel: bank.slice(0, 2).toUpperCase(),
-      leadingColor: bank === "Manual" ? "#1c1c1e" : "#1155cc",
+      leadingColor: bank === "Manual" ? "var(--text-primary)" : "var(--accent)",
     })),
   ];
 
@@ -303,10 +303,10 @@ function TransactionsWorkspaceContent({
   }
 
   return (
-    <main className="min-h-svh flex-1 bg-[#f2f2f4] dark:bg-black text-[#1c1c1e] dark:text-[#f2f2f7]">
-      <section className="sticky top-[58px] z-10 border-b border-black/[0.06] dark:border-white/10 bg-white dark:bg-[#1c1c1e] md:top-0">
+    <main className="min-h-svh flex-1 bg-app text-primary">
+      <section className="sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0">
         <div className="flex w-full items-center gap-3 px-3 py-2.5">
-          <h1 className="text-[22px] font-semibold tracking-tight text-[#1c1c1e] dark:text-[#f2f2f7]">
+          <h1 className="text-[22px] font-semibold tracking-tight text-primary">
             Transactions
           </h1>
         </div>
@@ -334,25 +334,25 @@ function TransactionsWorkspaceContent({
           />
         </section>
 
-        <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <section className="rounded-[13px] border-0 bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">Search</span>
+              <span className="text-[11px] font-medium text-tertiary">Search</span>
               <div className="relative">
                 <CupertinoIcon
                   name="search"
-                  className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-[#8e8e93]"
+                  className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-tertiary"
                 />
                 <Input
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Cari deskripsi, source, atau bank"
-                  className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] pl-9 shadow-none focus-visible:ring-[#007aff]/30"
+                  className="h-10 rounded-[10px] border-subtle bg-surface-muted pl-9 shadow-none focus-visible:ring-[var(--accent)]/30"
                 />
               </div>
             </label>
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">Type</span>
+              <span className="text-[11px] font-medium text-tertiary">Type</span>
               <CupertinoSelect
                 icon="repeat"
                 value={typeFilter}
@@ -363,7 +363,7 @@ function TransactionsWorkspaceContent({
               />
             </label>
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">Source</span>
+              <span className="text-[11px] font-medium text-tertiary">Source</span>
               <CupertinoSelect
                 icon="wallet"
                 value={bankFilter}
@@ -374,7 +374,7 @@ function TransactionsWorkspaceContent({
               />
             </label>
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">Category</span>
+              <span className="text-[11px] font-medium text-tertiary">Category</span>
               <CupertinoSelect
                 icon="tag"
                 value={categoryFilter}
@@ -388,54 +388,54 @@ function TransactionsWorkspaceContent({
 
           <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">Date from</span>
+              <span className="text-[11px] font-medium text-tertiary">Date from</span>
               <Input
                 type="date"
                 value={dateFrom}
                 onChange={(event) => setDateFrom(event.target.value)}
-                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
               />
             </label>
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">Date to</span>
+              <span className="text-[11px] font-medium text-tertiary">Date to</span>
               <Input
                 type="date"
                 value={dateTo}
                 onChange={(event) => setDateTo(event.target.value)}
-                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
               />
             </label>
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">Minimum amount</span>
+              <span className="text-[11px] font-medium text-tertiary">Minimum amount</span>
               <Input
                 inputMode="numeric"
                 placeholder="Nominal minimum"
                 value={amountMin}
                 onChange={(event) => setAmountMin(event.target.value)}
-                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
               />
             </label>
             <label className="space-y-2">
-              <span className="text-[11px] font-medium text-[#8e8e93]">Maximum amount</span>
+              <span className="text-[11px] font-medium text-tertiary">Maximum amount</span>
               <Input
                 inputMode="numeric"
                 placeholder="Nominal maksimum"
                 value={amountMax}
                 onChange={(event) => setAmountMax(event.target.value)}
-                className="h-10 rounded-[10px] border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] shadow-none focus-visible:ring-[#007aff]/30"
+                className="h-10 rounded-[10px] border-subtle bg-surface-muted shadow-none focus-visible:ring-[var(--accent)]/30"
               />
             </label>
           </div>
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {transactionIdFilter ? (
-              <span className="inline-flex h-5 items-center justify-center rounded-full border border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] px-2 py-0.5 text-[10px] font-medium whitespace-nowrap text-[#636366] dark:text-[#8e8e93]">
+              <span className="inline-flex h-5 items-center justify-center rounded-full border border-subtle bg-surface-muted px-2 py-0.5 text-[10px] font-medium whitespace-nowrap text-secondary">
                 Focused transaction
               </span>
             ) : null}
             <Button
               variant="outline"
-              className="h-9 rounded-[9px] border-black/10 dark:border-white/10 bg-white dark:bg-[#1c1c1e] px-3 text-[#1c1c1e] dark:text-[#f2f2f7] shadow-none hover:bg-[#f7f7f8] dark:hover:bg-[#2c2c2e]"
+              className="h-9 rounded-[9px] border-strong bg-surface px-3 text-primary shadow-none hover:bg-surface-muted"
               onClick={resetFilters}
             >
               Reset filters
@@ -443,17 +443,17 @@ function TransactionsWorkspaceContent({
           </div>
         </section>
 
-        <section className="rounded-[13px] border-0 bg-white dark:bg-[#1c1c1e] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <section className="rounded-[13px] border-0 bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <div className="flex flex-wrap items-start justify-between gap-3 px-[18px] pt-[18px] pb-3">
             <div className="space-y-1">
-              <h2 className="text-[13px] font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+              <h2 className="text-[13px] font-semibold text-primary">
                 Transaction table
               </h2>
-              <p className="max-w-3xl text-[11px] leading-5 text-[#8e8e93]">
+              <p className="max-w-3xl text-[11px] leading-5 text-tertiary">
                 Menampilkan seluruh transaksi workspace dari semua sumber yang aktif.
               </p>
             </div>
-            <span className="inline-flex h-5 items-center justify-center rounded-full border border-black/[0.08] dark:border-white/10 bg-[#f7f7f8] dark:bg-[#2c2c2e] px-2 py-0.5 text-[10px] font-medium whitespace-nowrap text-[#636366] dark:text-[#8e8e93]">
+            <span className="inline-flex h-5 items-center justify-center rounded-full border border-subtle bg-surface-muted px-2 py-0.5 text-[10px] font-medium whitespace-nowrap text-secondary">
               {isHydrated ? `${filteredTransactions.length} rows` : "Loading"}
             </span>
           </div>
@@ -473,7 +473,7 @@ function TransactionsWorkspaceContent({
             ]}
             hasRows={isHydrated && filteredTransactions.length > 0}
             emptyState={
-              <div className="px-[18px] py-10 text-center text-sm text-[#8e8e93]">
+              <div className="px-[18px] py-10 text-center text-sm text-tertiary">
                 {!isHydrated
                   ? "Memuat transaksi workspace..."
                   : "Belum ada transaksi yang cocok dengan filter saat ini."}
@@ -485,10 +485,10 @@ function TransactionsWorkspaceContent({
                 key={transaction.id}
                 className={`grid grid-cols-[110px_minmax(0,1.35fr)_150px_90px_120px_120px_100px_160px] items-center gap-3 px-[18px] ${CUPERTINO_TABLE_ROW_HEIGHT_CLASS}`}
               >
-                <span className="text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                <span className="text-[11px] text-secondary">
                   {formatDate(transaction.date)}
                 </span>
-                <span className="truncate text-sm text-[#1c1c1e] dark:text-[#f2f2f7]">
+                <span className="truncate text-sm text-primary">
                   {transaction.description}
                 </span>
                 <span>
@@ -497,10 +497,10 @@ function TransactionsWorkspaceContent({
                 <span>
                   <TypeChip type={transaction.type} />
                 </span>
-                <span className="text-sm font-semibold text-[#1c1c1e] dark:text-[#f2f2f7]">
+                <span className="text-sm font-semibold text-primary">
                   {formatCurrency(transaction.amount)}
                 </span>
-                <span className="text-sm text-[#636366] dark:text-[#8e8e93]">
+                <span className="text-sm text-secondary">
                   {formatCurrency(transaction.balance)}
                 </span>
                 <span>
@@ -510,7 +510,7 @@ function TransactionsWorkspaceContent({
                     {transaction.bank}
                   </CupertinoChip>
                 </span>
-                <span className="truncate text-[11px] text-[#636366] dark:text-[#8e8e93]">
+                <span className="truncate text-[11px] text-secondary">
                   {transaction.sourceLabel}
                 </span>
               </div>
