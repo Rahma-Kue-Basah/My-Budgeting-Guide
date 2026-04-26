@@ -94,7 +94,9 @@ function SidebarLinks({
             key={item.title}
             href={item.href}
             className={`mb-px flex h-[29px] w-full items-center gap-[9px] rounded-[8px] px-2.5 text-left text-[13px] font-normal text-primary transition-colors ${
-              isActive ? "bg-surface-muted" : "hover:bg-surface-muted"
+              isActive
+                ? "bg-white backdrop-blur-xl dark:bg-white/6 dark:backdrop-blur-xl"
+                : "bg-transparent shadow-none hover:bg-surface/24 dark:hover:bg-white/6"
             }`}
           >
             <CupertinoIcon
@@ -136,9 +138,9 @@ export function AppSidebar() {
   return (
     <Sidebar
       collapsible="none"
-      className="fixed inset-y-0 left-0 z-30 h-svh w-[232px] min-w-[232px] overflow-hidden border-r border-subtle bg-surface text-primary"
+      className="liquid-sidebar fixed inset-y-0 left-0 z-30 h-svh w-[232px] min-w-[232px] overflow-hidden text-primary border-r border-secondary"
     >
-      <SidebarHeader className="h-[58px] shrink-0 border-b border-subtle px-5 py-0">
+      <SidebarHeader className="h-[58px] shrink-0 bg-surface/42 px-5 py-0 backdrop-blur-xl">
         <div className="flex h-full items-center gap-[9px]">
           <Link
             href="/"
@@ -170,8 +172,6 @@ export function AppSidebar() {
           />
         </div>
 
-        <div className="my-1 h-px bg-surface-muted" />
-
         <nav className="flex-1 py-1">
           {navigationGroups.map((group) => (
             <SidebarSection key={group.group} label={group.group}>
@@ -181,8 +181,8 @@ export function AppSidebar() {
         </nav>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-subtle px-3.5 py-3.5">
-        <div className="flex items-center gap-2 rounded-[9px] px-2.5 py-2">
+      <SidebarFooter className="bg-surface/34 px-3.5 py-3.5 backdrop-blur-xl">
+        <div className="flex items-center gap-2 rounded-[9px] bg-surface/36 px-2.5 py-2 shadow-[inset_0_1px_0_rgb(255_255_255/0.2)]">
           <div className="flex size-[26px] shrink-0 items-center justify-center rounded-[7px] bg-warning text-[11px] font-bold text-white">
             A
           </div>

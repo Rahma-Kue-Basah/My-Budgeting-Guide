@@ -285,7 +285,7 @@ export function WalletList({
       <button
         className={cn(
           "mb-px flex h-[36px] w-full items-center gap-[9px] rounded-[8px] border-0 px-2.5 text-left",
-          "bg-surface-muted hover:bg-surface-muted",
+          "bg-surface/32 shadow-[inset_0_1px_0_rgb(255_255_255/0.16)] hover:bg-surface/42 dark:bg-white/8 dark:shadow-none dark:hover:bg-white/10",
         )}
         onClick={() => setIsOpen((current) => !current)}
         type="button"
@@ -310,13 +310,13 @@ export function WalletList({
       </button>
 
       {isOpen ? (
-        <div className="absolute top-[calc(100%+4px)] right-0 left-0 z-40 rounded-[10px] border border-subtle bg-surface dark:bg-surface-muted p-1 shadow-[0_12px_28px_rgba(0,0,0,0.12)] dark:shadow-[0_12px_28px_rgba(0,0,0,0.4)]">
+        <div className="absolute top-[calc(100%+6px)] right-0 left-0 z-40 rounded-[10px] border border-white/35 bg-white/88 p-1 shadow-[0_18px_38px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:border-white/6 dark:bg-[rgb(28_32_44/0.88)] dark:shadow-[0_18px_38px_rgba(0,0,0,0.42)]">
           <button
             className={cn(
-              "flex w-full items-center gap-2.5 rounded-[8px] border-0 px-2 py-1.5 text-left",
+              "flex w-full items-center gap-2.5 rounded-[8px] border-0 px-2 py-1.5 text-left transition-colors",
               activeWallet === "all"
-                ? "bg-[color-mix(in_srgb,var(--accent)_10%,transparent)]"
-                : "hover:bg-surface-muted",
+                ? "bg-white text-primary shadow-[inset_0_1px_0_rgb(255_255_255/0.42),0_8px_18px_rgb(15_23_42/0.06)] dark:bg-surface-raised/80 dark:shadow-none"
+                : "hover:bg-surface/40 dark:hover:bg-white/8",
             )}
             onClick={() => {
               setActiveWallet("all");
@@ -344,10 +344,10 @@ export function WalletList({
             <button
               key={wallet.id}
               className={cn(
-                "flex w-full items-center gap-2.5 rounded-[8px] border-0 px-2 py-1.5 text-left",
+                "flex w-full items-center gap-2.5 rounded-[8px] border-0 px-2 py-1.5 text-left transition-colors",
                 activeWallet === wallet.name
-                  ? "bg-[color-mix(in_srgb,var(--accent)_10%,transparent)]"
-                  : "hover:bg-surface-muted",
+                  ? "bg-white text-primary shadow-[inset_0_1px_0_rgb(255_255_255/0.42),0_8px_18px_rgb(15_23_42/0.06)] dark:bg-surface-raised/80 dark:shadow-none"
+                  : "hover:bg-surface/40 dark:hover:bg-white/8",
               )}
               onClick={() => {
                 setActiveWallet(wallet.name);
@@ -377,10 +377,10 @@ export function WalletList({
             </button>
           ))}
 
-          <div className="my-1 h-px bg-surface-muted" />
+          <div className="my-1 h-px bg-surface/50 dark:bg-white/8" />
 
           <button
-            className="flex w-full items-center gap-2.5 rounded-[8px] border-0 bg-transparent px-2 py-1.5 text-left hover:bg-surface-muted"
+            className="flex w-full items-center gap-2.5 rounded-[8px] border-0 bg-transparent px-2 py-1.5 text-left transition-colors hover:bg-surface/40 dark:hover:bg-white/8"
             onClick={() => {
               setIsOpen(false);
               onAddWallet();
