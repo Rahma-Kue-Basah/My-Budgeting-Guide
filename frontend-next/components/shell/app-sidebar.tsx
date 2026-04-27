@@ -95,7 +95,7 @@ function SidebarLinks({
             href={item.href}
             className={`mb-px flex h-[29px] w-full items-center gap-[9px] rounded-[8px] px-2.5 text-left text-[13px] transition-colors ${
               isActive
-                ? "bg-black/3 font-medium text-primary dark:bg-white/10"
+                ? "bg-(--accent)/8 font-medium text-accent dark:bg-(--accent)/10 dark:text-accent"
                 : "font-normal text-primary hover:bg-black/4 dark:hover:bg-white/6"
             }`}
           >
@@ -137,8 +137,8 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      collapsible="none"
-      className="liquid-sidebar fixed inset-y-0 left-0 z-30 h-svh w-[232px] min-w-[232px] overflow-hidden text-primary border-r border-black/6 dark:border-white/6"
+      collapsible="offcanvas"
+      className="liquid-sidebar overflow-hidden text-primary border-r border-black/6 dark:border-white/6"
     >
       <SidebarHeader className="h-[58px] shrink-0 bg-surface/42 px-5 py-0 backdrop-blur-xl">
         <div className="flex h-full items-center gap-[9px]">
@@ -182,7 +182,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="bg-surface/34 px-3.5 py-3.5 backdrop-blur-xl">
-        <div className="flex items-center gap-2 rounded-[9px] bg-surface/36 px-2.5 py-2 shadow-[inset_0_1px_0_rgb(255_255_255/0.2)]">
+        <div className="flex items-center gap-2 rounded-[14px] border border-subtle bg-surface px-2.5 py-2">
           <div className="flex size-[26px] shrink-0 items-center justify-center rounded-[7px] bg-warning text-[11px] font-bold text-white">
             A
           </div>

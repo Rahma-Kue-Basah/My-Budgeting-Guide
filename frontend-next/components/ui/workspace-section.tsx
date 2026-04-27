@@ -18,7 +18,7 @@ export function WorkspaceSection<T extends ElementType = "section">({
   return (
     <Component
       className={cn(
-        "rounded-[13px] border-0 bg-surface shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-none",
+        "rounded-[20px] border border-subtle bg-surface shadow-[0_10px_30px_rgba(15,23,42,0.03)] dark:shadow-none",
         padded && "p-[18px]",
         className,
       )}

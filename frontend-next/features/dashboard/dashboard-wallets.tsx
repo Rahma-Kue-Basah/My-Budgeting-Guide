@@ -286,7 +286,7 @@ export function WalletList({
       <button
         className={cn(
           "mb-px flex h-[36px] w-full items-center gap-[9px] rounded-[8px] border-0 px-2.5 text-left",
-          "bg-black/5 hover:bg-black/7 dark:bg-white/8 dark:hover:bg-white/10",
+          "bg-(--accent)/8 hover:bg-(--accent)/10 dark:bg-(--accent)/10 dark:hover:bg-(--accent)/14",
         )}
         onClick={() => setIsOpen((current) => !current)}
         type="button"
@@ -304,7 +304,7 @@ export function WalletList({
             <CupertinoIcon name="wallet" className="size-3 text-white" />
           </span>
         )}
-        <span className="min-w-0 flex-1 truncate text-[13px] font-normal text-primary">
+        <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-accent">
           {selectedLabel}
         </span>
         {iconEnd ? <span className="ml-auto flex size-3.5 items-center">{iconEnd}</span> : null}

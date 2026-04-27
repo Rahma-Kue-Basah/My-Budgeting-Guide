@@ -11,7 +11,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(180deg, #ffffff 0%, #fdfdff 100%);
+  background: #f8f9fa;
   color: #172033;
   position: relative;
 }
@@ -23,10 +23,7 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(1200px circle at 0% 0%, rgba(255, 229, 234, 0.16), transparent 42%),
-    radial-gradient(1100px circle at 100% 8%, rgba(225, 239, 255, 0.18), transparent 40%),
-    radial-gradient(900px circle at 50% 100%, rgba(244, 238, 255, 0.1), transparent 42%),
-    linear-gradient(180deg, #ffffff 0%, #feffff 38%, #fbfdff 100%);
+    linear-gradient(180deg, #fafbfc 0%, #f8f9fa 100%);
 }
 
 @theme inline {
@@ -80,19 +77,19 @@ body::before {
 }
 
 :root {
-  --bg-app: #f2f3f7;
+  --bg-app: #f8f9fa;
   --bg-surface: #ffffff;
-  --bg-surface-muted: #f7f7f8;
-  --bg-surface-raised: #f5f5f8;
+  --bg-surface-muted: #f3f4f6;
+  --bg-surface-raised: #eff2f5;
   --text-primary: #1c1c1e;
   --text-secondary: #636366;
   --text-tertiary: #8e8e93;
-  --border-subtle: rgb(0 0 0 / 0.06);
-  --border-strong: rgb(0 0 0 / 0.1);
+  --border-subtle: #e5e7eb;
+  --border-strong: #dde2e7;
   --accent: #007aff;
-  --success: #30d158;
+  --success: #2563eb;
   --warning: #ff9f0a;
-  --danger: #ff453a;
+  --danger: #e11d48;
   --background: oklch(0.997 0.003 255);
   --foreground: oklch(0.22 0.02 255);
   --card: oklch(0.995 0.006 255);
@@ -138,9 +135,9 @@ body::before {
   --border-subtle: rgb(255 255 255 / 0.1);
   --border-strong: rgb(255 255 255 / 0.2);
   --accent: #0a84ff;
-  --success: #30d158;
+  --success: #60a5fa;
   --warning: #ffd60a;
-  --danger: #ff453a;
+  --danger: #fb7185;
   --background: oklch(0.19 0.015 255);
   --foreground: oklch(0.94 0.01 255);
   --card: oklch(0.24 0.015 255 / 92%);
@@ -244,11 +241,11 @@ body::before {
   }
 
   .ios-surface {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(12px);
     box-shadow:
-      0 10px 30px rgba(115, 131, 173, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.88);
+      0 12px 28px rgba(15, 23, 42, 0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 0.94);
   }
 
   .dark .ios-surface {
@@ -256,6 +253,50 @@ body::before {
     box-shadow:
       0 14px 34px rgba(7, 10, 19, 0.34),
       inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .dashboard-featured-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.035);
+  }
+
+  .dark .dashboard-featured-card {
+    border-color: rgb(255 255 255 / 0.08);
+    background: rgb(28 28 30 / 0.94);
+    box-shadow:
+      0 18px 34px rgb(0 0 0 / 0.24),
+      inset 0 1px 0 rgb(255 255 255 / 0.04);
+  }
+
+  .summary-hero-card {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .summary-hero-card::after {
+    content: "";
+    position: absolute;
+    right: -18px;
+    bottom: -26px;
+    width: 160px;
+    height: 160px;
+    border-radius: 999px;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 35% 35%, rgb(255 255 255 / 0.12), transparent 36%),
+      radial-gradient(circle at 70% 70%, rgb(255 255 255 / 0.08), transparent 58%);
+    filter: blur(4px);
+    opacity: 0.9;
+    z-index: 0;
+  }
+
+  .summary-hero-card > * {
+    position: relative;
+    z-index: 1;
   }
 
   .liquid-sidebar {
@@ -287,13 +328,13 @@ body::before {
     radial-gradient(220px 260px at 42% 72%, rgb(245 158 11 / 0.18), transparent 72%),
 
     /* danger / expense - use very subtle */
-    radial-gradient(200px 240px at 72% 64%, rgb(239 68 68 / 0.14), transparent 72%),
+    /* radial-gradient(200px 240px at 72% 64%, rgb(239 68 68 / 0.14), transparent 72%), */
 
     /* soft neutral base */
     radial-gradient(320px 420px at 12% 18%, rgb(99 102 241 / 0.18), transparent 66%);
 
   filter: blur(58px);
-  opacity: 0.5;
+  opacity: 0;
   transform: translate3d(-2%, 0, 0) rotate(-6deg);
   animation: liquid-sidebar-drift 18s ease-in-out infinite alternate;
 }

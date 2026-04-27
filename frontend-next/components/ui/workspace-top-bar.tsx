@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 type WorkspaceTopBarProps = {
   title: ReactNode;
@@ -38,8 +39,8 @@ export function WorkspaceTopBar({
           ? "liquid-topbar border-b border-white/60 dark:border-white/8"
           : "border-b border-transparent bg-transparent",
         variant === "fixed"
-          ? "fixed top-[58px] right-0 left-0 z-20 md:top-0 md:left-58 md:w-[calc(100%-232px)]"
-          : "sticky top-[58px] z-10 md:top-0",
+          ? "fixed top-0 right-0 left-0 z-20 md:left-58 md:w-[calc(100%-232px)]"
+          : "sticky top-0 z-10",
         className,
       )}
     >
@@ -50,6 +51,7 @@ export function WorkspaceTopBar({
           contentClassName,
         )}
       >
+        <SidebarTrigger className="md:hidden size-9 shrink-0 rounded-full border border-subtle bg-surface/80" />
         <div className="min-w-0">
           {typeof title === "string" ? (
             <h1 className="truncate text-xl font-semibold tracking-normal text-primary">
