@@ -158,7 +158,7 @@ function UploadPanel({
           </p>
           <p className="text-[11px] leading-5 text-tertiary">
             Pilih bank terlebih dulu, lalu tambahkan file PDF mutasi rekening
-            untuk diparse, dikategorikan otomatis lewat rules, lalu masuk ke workspace MBG.
+            untuk diparse, dikategorikan otomatis lewat rules, lalu masuk ke workspace Nidhi.id.
           </p>
         </div>
       </div>
@@ -390,7 +390,7 @@ function FileTable({
       <div className="px-[18px] py-3.5">
         <p className="text-[13px] font-semibold text-primary">Daftar file PDF</p>
         <p className="text-[11px] text-tertiary">
-          Semua file mutasi yang sudah diupload ke workspace MBG.
+          Semua file mutasi yang sudah diupload ke workspace Nidhi.id.
         </p>
       </div>
       <div className="space-y-4 px-[18px] pb-[18px]">

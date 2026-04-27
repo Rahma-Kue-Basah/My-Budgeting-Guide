@@ -93,18 +93,18 @@ function SidebarLinks({
           <Link
             key={item.title}
             href={item.href}
-            className={`mb-px flex h-[29px] w-full items-center gap-[9px] rounded-[8px] px-2.5 text-left text-[13px] font-normal text-primary transition-colors ${
+            className={`mb-px flex h-[29px] w-full items-center gap-[9px] rounded-[8px] px-2.5 text-left text-[13px] transition-colors ${
               isActive
-                ? "bg-white backdrop-blur-xl dark:bg-white/6 dark:backdrop-blur-xl"
-                : "bg-transparent shadow-none hover:bg-surface/24 dark:hover:bg-white/6"
+                ? "bg-black/3 font-medium text-primary dark:bg-white/10"
+                : "font-normal text-primary hover:bg-black/4 dark:hover:bg-white/6"
             }`}
           >
             <CupertinoIcon
               name={item.icon}
               className={`size-3.5 ${
-                isActive ? "text-primary" : "text-tertiary"
+                isActive ? "text-accent" : "text-tertiary"
               }`}
-              strokeWidth={1.75}
+              strokeWidth={isActive ? 2 : 1.75}
             />
             <span className="truncate">{item.title}</span>
           </Link>
@@ -138,7 +138,7 @@ export function AppSidebar() {
   return (
     <Sidebar
       collapsible="none"
-      className="liquid-sidebar fixed inset-y-0 left-0 z-30 h-svh w-[232px] min-w-[232px] overflow-hidden text-primary border-r border-secondary"
+      className="liquid-sidebar fixed inset-y-0 left-0 z-30 h-svh w-[232px] min-w-[232px] overflow-hidden text-primary border-r border-black/6 dark:border-white/6"
     >
       <SidebarHeader className="h-[58px] shrink-0 bg-surface/42 px-5 py-0 backdrop-blur-xl">
         <div className="flex h-full items-center gap-[9px]">
@@ -150,7 +150,7 @@ export function AppSidebar() {
               M
             </span>
             <p className="truncate text-sm font-semibold tracking-[-0.2px] text-primary">
-              Expensave
+              Nidhi.id
             </p>
           </Link>
           <span className="ml-auto rounded bg-[var(--accent)] px-1.5 py-0.5 text-[9px] font-semibold tracking-[0.04em] text-white">

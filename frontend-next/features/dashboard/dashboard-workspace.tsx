@@ -3,6 +3,8 @@
 import { useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import {
+  Area,
+  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
@@ -216,49 +218,12 @@ const overviewCashFlowData = [
 ];
 
 const overviewBudgetCategories = [
-  {
-    name: "Housing",
-    spent: "Rp 2.500",
-    limit: "Rp 2.500",
-    percent: 100,
-    color: "var(--accent)",
-  },
-  {
-    name: "Groceries",
-    spent: "Rp 412",
-    limit: "Rp 600",
-    percent: 69,
-    color: "var(--success)",
-  },
-  {
-    name: "Dining",
-    spent: "Rp 531",
-    limit: "Rp 400",
-    percent: 100,
-    color: "var(--danger)",
-    over: true,
-  },
-  {
-    name: "Transportation",
-    spent: "Rp 188",
-    limit: "Rp 300",
-    percent: 63,
-    color: "var(--warning)",
-  },
-  {
-    name: "Subscriptions",
-    spent: "Rp 96",
-    limit: "Rp 120",
-    percent: 80,
-    color: "var(--accent)",
-  },
-  {
-    name: "Fitness",
-    spent: "Rp 68",
-    limit: "Rp 100",
-    percent: 68,
-    color: "var(--accent)",
-  },
+  { name: "Housing", spent: "Rp 2.500", limit: "Rp 2.500", percent: 100 },
+  { name: "Groceries", spent: "Rp 412", limit: "Rp 600", percent: 69 },
+  { name: "Dining", spent: "Rp 531", limit: "Rp 400", percent: 100, over: true },
+  { name: "Transportation", spent: "Rp 188", limit: "Rp 300", percent: 63 },
+  { name: "Subscriptions", spent: "Rp 96", limit: "Rp 120", percent: 80 },
+  { name: "Fitness", spent: "Rp 68", limit: "Rp 100", percent: 68 },
 ];
 
 const overviewMerchants = [
@@ -271,7 +236,7 @@ const overviewMerchants = [
 
 const overviewAlerts = [
   {
-    type: "warning",
+    type: "danger",
     marker: "↑",
     title: "Dining overspent by Rp 131.000",
     description: "Rp 531.000 vs Rp 400.000 budget",
@@ -297,6 +262,12 @@ const overviewQuickActions = [
   { title: "Create Budget Plan", href: "/budgeting", icon: "receipt" as const },
 ];
 
+function getBudgetBarColor(percent: number, over?: boolean): string {
+  if (over || percent >= 100) return "var(--danger)";
+  if (percent >= 80) return "var(--warning)";
+  return "var(--success)";
+}
+
 type DashboardWorkspaceProps = {
   variant?: DashboardWorkspaceVariant;
 };
@@ -317,6 +288,9 @@ function DashboardOverview({
       detail: "vs last month",
       trend: "↑ 2.4%",
       tone: "text-success",
+      icon: "wallet" as const,
+      iconBg: "bg-[var(--accent)]/10",
+      iconColor: "text-accent",
     },
     {
       label: "Monthly Income",
@@ -324,6 +298,9 @@ function DashboardOverview({
       detail: "salary + transfers",
       trend: null,
       tone: "text-primary",
+      icon: "download" as const,
+      iconBg: "bg-success/10",
+      iconColor: "text-success",
     },
     {
       label: "Total Expenses",
@@ -331,6 +308,9 @@ function DashboardOverview({
       detail: "vs last month",
       trend: "↓ 5.1%",
       tone: "text-success",
+      icon: "upload" as const,
+      iconBg: "bg-danger/10",
+      iconColor: "text-danger",
     },
     {
       label: "Remaining",
@@ -338,6 +318,9 @@ function DashboardOverview({
       detail: "of Rp 2.200.000 budget",
       trend: null,
       tone: "text-primary",
+      icon: "receipt" as const,
+      iconBg: "bg-warning/10",
+      iconColor: "text-warning",
     },
     {
       label: "Savings Rate",
@@ -345,11 +328,14 @@ function DashboardOverview({
       detail: "target 25%",
       trend: "↑ 2 pts",
       tone: "text-success",
+      icon: "piggy" as const,
+      iconBg: "bg-success/10",
+      iconColor: "text-success",
     },
   ];
 
   return (
-    <div className="flex w-full flex-col gap-3 px-3 pt-[132px] pb-3 md:px-3 md:pt-[70px]">
+    <div className="flex w-full flex-col gap-4 px-3 pt-[132px] pb-4 md:px-3 md:pt-[60px]">
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {summaryCards.map((card) => (
           <SummaryCard
@@ -359,14 +345,17 @@ function DashboardOverview({
             detail={card.detail}
             trend={card.trend}
             trendClassName={card.tone}
+            icon={card.icon}
+            iconBg={card.iconBg}
+            iconColor={card.iconColor}
             className="px-[18px] py-3.5"
-            valueClassName="truncate text-xl font-bold tracking-normal"
+            valueClassName="truncate text-xl font-bold tracking-tight"
           />
         ))}
       </section>
 
       <section className="grid gap-3 xl:grid-cols-[minmax(0,1.45fr)_minmax(300px,0.75fr)]">
-        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_4px_rgba(0,0,0,0.07)] dark:shadow-none">
           <div className="mb-4 flex flex-wrap items-center gap-3">
             <div>
               <h2 className="text-[13px] font-semibold">Cash Flow</h2>
@@ -393,13 +382,23 @@ function DashboardOverview({
               Expenses
             </span>
           </div>
-          <div className="h-[246px]">
+          <div className="h-[260px]">
             {isClient ? (
               <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
-                <LineChart
+                <AreaChart
                   data={overviewCashFlowData}
                   margin={{ top: 8, right: 6, bottom: 0, left: 0 }}
                 >
+                  <defs>
+                    <linearGradient id="incomeGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--success)" stopOpacity={0.14} />
+                      <stop offset="95%" stopColor="var(--success)" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="expenseGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--danger)" stopOpacity={0.1} />
+                      <stop offset="95%" stopColor="var(--danger)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid
                     stroke="rgba(0,0,0,0.06)"
                     strokeDasharray="4 4"
@@ -423,23 +422,25 @@ function DashboardOverview({
                       fontSize: 12,
                     }}
                   />
-                  <Line
+                  <Area
                     type="monotone"
                     dataKey="income"
                     stroke="var(--success)"
-                    strokeWidth={3}
+                    strokeWidth={2.5}
+                    fill="url(#incomeGrad)"
                     dot={false}
                     activeDot={{ r: 4, strokeWidth: 0 }}
                   />
-                  <Line
+                  <Area
                     type="monotone"
                     dataKey="expenses"
                     stroke="var(--danger)"
-                    strokeWidth={3}
+                    strokeWidth={2.5}
+                    fill="url(#expenseGrad)"
                     dot={false}
                     activeDot={{ r: 4, strokeWidth: 0 }}
                   />
-                </LineChart>
+                </AreaChart>
               </ResponsiveContainer>
             ) : (
               <div className="h-full rounded-[10px] bg-surface-muted" />
@@ -447,7 +448,7 @@ function DashboardOverview({
           </div>
         </div>
 
-        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-none">
           <div className="mb-3">
             <h2 className="text-[13px] font-semibold">Budget Progress</h2>
             <p className="mt-0.5 text-[11px] text-tertiary">April 2025</p>
@@ -463,7 +464,7 @@ function DashboardOverview({
             </div>
           </div>
           <div className="mb-4 h-2 overflow-hidden rounded-full bg-surface-muted">
-            <div className="h-full w-[78%] rounded-full bg-[var(--accent)]" />
+            <div className="h-full w-[78%] rounded-full bg-warning" />
           </div>
           <div className="space-y-3">
             {overviewBudgetCategories.map((category) => (
@@ -484,7 +485,7 @@ function DashboardOverview({
                     className="h-full rounded-full"
                     style={{
                       width: `${category.percent}%`,
-                      background: category.color,
+                      background: getBudgetBarColor(category.percent, category.over),
                     }}
                   />
                 </div>
@@ -495,13 +496,16 @@ function DashboardOverview({
       </section>
 
       <section className="grid gap-3 xl:grid-cols-[0.85fr_0.9fr_1fr]">
-        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-none">
           <h2 className="text-[13px] font-semibold">Income vs Expense</h2>
           <p className="mt-0.5 text-[11px] text-tertiary">April 2025</p>
           <p className="mt-4 text-2xl font-bold text-success">+Rp 3,11jt</p>
           <p className="text-[11px] text-tertiary">net this month</p>
-          <div className="mt-5 h-2 overflow-hidden rounded-full bg-danger">
-            <div className="h-full w-[64%] rounded-r-full bg-success" />
+          <div className="mt-5 h-2 overflow-hidden rounded-full bg-surface-muted">
+            <div className="flex h-full">
+              <div className="h-full rounded-l-full bg-success" style={{ width: "64%" }} />
+              <div className="h-full rounded-r-full bg-danger/60" style={{ width: "36%" }} />
+            </div>
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
             <div className="rounded-[9px] bg-success/10 px-3 py-2">
@@ -515,7 +519,7 @@ function DashboardOverview({
           </div>
         </div>
 
-        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-none">
           <h2 className="text-[13px] font-semibold">Top Merchants</h2>
           <p className="mt-0.5 text-[11px] text-tertiary">by total spend</p>
           <div className="mt-3 space-y-2">
@@ -530,12 +534,12 @@ function DashboardOverview({
                 <span className="text-xs font-semibold">{merchant.amount}</span>
                 <span
                   className={cn(
-                    "w-8 text-right text-[10px] font-semibold",
+                    "shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold",
                     merchant.change.startsWith("+")
-                      ? "text-danger"
+                      ? "bg-danger/10 text-danger"
                       : merchant.change.startsWith("-")
-                        ? "text-success"
-                        : "text-tertiary",
+                        ? "bg-success/10 text-success"
+                        : "bg-surface-raised text-tertiary",
                   )}
                 >
                   {merchant.change}
@@ -545,7 +549,7 @@ function DashboardOverview({
           </div>
         </div>
 
-        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-none">
           <div className="mb-3 flex items-center justify-between">
             <div>
               <h2 className="text-[13px] font-semibold">Alerts</h2>
@@ -558,13 +562,21 @@ function DashboardOverview({
                 key={alert.title}
                 className={cn(
                   "flex gap-2 rounded-[10px] p-2.5",
-                  alert.type === "info" ? "bg-[var(--accent)]/10" : "bg-danger/10",
+                  alert.type === "info"
+                    ? "bg-[var(--accent)]/10"
+                    : alert.type === "warning"
+                      ? "bg-warning/10"
+                      : "bg-danger/10",
                 )}
               >
                 <span
                   className={cn(
                     "flex size-7 shrink-0 items-center justify-center rounded-[8px] bg-surface dark:bg-surface-muted text-[10px] font-bold",
-                    alert.type === "info" ? "text-accent" : "text-danger",
+                    alert.type === "info"
+                      ? "text-accent"
+                      : alert.type === "warning"
+                        ? "text-warning"
+                        : "text-danger",
                   )}
                 >
                   {alert.marker}
@@ -585,7 +597,7 @@ function DashboardOverview({
       </section>
 
       <section className="grid gap-3 xl:grid-cols-[300px_minmax(0,1fr)]">
-        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-none">
           <h2 className="text-[13px] font-semibold">Quick Actions</h2>
           <div className="mt-3 grid gap-2">
             {overviewQuickActions.map((action) => (
@@ -602,7 +614,7 @@ function DashboardOverview({
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-[13px] bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+        <div className="overflow-hidden rounded-[13px] bg-surface shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-none">
           <div className="flex flex-wrap items-center gap-2 border-b border-subtle px-[18px] py-3.5">
             <div>
               <h2 className="text-[13px] font-semibold">Recent Transactions</h2>
@@ -697,10 +709,9 @@ function StatusBadge({
       className={cn(
         "inline-flex items-center rounded-full border font-medium capitalize",
         compact ? "h-5 px-1.5 text-[10px]" : "h-6 px-2 text-[11px]",
-        status === "cleared" &&
-          "border-emerald-200 bg-emerald-50 text-emerald-700",
-        status === "pending" && "border-amber-200 bg-amber-50 text-amber-700",
-        status === "review" && "border-rose-200 bg-rose-50 text-rose-700",
+        status === "cleared" && "border-success/25 bg-success/10 text-success",
+        status === "pending" && "border-warning/25 bg-warning/10 text-warning",
+        status === "review" && "border-danger/25 bg-danger/10 text-danger",
       )}
     >
       {status}
@@ -730,7 +741,7 @@ export function DashboardWorkspace({
   );
   const [isWalletDialogOpen, setIsWalletDialogOpen] = useState(false);
   const isTransactionsPage = variant === "transactions";
-  const pageTitle = isTransactionsPage ? "Transactions" : "MBG Overview Dashboard";
+  const pageTitle = isTransactionsPage ? "Transactions" : "Nidhi.id Overview";
 
   const processedFileNames = useMemo(
     () =>
@@ -940,7 +951,7 @@ export function DashboardWorkspace({
             </section>
 
             <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_316px]">
-              <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+              <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-none">
                 <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center">
                   <div>
                     <h2 className="text-[13px] font-semibold">
@@ -1030,7 +1041,7 @@ export function DashboardWorkspace({
                 </div>
               </div>
 
-              <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+              <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-none">
                 <h2 className="text-[13px] font-semibold">Budget Progress</h2>
                 <p className="mt-0.5 text-[11px] text-tertiary">
                   April category limits
@@ -1063,7 +1074,7 @@ export function DashboardWorkspace({
             </section>
 
             {isTransactionsPage ? (
-              <section className="overflow-hidden rounded-[13px] bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+              <section className="overflow-hidden rounded-[13px] bg-surface shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-none">
                 <div className="flex flex-wrap items-center gap-2 border-b border-subtle px-[18px] py-3.5">
                   <div className="flex rounded-[9px] bg-surface-muted p-[3px]">
                     {(["all", "cleared", "pending", "review"] as const).map(
@@ -1262,7 +1273,7 @@ export function DashboardWorkspace({
               </section>
             ) : (
               <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_316px]">
-                <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+                <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-none">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <div>
                       <h2 className="text-[13px] font-semibold">
@@ -1322,7 +1333,7 @@ export function DashboardWorkspace({
                   </div>
                 </div>
 
-                <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
+                <div className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-none">
                   <h2 className="text-[13px] font-semibold">Wallet Mix</h2>
                   <p className="mt-0.5 text-[11px] text-tertiary">
                     Active balance sources
@@ -1366,13 +1377,14 @@ export function DashboardWorkspace({
           onClick={() => setSelectedTx(null)}
         >
           <div
-            className="max-h-[90vh] w-full max-w-[460px] overflow-y-auto rounded-[20px] bg-app dark:bg-surface shadow-[0_32px_100px_rgba(0,0,0,0.2)] dark:shadow-[0_32px_100px_rgba(0,0,0,0.6)]"
+            className="liquid-modal w-full max-w-[460px] overflow-hidden rounded-[20px]"
             onClick={(event) => event.stopPropagation()}
           >
+          <div className="max-h-[90vh] overflow-y-auto">
             <div className="relative flex items-center justify-center px-5 pt-[18px] pb-3">
               <span className="text-[15px] font-semibold">Transaction</span>
               <button
-                className="absolute top-3.5 right-4 flex size-7 items-center justify-center rounded-full bg-surface-raised"
+                className="absolute top-3.5 right-4 flex size-7 items-center justify-center rounded-full bg-black/6 dark:bg-white/10"
                 onClick={() => setSelectedTx(null)}
               >
                 <CupertinoIcon
@@ -1383,7 +1395,7 @@ export function DashboardWorkspace({
             </div>
 
             <div className="flex flex-col gap-2.5 px-4 pb-5">
-              <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3">
+              <div className="rounded-[12px] bg-white/50 dark:bg-white/7 px-4 py-3">
                 <p className="mb-1.5 text-[11px] text-secondary">Amount</p>
                 <p
                   className={cn(
@@ -1396,17 +1408,17 @@ export function DashboardWorkspace({
                 </p>
               </div>
 
-              <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3">
+              <div className="rounded-[12px] bg-white/50 dark:bg-white/7 px-4 py-3">
                 <p className="mb-1.5 text-[11px] text-secondary">Your note</p>
                 <p className="text-[13px] text-primary">
                   {selectedTx.note || "Add note"}
                 </p>
               </div>
 
-              <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3.5">
+              <div className="rounded-[12px] bg-white/50 dark:bg-white/7 px-4 py-3.5">
                 <div className="mb-3.5 grid gap-3 sm:grid-cols-3">
                   <div className="flex items-center gap-2">
-                    <div className="flex size-8 items-center justify-center rounded-[8px] bg-surface-raised">
+                    <div className="flex size-8 items-center justify-center rounded-[8px] bg-white/60 dark:bg-white/10">
                       <CupertinoIcon
                         name="wallet"
                         className="size-4 text-secondary"
@@ -1472,7 +1484,7 @@ export function DashboardWorkspace({
                 </button>
               </div>
 
-              <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3.5">
+              <div className="rounded-[12px] bg-white/50 dark:bg-white/7 px-4 py-3.5">
                 <p className="mb-3 text-[11px] text-secondary">
                   Total {selectedTx.amount > 0 ? "income" : "expense"}{" "}
                   {formatCurrency(Math.abs(selectedTx.amount))} for last 12
@@ -1513,10 +1525,10 @@ export function DashboardWorkspace({
               </div>
 
               <div className="flex justify-end gap-2">
-                <button className="flex size-[38px] items-center justify-center rounded-[10px] border border-strong bg-surface">
+                <button className="flex size-[38px] items-center justify-center rounded-[10px] border border-strong bg-white/50 dark:bg-white/7">
                   <CupertinoIcon name="upload" className="size-4 text-secondary" />
                 </button>
-                <button className="relative flex size-[38px] items-center justify-center rounded-[10px] border border-strong bg-surface">
+                <button className="relative flex size-[38px] items-center justify-center rounded-[10px] border border-strong bg-white/50 dark:bg-white/7">
                   <CupertinoIcon name="download" className="size-4 text-secondary" />
                   <span className="absolute -top-1.5 -right-1.5 rounded-[3px] bg-[var(--accent)] px-1 text-[7px] font-bold text-white">
                     CSV
@@ -1527,6 +1539,7 @@ export function DashboardWorkspace({
                 </button>
               </div>
             </div>
+          </div>
           </div>
         </div>
       ) : null}

@@ -473,7 +473,7 @@ function BudgetPlanner({
             <div className="space-y-0.5">
               <p className="text-[13px] font-semibold text-primary">Suggest the rest</p>
               <p className="text-[11px] leading-5 text-tertiary">
-                Setelah pengeluaran wajib diisi, MBG bantu menyarankan category lain untuk sisa target expense yang belum teralokasi.
+                Setelah pengeluaran wajib diisi, Nidhi.id bantu menyarankan category lain untuk sisa target expense yang belum teralokasi.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -492,7 +492,7 @@ function BudgetPlanner({
 
           {expenseTargetNumber <= 0 ? (
             <p className="text-[11px] text-tertiary">
-              Isi Expense target dulu supaya MBG tahu sisa budget yang perlu dibantu.
+              Isi Expense target dulu supaya Nidhi.id tahu sisa budget yang perlu dibantu.
             </p>
           ) : null}
           {expenseTargetNumber > 0 && selectedRows.length === 0 ? (

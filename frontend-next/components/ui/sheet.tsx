@@ -5,6 +5,7 @@ import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { DialogPresence } from "@/components/ui/dialog-presence"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Cancel01Icon } from "@hugeicons/core-free-icons"
 
@@ -49,6 +50,7 @@ function SheetContent({
 }) {
   return (
     <SheetPortal>
+      <DialogPresence />
       <SheetOverlay />
       <SheetPrimitive.Popup
         data-slot="sheet-content"

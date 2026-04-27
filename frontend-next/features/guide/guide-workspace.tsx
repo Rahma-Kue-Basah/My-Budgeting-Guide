@@ -114,12 +114,12 @@ const followUpLinks = [
 export function GuideWorkspace() {
   return (
     <main className="min-h-svh flex-1 bg-app text-primary">
-      <WorkspaceTopBar title="Cara Pakai MBG" />
+      <WorkspaceTopBar title="Cara Pakai Nidhi.id" />
 
       <div className="flex w-full flex-col gap-3 px-3 py-3">
         <section className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
           <p className="text-[11px] leading-5 text-tertiary">
-            MBG paling enak dipakai sebagai workflow bertahap — rapikan data dulu, baru masuk ke klasifikasi, lalu analisis. Ikuti urutan ini untuk hasil terbaik.
+            Nidhi.id paling enak dipakai sebagai workflow bertahap — rapikan data dulu, baru masuk ke klasifikasi, lalu analisis. Ikuti urutan ini untuk hasil terbaik.
           </p>
         </section>
 

@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-const APP_SETTINGS_STORAGE_KEY = "mbg-app-settings-v1";
-const APP_SETTINGS_EVENT = "mbg-app-settings-updated";
+const APP_SETTINGS_STORAGE_KEY = "nidhi-app-settings-v1";
+const APP_SETTINGS_EVENT = "nidhi-app-settings-updated";
 
 export type ParserMode = "balanced" | "strict";
 export type DisplayDensity = "comfortable" | "compact";

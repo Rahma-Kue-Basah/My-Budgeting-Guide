@@ -1,1 +1,1 @@
-export const FILE_WORKSPACE_STORAGE_KEY = "mbg:file-workspace:v1";
+export const FILE_WORKSPACE_STORAGE_KEY = "nidhi:file-workspace:v1";

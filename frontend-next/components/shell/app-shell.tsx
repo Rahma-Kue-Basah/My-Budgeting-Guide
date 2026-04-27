@@ -22,10 +22,10 @@ export function AppShell({ children }: AppShellProps) {
               <SidebarTrigger className="size-9 rounded-full border border-subtle bg-surface/80 dark:border-subtle dark:bg-surface/80" />
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-foreground">
-                  Expensave
+                  Nidhi.id
                 </p>
                 <p className="truncate text-[11px] text-muted-foreground">
-                  My Budgeting Guide
+                  Personal Finance
                 </p>
               </div>
             </div>

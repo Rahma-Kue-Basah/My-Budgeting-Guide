@@ -6,6 +6,7 @@ import { CupertinoIcon } from "@/components/icons/cupertino-icon";
 import { APP_COLOR_OPTIONS } from "@/lib/color-palette";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { WorkspacePrimaryButton } from "@/components/ui/workspace-primary-button";
 
 export type WalletTone = (typeof APP_COLOR_OPTIONS)[number]["walletTone"];
@@ -20,9 +21,9 @@ export type DashboardWallet = {
   color: string;
 };
 
-const WALLETS_STORAGE_KEY = "mbg_dashboard_wallets";
-const ACTIVE_WALLET_STORAGE_KEY = "mbg_dashboard_active_wallet";
-const WALLET_CHANGE_EVENT = "mbg-dashboard-wallets-change";
+const WALLETS_STORAGE_KEY = "nidhi_dashboard_wallets";
+const ACTIVE_WALLET_STORAGE_KEY = "nidhi_dashboard_active_wallet";
+const WALLET_CHANGE_EVENT = "nidhi-dashboard-wallets-change";
 
 const walletColorOptions = APP_COLOR_OPTIONS.map((option) => ({
   name: option.name,
@@ -285,7 +286,7 @@ export function WalletList({
       <button
         className={cn(
           "mb-px flex h-[36px] w-full items-center gap-[9px] rounded-[8px] border-0 px-2.5 text-left",
-          "bg-surface/32 shadow-[inset_0_1px_0_rgb(255_255_255/0.16)] hover:bg-surface/42 dark:bg-white/8 dark:shadow-none dark:hover:bg-white/10",
+          "bg-black/5 hover:bg-black/7 dark:bg-white/8 dark:hover:bg-white/10",
         )}
         onClick={() => setIsOpen((current) => !current)}
         type="button"
@@ -315,7 +316,7 @@ export function WalletList({
             className={cn(
               "flex w-full items-center gap-2.5 rounded-[8px] border-0 px-2 py-1.5 text-left transition-colors",
               activeWallet === "all"
-                ? "bg-white text-primary shadow-[inset_0_1px_0_rgb(255_255_255/0.42),0_8px_18px_rgb(15_23_42/0.06)] dark:bg-surface-raised/80 dark:shadow-none"
+                ? "bg-(--accent)/8 ring-1 ring-(--accent)/15 dark:bg-white/10 dark:ring-white/8"
                 : "hover:bg-surface/40 dark:hover:bg-white/8",
             )}
             onClick={() => {
@@ -346,7 +347,7 @@ export function WalletList({
               className={cn(
                 "flex w-full items-center gap-2.5 rounded-[8px] border-0 px-2 py-1.5 text-left transition-colors",
                 activeWallet === wallet.name
-                  ? "bg-white text-primary shadow-[inset_0_1px_0_rgb(255_255_255/0.42),0_8px_18px_rgb(15_23_42/0.06)] dark:bg-surface-raised/80 dark:shadow-none"
+                  ? "bg-(--accent)/8 ring-1 ring-(--accent)/15 dark:bg-white/10 dark:ring-white/8"
                   : "hover:bg-surface/40 dark:hover:bg-white/8",
               )}
               onClick={() => {
@@ -414,17 +415,13 @@ export function AddWalletDialog({
     tone: walletColorOptions[0].tone,
   });
 
-  if (!open) {
-    return null;
-  }
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[color-mix(in_srgb,var(--text-primary)_30%,transparent)] p-4"
-      onClick={() => onOpenChange(false)}
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        showCloseButton={false}
+        className="liquid-modal w-full max-w-95 rounded-[18px] p-4"
+      >
       <form
-        className="w-full max-w-[380px] rounded-[18px] bg-app dark:bg-surface p-4 shadow-[0_32px_100px_rgba(0,0,0,0.2)] dark:shadow-[0_32px_100px_rgba(0,0,0,0.6)]"
         onSubmit={(event) => {
           event.preventDefault();
           addWallet({
@@ -443,7 +440,6 @@ export function AddWalletDialog({
           });
           onOpenChange(false);
         }}
-        onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
           <div>
@@ -452,7 +448,7 @@ export function AddWalletDialog({
           </div>
           <button
             type="button"
-            className="flex size-7 items-center justify-center rounded-full bg-surface-raised"
+            className="flex size-7 items-center justify-center rounded-full bg-black/6 dark:bg-white/10"
             onClick={() => onOpenChange(false)}
           >
             <CupertinoIcon name="close" className="size-3.5 text-secondary" />
@@ -460,7 +456,7 @@ export function AddWalletDialog({
         </div>
 
         <div className="space-y-2.5">
-          <label className="block rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3">
+          <label className="block rounded-[12px] bg-white px-4 py-3 shadow-[inset_0_0_0_1px_rgb(0_0_0/0.05)] dark:bg-[rgb(255_255_255/0.08)] dark:shadow-[inset_0_0_0_1px_rgb(255_255_255/0.06)]">
             <span className="mb-1.5 flex items-center gap-1.5 text-[11px] text-secondary">
               <CupertinoIcon name="wallet" className="size-3" />
               Wallet name
@@ -477,7 +473,7 @@ export function AddWalletDialog({
               className="w-full border-0 bg-transparent text-sm font-medium text-primary outline-none placeholder:text-tertiary"
             />
           </label>
-          <label className="block rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3">
+          <label className="block rounded-[12px] bg-white px-4 py-3 shadow-[inset_0_0_0_1px_rgb(0_0_0/0.05)] dark:bg-[rgb(255_255_255/0.08)] dark:shadow-[inset_0_0_0_1px_rgb(255_255_255/0.06)]">
             <span className="mb-1.5 block text-[11px] text-secondary">
               Institution
             </span>
@@ -493,7 +489,7 @@ export function AddWalletDialog({
               className="w-full border-0 bg-transparent text-sm font-medium text-primary outline-none placeholder:text-tertiary"
             />
           </label>
-          <label className="block rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3">
+          <label className="block rounded-[12px] bg-white px-4 py-3 shadow-[inset_0_0_0_1px_rgb(0_0_0/0.05)] dark:bg-[rgb(255_255_255/0.08)] dark:shadow-[inset_0_0_0_1px_rgb(255_255_255/0.06)]">
             <span className="mb-1.5 block text-[11px] text-secondary">
               Current balance
             </span>
@@ -510,7 +506,7 @@ export function AddWalletDialog({
               className="w-full border-0 bg-transparent text-sm font-medium text-primary outline-none placeholder:text-tertiary"
             />
           </label>
-          <div className="rounded-[12px] bg-surface dark:bg-surface-muted px-4 py-3">
+          <div className="rounded-[12px] bg-white px-4 py-3 shadow-[inset_0_0_0_1px_rgb(0_0_0/0.05)] dark:bg-[rgb(255_255_255/0.08)] dark:shadow-[inset_0_0_0_1px_rgb(255_255_255/0.06)]">
             <span className="mb-2 block text-[11px] text-secondary">
               Wallet color
             </span>
@@ -520,7 +516,7 @@ export function AddWalletDialog({
                   key={option.name}
                   type="button"
                   className={cn(
-                    "flex size-8 items-center justify-center rounded-[8px] ring-offset-2 ring-offset-surface dark:ring-offset-surface-muted",
+                    "flex size-8 items-center justify-center rounded-[8px] ring-offset-2 ring-offset-white/50 dark:ring-offset-white/7",
                     walletDraft.color === option.color && "ring-2 ring-[var(--accent)]",
                   )}
                   style={{ background: option.color }}
@@ -546,7 +542,7 @@ export function AddWalletDialog({
           <Button
             type="button"
             variant="outline"
-            className="rounded-[10px] border-strong bg-surface dark:bg-surface-muted dark:text-primary shadow-none dark:hover:bg-surface-raised"
+            className="rounded-[10px] border-strong bg-white/50 dark:bg-white/7 dark:text-primary shadow-none dark:hover:bg-white/12"
             onClick={() => onOpenChange(false)}
           >
             Cancel
@@ -559,6 +555,7 @@ export function AddWalletDialog({
           </WorkspacePrimaryButton>
         </div>
       </form>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

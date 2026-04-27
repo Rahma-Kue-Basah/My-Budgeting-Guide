@@ -1,4 +1,6 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useEffect, useState, type ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -17,12 +19,27 @@ export function WorkspaceTopBar({
   className,
   contentClassName,
 }: WorkspaceTopBarProps) {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 8);
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <section
       className={cn(
+        "relative transition-[background-color,border-color,backdrop-filter] duration-200",
+        scrolled
+          ? "liquid-topbar border-b border-white/60 dark:border-white/8"
+          : "border-b border-transparent bg-transparent",
         variant === "fixed"
-          ? "fixed top-[58px] right-0 left-0 z-20 border-b border-subtle bg-surface md:top-0 md:left-[232px] md:w-[calc(100%-232px)]"
-          : "sticky top-[58px] z-10 border-b border-subtle bg-surface md:top-0",
+          ? "fixed top-[58px] right-0 left-0 z-20 md:top-0 md:left-58 md:w-[calc(100%-232px)]"
+          : "sticky top-[58px] z-10 md:top-0",
         className,
       )}
     >

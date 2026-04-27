@@ -80,7 +80,7 @@ body::before {
 }
 
 :root {
-  --bg-app: #fafafc;
+  --bg-app: #f2f3f7;
   --bg-surface: #ffffff;
   --bg-surface-muted: #f7f7f8;
   --bg-surface-raised: #f5f5f8;
@@ -259,47 +259,56 @@ body::before {
   }
 
   .liquid-sidebar {
-    isolation: isolate;
-    background:
-      linear-gradient(180deg, rgb(255 255 255 / 0.78), rgb(255 255 255 / 0.5)),
-      color-mix(in srgb, var(--bg-surface) 82%, transparent);
-    backdrop-filter: blur(26px) saturate(1.28);
-  }
+  isolation: isolate;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.78), rgb(255 255 255 / 0.5)),
+    color-mix(in srgb, var(--bg-surface) 82%, transparent);
+  backdrop-filter: blur(26px) saturate(1.2);
+}
 
-  .liquid-sidebar::before,
-  .liquid-sidebar::after {
-    content: "";
-    position: absolute;
-    pointer-events: none;
-    z-index: -1;
-  }
+.liquid-sidebar::before,
+.liquid-sidebar::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+}
 
-  .liquid-sidebar::before {
-    inset: -20% -60% -18% -70%;
-    background:
-      radial-gradient(220px 260px at 34% 12%, rgb(255 111 145 / 0.45), transparent 80%),
-      radial-gradient(260px 300px at 66% 22%, rgb(71 157 255 / 0.4), transparent 82%),
-      radial-gradient(280px 260px at 38% 48%, rgb(255 201 91 / 0.35), transparent 80%),
-      radial-gradient(240px 280px at 38% 88%, rgb(40 214 164 / 0.3), transparent 82%),
-      radial-gradient(280px 320px at 72% 64%, rgb(122 92 255 / 0.35), transparent 68%);
-    filter: blur(55px);
-    opacity: 0.5;
-    transform: translate3d(-2%, 0, 0) rotate(-6deg);
-    animation: liquid-sidebar-drift 18s ease-in-out infinite alternate;
-  }
+.liquid-sidebar::before {
+  inset: -20% -60% -18% -70%;
+  background:
+    /* neutral / system */
+    radial-gradient(260px 320px at 68% 18%, rgb(59 130 246 / 0.34), transparent 68%),
 
-  .liquid-sidebar::after {
-    inset: 0;
-    background:
-      linear-gradient(90deg, rgb(255 255 255 / 0.64), transparent 52%),
-      radial-gradient(240px 680px at 20% 50%, rgb(255 255 255 / 0.34), transparent 72%);
-  }
+    /* success / income */
+    radial-gradient(240px 280px at 32% 42%, rgb(34 197 94 / 0.24), transparent 70%),
 
-  .liquid-sidebar > * {
-    position: relative;
-    z-index: 1;
-  }
+    /* warning */
+    radial-gradient(220px 260px at 42% 72%, rgb(245 158 11 / 0.18), transparent 72%),
 
+    /* danger / expense - use very subtle */
+    radial-gradient(200px 240px at 72% 64%, rgb(239 68 68 / 0.14), transparent 72%),
+
+    /* soft neutral base */
+    radial-gradient(320px 420px at 12% 18%, rgb(99 102 241 / 0.18), transparent 66%);
+
+  filter: blur(58px);
+  opacity: 0.5;
+  transform: translate3d(-2%, 0, 0) rotate(-6deg);
+  animation: liquid-sidebar-drift 18s ease-in-out infinite alternate;
+}
+
+.liquid-sidebar::after {
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgb(255 255 255 / 0.68), transparent 52%),
+    radial-gradient(240px 680px at 20% 50%, rgb(255 255 255 / 0.36), transparent 72%);
+}
+
+.liquid-sidebar > * {
+  position: relative;
+  z-index: 1;
+}
   .dark .liquid-sidebar {
     background:
       linear-gradient(180deg, rgb(20 24 34 / 0.88), rgb(11 14 22 / 0.72)),
@@ -313,7 +322,7 @@ body::before {
       radial-gradient(170px 230px at 36% 48%, rgb(255 196 92 / 0.12), transparent 66%),
       radial-gradient(220px 300px at 74% 66%, rgb(86 116 255 / 0.18), transparent 70%),
       radial-gradient(180px 240px at 38% 90%, rgb(56 188 166 / 0.14), transparent 68%);
-    opacity: 0.44;
+    opacity: 0.4;
   }
 
   .dark .liquid-sidebar::after {
@@ -321,6 +330,80 @@ body::before {
       linear-gradient(90deg, rgb(255 255 255 / 0.06), transparent 58%),
       radial-gradient(240px 680px at 24% 46%, rgb(255 255 255 / 0.05), transparent 72%);
   }
+}
+
+/* Top bar liquid glass */
+.liquid-topbar {
+  isolation: isolate;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.55), rgb(255 255 255 / 0.38));
+  backdrop-filter: blur(24px) saturate(1.6) brightness(1.04);
+}
+
+.liquid-topbar::before {
+  content: "";
+  position: absolute;
+  inset: -150% -20% -150% -20%;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(360px 90px at 10% 50%, rgb(59 130 246 / 0.28), transparent 65%),
+    radial-gradient(320px 80px at 90% 50%, rgb(34 197 94 / 0.22), transparent 68%),
+    radial-gradient(280px 70px at 50% 50%, rgb(245 158 11 / 0.16), transparent 70%);
+  filter: blur(18px);
+  opacity: 0.7;
+}
+
+.liquid-topbar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.45) 0%, rgb(255 255 255 / 0.1) 100%);
+}
+
+.liquid-topbar > * {
+  position: relative;
+  z-index: 1;
+}
+
+.dark .liquid-topbar {
+  background:
+    linear-gradient(180deg, rgb(15 20 32 / 0.62), rgb(10 14 24 / 0.48));
+  backdrop-filter: blur(24px) saturate(1.5) brightness(0.96);
+}
+
+.dark .liquid-topbar::before {
+  background:
+    radial-gradient(300px 80px at 12% 50%, rgb(72 154 255 / 0.32), transparent 65%),
+    radial-gradient(280px 70px at 88% 50%, rgb(56 188 120 / 0.24), transparent 68%);
+  opacity: 0.65;
+}
+
+.dark .liquid-topbar::after {
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.05) 0%, transparent 100%);
+}
+
+/* Modal liquid glass */
+.liquid-modal {
+  background:
+    linear-gradient(155deg, rgb(255 255 255 / 0.72) 0%, rgb(245 247 255 / 0.56) 100%);
+  backdrop-filter: blur(40px) saturate(1.8) brightness(1.06);
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.6);
+}
+
+.dark .liquid-modal {
+  background:
+    linear-gradient(155deg, rgb(22 28 44 / 0.76) 0%, rgb(14 19 32 / 0.62) 100%);
+  backdrop-filter: blur(40px) saturate(1.6) brightness(0.92);
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.06);
 }
 
 :root[data-density="compact"] [data-slot="table-head"] {
@@ -344,6 +427,15 @@ body::before {
   100% {
     transform: translate3d(2%, -4%, 0) rotate(-3deg) scale(1.02);
   }
+}
+
+/* Blur app content when any overlay-driven surface is open */
+body[data-overlay-blur-count] #app-root {
+  transition: none;
+}
+
+#app-root {
+  transition: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
