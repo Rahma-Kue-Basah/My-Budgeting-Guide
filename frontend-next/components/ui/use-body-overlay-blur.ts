@@ -4,7 +4,7 @@ import * as React from "react"
 
 const BODY_OVERLAY_BLUR_ATTR = "data-overlay-blur-count"
 
-function readOverlayBlurCount(body: HTMLBodyElement) {
+function readOverlayBlurCount(body: HTMLElement) {
   const value = Number(body.getAttribute(BODY_OVERLAY_BLUR_ATTR) || "0")
 
   return Number.isFinite(value) ? value : 0
