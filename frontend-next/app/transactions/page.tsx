@@ -1,5 +1,5 @@
-import { DashboardWorkspace } from "@/features/dashboard/dashboard-workspace";
+import { TransactionsWorkspace } from "@/features/transactions/transactions-workspace";
 
 export default function TransactionsPage() {
-  return <DashboardWorkspace variant="transactions" />;
+  return <TransactionsWorkspace />;
 }

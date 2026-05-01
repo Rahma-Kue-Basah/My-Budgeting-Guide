@@ -17,7 +17,7 @@ import {
 import {
   AddWalletDialog,
   WalletList,
-} from "@/features/dashboard/dashboard-wallets";
+} from "@/features/wallets/wallets";
 
 type NavigationItem = {
   title: string;

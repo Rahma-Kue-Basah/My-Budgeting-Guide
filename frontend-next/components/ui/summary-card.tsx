@@ -45,7 +45,7 @@ export function SummaryCard({
       {icon ? (
         <span
           className={cn(
-            "mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-2xl",
+            "mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-2xl",
             iconBg ?? "bg-surface-muted",
           )}
         >

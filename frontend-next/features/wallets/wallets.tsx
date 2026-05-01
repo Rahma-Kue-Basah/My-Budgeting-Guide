@@ -6,12 +6,13 @@ import { CupertinoIcon } from "@/components/icons/cupertino-icon";
 import { APP_COLOR_OPTIONS } from "@/lib/color-palette";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { CupertinoSelect } from "@/components/ui/cupertino-select";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { WorkspacePrimaryButton } from "@/components/ui/workspace-primary-button";
 
 export type WalletTone = (typeof APP_COLOR_OPTIONS)[number]["walletTone"];
 
-export type DashboardWallet = {
+export type Wallet = {
   id: string;
   name: string;
   institution: string;
@@ -21,9 +22,11 @@ export type DashboardWallet = {
   color: string;
 };
 
-const WALLETS_STORAGE_KEY = "nidhi_dashboard_wallets";
-const ACTIVE_WALLET_STORAGE_KEY = "nidhi_dashboard_active_wallet";
-const WALLET_CHANGE_EVENT = "nidhi-dashboard-wallets-change";
+const WALLETS_STORAGE_KEY = "nidhi_wallets";
+const LEGACY_WALLETS_STORAGE_KEY = "nidhi_dashboard_wallets";
+const ACTIVE_WALLET_STORAGE_KEY = "nidhi_active_wallet";
+const LEGACY_ACTIVE_WALLET_STORAGE_KEY = "nidhi_dashboard_active_wallet";
+const WALLET_CHANGE_EVENT = "nidhi-wallets-change";
 
 const walletColorOptions = APP_COLOR_OPTIONS.map((option) => ({
   name: option.name,
@@ -31,7 +34,7 @@ const walletColorOptions = APP_COLOR_OPTIONS.map((option) => ({
   color: option.color,
 }));
 
-export const defaultDashboardWallets: DashboardWallet[] = [
+export const defaultWallets: Wallet[] = [
   {
     id: "wallet-bca",
     name: "BCA",
@@ -70,12 +73,12 @@ export const defaultDashboardWallets: DashboardWallet[] = [
   },
 ];
 
-function normalizeWallet(value: unknown): DashboardWallet | null {
+function normalizeWallet(value: unknown): Wallet | null {
   if (!value || typeof value !== "object") {
     return null;
   }
 
-  const wallet = value as Partial<DashboardWallet>;
+  const wallet = value as Partial<Wallet>;
   const isValid =
     typeof wallet.id === "string" &&
     typeof wallet.name === "string" &&
@@ -123,27 +126,29 @@ function normalizeWallet(value: unknown): DashboardWallet | null {
 
 function loadWallets() {
   if (typeof window === "undefined") {
-    return defaultDashboardWallets;
+    return defaultWallets;
   }
 
   try {
-    const raw = window.localStorage.getItem(WALLETS_STORAGE_KEY);
+    const raw =
+      window.localStorage.getItem(WALLETS_STORAGE_KEY) ??
+      window.localStorage.getItem(LEGACY_WALLETS_STORAGE_KEY);
     if (!raw) {
-      return defaultDashboardWallets;
+      return defaultWallets;
     }
 
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) {
-      return defaultDashboardWallets;
+      return defaultWallets;
     }
 
     const normalized = parsed
       .map(normalizeWallet)
-      .filter((wallet): wallet is DashboardWallet => Boolean(wallet));
+      .filter((wallet): wallet is Wallet => Boolean(wallet));
 
-    return normalized.length > 0 ? normalized : defaultDashboardWallets;
+    return normalized.length > 0 ? normalized : defaultWallets;
   } catch {
-    return defaultDashboardWallets;
+    return defaultWallets;
   }
 }
 
@@ -152,7 +157,11 @@ function loadActiveWallet() {
     return "all";
   }
 
-  return window.localStorage.getItem(ACTIVE_WALLET_STORAGE_KEY) || "all";
+  return (
+    window.localStorage.getItem(ACTIVE_WALLET_STORAGE_KEY) ||
+    window.localStorage.getItem(LEGACY_ACTIVE_WALLET_STORAGE_KEY) ||
+    "all"
+  );
 }
 
 function emitWalletChange() {
@@ -178,12 +187,12 @@ function getWalletSnapshot() {
 
 function getServerWalletSnapshot() {
   return JSON.stringify({
-    wallets: defaultDashboardWallets,
+    wallets: defaultWallets,
     activeWallet: "all",
   });
 }
 
-export function useDashboardWallets() {
+export function useWallets() {
   const snapshot = useSyncExternalStore(
     subscribeToWallets,
     getWalletSnapshot,
@@ -193,7 +202,7 @@ export function useDashboardWallets() {
   const { wallets, activeWallet } = useMemo(
     () =>
       JSON.parse(snapshot) as {
-        wallets: DashboardWallet[];
+        wallets: Wallet[];
         activeWallet: string;
       },
     [snapshot],
@@ -211,7 +220,7 @@ export function useDashboardWallets() {
     tone: WalletTone;
     color: string;
   }) {
-    const nextWallet: DashboardWallet = {
+    const nextWallet: Wallet = {
       id: `wallet-${Date.now()}`,
       name: payload.name.trim(),
       institution: payload.institution.trim() || "Manual wallet",
@@ -260,6 +269,37 @@ export function WalletDot({ tone }: { tone: WalletTone }) {
   );
 }
 
+export function WalletSelect({
+  ariaLabel = "Select wallet",
+}: {
+  ariaLabel?: string;
+}) {
+  const { wallets, activeWallet, setActiveWallet } = useWallets();
+
+  return (
+    <CupertinoSelect
+      icon="wallet"
+      value={activeWallet}
+      onChange={setActiveWallet}
+      ariaLabel={ariaLabel}
+      options={[
+        {
+          value: "all",
+          label: "All wallets",
+          leadingIcon: "wallet",
+          leadingColor: "var(--accent)",
+        },
+        ...wallets.map((wallet) => ({
+          value: wallet.name,
+          label: wallet.name,
+          leadingLabel: wallet.abbr,
+          leadingColor: wallet.color,
+        })),
+      ]}
+    />
+  );
+}
+
 export function WalletList({
   className,
   onAddWallet,
@@ -269,7 +309,7 @@ export function WalletList({
   onAddWallet: () => void;
   iconEnd?: React.ReactNode;
 }) {
-  const { wallets, activeWallet, setActiveWallet } = useDashboardWallets();
+  const { wallets, activeWallet, setActiveWallet } = useWallets();
   const [isOpen, setIsOpen] = useState(false);
   const selectedWallet =
     activeWallet === "all"
@@ -406,7 +446,7 @@ export function AddWalletDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { addWallet } = useDashboardWallets();
+  const { addWallet } = useWallets();
   const [walletDraft, setWalletDraft] = useState({
     name: "",
     institution: "",
