@@ -29,8 +29,8 @@ import { SummaryCard } from "@/components/ui/summary-card";
 import { WorkspaceTopBar } from "@/components/ui/workspace-top-bar";
 import { WorkspaceTopBarActionButton } from "@/components/ui/workspace-top-bar-action-button";
 import {
+  AddWalletTopBarButton,
   AddWalletDialog,
-  WalletSelect,
   useWallets,
 } from "@/features/wallets/wallets";
 import {
@@ -903,15 +903,9 @@ export function DashboardWorkspace() {
         title="Nidhi.id Overview"
         variant="fixed"
         actions={
-          <>
-            <WalletSelect />
-            <WorkspaceTopBarActionButton
-              onClick={() => setIsWalletDialogOpen(true)}
-            >
-              <CupertinoIcon name="plus" className="size-3.5" />
-              Add wallet
-            </WorkspaceTopBarActionButton>
-          </>
+          <AddWalletTopBarButton
+            onClick={() => setIsWalletDialogOpen(true)}
+          />
         }
       />
 

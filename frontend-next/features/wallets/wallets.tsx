@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 
 import { CupertinoIcon } from "@/components/icons/cupertino-icon";
 import { APP_COLOR_OPTIONS } from "@/lib/color-palette";
@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CupertinoSelect } from "@/components/ui/cupertino-select";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { WorkspaceTopBarActionButton } from "@/components/ui/workspace-top-bar-action-button";
 import { WorkspacePrimaryButton } from "@/components/ui/workspace-primary-button";
 
 export type WalletTone = (typeof APP_COLOR_OPTIONS)[number]["walletTone"];
@@ -146,7 +147,7 @@ function loadWallets() {
       .map(normalizeWallet)
       .filter((wallet): wallet is Wallet => Boolean(wallet));
 
-    return normalized.length > 0 ? normalized : defaultWallets;
+    return normalized;
   } catch {
     return defaultWallets;
   }
@@ -247,11 +248,80 @@ export function useWallets() {
     emitWalletChange();
   }
 
+  function updateWallet(
+    walletId: string,
+    payload: {
+      name: string;
+      institution: string;
+      balance: number;
+      tone: WalletTone;
+      color: string;
+    },
+  ) {
+    const currentWallet = wallets.find((wallet) => wallet.id === walletId);
+    if (!currentWallet) {
+      return;
+    }
+
+    const nextName = payload.name.trim();
+    if (!nextName) {
+      return;
+    }
+
+    const nextWallets = wallets.map((wallet) => {
+      if (wallet.id !== walletId) {
+        return wallet;
+      }
+
+      return {
+        ...wallet,
+        name: nextName,
+        institution: payload.institution.trim() || "Manual wallet",
+        balance: Number.isFinite(payload.balance) ? payload.balance : 0,
+        tone: payload.tone,
+        color: payload.color,
+        abbr:
+          nextName
+            .split(/\s+/)
+            .map((part) => part[0])
+            .join("")
+            .slice(0, 2)
+            .toUpperCase() || "WL",
+      };
+    });
+
+    window.localStorage.setItem(WALLETS_STORAGE_KEY, JSON.stringify(nextWallets));
+
+    if (activeWallet === currentWallet.name) {
+      window.localStorage.setItem(ACTIVE_WALLET_STORAGE_KEY, nextName);
+    }
+
+    emitWalletChange();
+  }
+
+  function removeWallet(walletId: string) {
+    const walletToDelete = wallets.find((wallet) => wallet.id === walletId);
+    if (!walletToDelete) {
+      return;
+    }
+
+    const nextWallets = wallets.filter((wallet) => wallet.id !== walletId);
+    window.localStorage.setItem(WALLETS_STORAGE_KEY, JSON.stringify(nextWallets));
+
+    if (activeWallet === walletToDelete.name) {
+      window.localStorage.setItem(ACTIVE_WALLET_STORAGE_KEY, "all");
+    }
+
+    emitWalletChange();
+  }
+
   return {
     wallets,
     activeWallet,
     setActiveWallet,
     addWallet,
+    updateWallet,
+    removeWallet,
   };
 }
 
@@ -266,6 +336,19 @@ export function WalletDot({ tone }: { tone: WalletTone }) {
         tone === "slate" && "bg-[var(--text-primary)] dark:bg-surface-raised",
       )}
     />
+  );
+}
+
+export function AddWalletTopBarButton({
+  onClick,
+}: {
+  onClick: () => void;
+}) {
+  return (
+    <WorkspaceTopBarActionButton onClick={onClick}>
+      <CupertinoIcon name="plus" className="size-4" />
+      Add wallet
+    </WorkspaceTopBarActionButton>
   );
 }
 
@@ -442,18 +525,53 @@ export function WalletList({
 export function AddWalletDialog({
   open,
   onOpenChange,
+  mode = "create",
+  wallet,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  mode?: "create" | "edit";
+  wallet?: Wallet | null;
 }) {
-  const { addWallet } = useWallets();
-  const [walletDraft, setWalletDraft] = useState({
+  const { addWallet, updateWallet } = useWallets();
+  const [walletDraft, setWalletDraft] = useState<{
+    name: string;
+    institution: string;
+    balance: string;
+    color: string;
+    tone: WalletTone;
+  }>({
     name: "",
     institution: "",
     balance: "",
     color: walletColorOptions[0].color,
     tone: walletColorOptions[0].tone,
   });
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    if (mode === "edit" && wallet) {
+      setWalletDraft({
+        name: wallet.name,
+        institution: wallet.institution,
+        balance: String(wallet.balance),
+        color: wallet.color,
+        tone: wallet.tone,
+      });
+      return;
+    }
+
+    setWalletDraft({
+      name: "",
+      institution: "",
+      balance: "",
+      color: walletColorOptions[0].color,
+      tone: walletColorOptions[0].tone,
+    });
+  }, [mode, open, wallet]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -464,13 +582,20 @@ export function AddWalletDialog({
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          addWallet({
+          const payload = {
             name: walletDraft.name,
             institution: walletDraft.institution,
             balance: Number(walletDraft.balance.replace(/[^\d.-]/g, "")),
             color: walletDraft.color,
             tone: walletDraft.tone,
-          });
+          };
+
+          if (mode === "edit" && wallet) {
+            updateWallet(wallet.id, payload);
+          } else {
+            addWallet(payload);
+          }
+
           setWalletDraft({
             name: "",
             institution: "",
@@ -484,7 +609,9 @@ export function AddWalletDialog({
         <div className="mb-4 flex items-center justify-between">
           <div>
             <p className="text-[11px] text-tertiary">Wallet</p>
-            <h2 className="text-[15px] font-semibold text-primary">Add wallet</h2>
+            <h2 className="text-[15px] font-semibold text-primary">
+              {mode === "edit" ? "Edit wallet" : "Add wallet"}
+            </h2>
           </div>
           <button
             type="button"
@@ -591,7 +718,7 @@ export function AddWalletDialog({
             type="submit"
             className="rounded-[10px]"
           >
-            Add wallet
+            {mode === "edit" ? "Save changes" : "Add wallet"}
           </WorkspacePrimaryButton>
         </div>
       </form>

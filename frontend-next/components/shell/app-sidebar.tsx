@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+import { useAuth } from "@/contexts/auth-context";
+
 import {
   Sidebar,
   SidebarContent,
@@ -31,6 +33,7 @@ const navigationGroups: { group: string; items: NavigationItem[] }[] = [
     items: [
       { title: "Overview", href: "/", icon: "home" },
       { title: "Dashboard", href: "/dashboard", icon: "layout" },
+      { title: "Wallet", href: "/wallets", icon: "wallet" },
       { title: "Transactions", href: "/transactions", icon: "database" },
     ],
   },
@@ -131,9 +134,23 @@ function SidebarSection({
   );
 }
 
+const profileColorClass: Record<string, string> = {
+  accent: "bg-[var(--accent)]",
+  warning: "bg-warning",
+  danger: "bg-danger",
+  success: "bg-success",
+  graphite: "bg-[var(--text-primary)]",
+};
+
 export function AppSidebar() {
   const pathname = usePathname();
   const [isWalletDialogOpen, setIsWalletDialogOpen] = useState(false);
+  const { user, logout } = useAuth();
+
+  const avatarColor =
+    profileColorClass[user?.profile?.profile_color ?? ""] ?? "bg-warning";
+  const initials = user?.profile?.initials ?? "?";
+  const displayName = user?.profile?.full_name ?? user?.email ?? "";
 
   return (
     <Sidebar
@@ -183,17 +200,26 @@ export function AppSidebar() {
 
       <SidebarFooter className="bg-surface/34 px-3.5 py-3.5 backdrop-blur-xl">
         <div className="flex items-center gap-2 rounded-[14px] border border-subtle bg-surface px-2.5 py-2">
-          <div className="flex size-[26px] shrink-0 items-center justify-center rounded-[7px] bg-warning text-[11px] font-bold text-white">
-            A
+          <div
+            className={`flex size-6.5 shrink-0 items-center justify-center rounded-[7px] ${avatarColor} text-[11px] font-bold text-white`}
+          >
+            {initials}
           </div>
           <div className="min-w-0 flex-1">
             <div className="truncate text-xs font-semibold text-primary">
-              Alex Rahmad
+              {displayName}
             </div>
             <div className="truncate text-[10px] text-tertiary dark:text-secondary">
-              Synced 4 min ago
+              {user?.email ?? ""}
             </div>
           </div>
+          <button
+            onClick={logout}
+            className="ml-1 flex size-6 shrink-0 items-center justify-center rounded-[6px] text-tertiary transition-colors hover:bg-surface-muted hover:text-primary"
+            title="Sign out"
+          >
+            <CupertinoIcon name="logout" className="size-3.5" />
+          </button>
         </div>
       </SidebarFooter>
 

@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useMemo, useState, useSyncExternalStore } from "react";
 import {
+  Area,
+  AreaChart,
   CartesianGrid,
-  Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip as RechartsTooltip,
   XAxis,
@@ -23,12 +23,12 @@ import {
 } from "@/components/tables/cupertino-table";
 import { Button } from "@/components/ui/button";
 import { SummaryCard } from "@/components/ui/summary-card";
+import { WorkspaceSection } from "@/components/ui/workspace-section";
 import { WorkspacePrimaryButton } from "@/components/ui/workspace-primary-button";
 import { WorkspaceTopBar } from "@/components/ui/workspace-top-bar";
-import { WorkspaceTopBarActionButton } from "@/components/ui/workspace-top-bar-action-button";
 import {
+  AddWalletTopBarButton,
   AddWalletDialog,
-  WalletSelect,
   useWallets,
 } from "@/features/wallets/wallets";
 import { useFileWorkspace } from "@/hooks/use-file-workspace";
@@ -390,15 +390,9 @@ export function TransactionsWorkspace() {
         title="Transactions"
         variant="fixed"
         actions={
-          <>
-            <WalletSelect />
-            <WorkspaceTopBarActionButton
-              onClick={() => setIsWalletDialogOpen(true)}
-            >
-              <CupertinoIcon name="plus" className="size-3.5" />
-              Add wallet
-            </WorkspaceTopBarActionButton>
-          </>
+          <AddWalletTopBarButton
+            onClick={() => setIsWalletDialogOpen(true)}
+          />
         }
       />
 
@@ -406,7 +400,7 @@ export function TransactionsWorkspace() {
         <section>
           <div className="flex min-w-0 flex-col gap-3">
             <section>
-              <div className="dashboard-featured-card rounded-[20px] p-[18px]">
+              <WorkspaceSection as="div">
                 <div className="mb-4 flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <h2 className="text-[13px] font-semibold">
@@ -445,7 +439,7 @@ export function TransactionsWorkspace() {
                     Expenses
                   </span>
                   <span className="inline-flex items-center gap-1.5">
-                    <span className="size-2 rounded-full bg-success" />
+                    <span className="size-2 rounded-full bg-accent" />
                     Income
                   </span>
                 </div>
@@ -457,10 +451,48 @@ export function TransactionsWorkspace() {
                       minWidth={1}
                       minHeight={1}
                     >
-                      <LineChart
+                      <AreaChart
                         data={chartData}
                         margin={{ top: 8, right: 10, bottom: 0, left: 0 }}
                       >
+                        <defs>
+                          <linearGradient
+                            id="transactions-expense-fill"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                          >
+                            <stop
+                              offset="0%"
+                              stopColor="var(--danger)"
+                              stopOpacity={0.2}
+                            />
+                            <stop
+                              offset="100%"
+                              stopColor="var(--danger)"
+                              stopOpacity={0}
+                            />
+                          </linearGradient>
+                          <linearGradient
+                            id="transactions-income-fill"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                          >
+                            <stop
+                              offset="0%"
+                              stopColor="var(--accent)"
+                              stopOpacity={0.18}
+                            />
+                            <stop
+                              offset="100%"
+                              stopColor="var(--accent)"
+                              stopOpacity={0}
+                            />
+                          </linearGradient>
+                        </defs>
                         <CartesianGrid
                           stroke="rgba(0,0,0,0.06)"
                           strokeDasharray="4 4"
@@ -491,46 +523,68 @@ export function TransactionsWorkspace() {
                         />
                         {chartMode === "all" ? (
                           <>
-                            <Line
-                              type="monotone"
+                            <Area
+                              type="basis"
                               dataKey="expense"
                               stroke="var(--danger)"
                               strokeWidth={3}
+                              fill="url(#transactions-expense-fill)"
+                              fillOpacity={1}
                               dot={false}
-                              activeDot={{ r: 4, strokeWidth: 0 }}
+                              activeDot={{
+                                r: 4,
+                                strokeWidth: 2,
+                                stroke: "var(--surface)",
+                              }}
                             />
-                            <Line
-                              type="monotone"
+                            <Area
+                              type="basis"
                               dataKey="income"
-                              stroke="var(--success)"
+                              stroke="var(--accent)"
                               strokeWidth={3}
+                              fill="url(#transactions-income-fill)"
+                              fillOpacity={1}
                               dot={false}
-                              activeDot={{ r: 4, strokeWidth: 0 }}
+                              activeDot={{
+                                r: 4,
+                                strokeWidth: 2,
+                                stroke: "var(--surface)",
+                              }}
                             />
                           </>
                         ) : (
-                          <Line
-                            type="monotone"
+                          <Area
+                            type="basis"
                             dataKey={chartMode}
                             stroke={
                               chartMode === "income"
-                                ? "var(--success)"
+                                ? "var(--accent)"
                                 : chartMode === "expense"
                                   ? "var(--danger)"
                                   : "var(--accent)"
                             }
                             strokeWidth={3}
+                            fill={
+                              chartMode === "income"
+                                ? "url(#transactions-income-fill)"
+                                : "url(#transactions-expense-fill)"
+                            }
+                            fillOpacity={1}
                             dot={false}
-                            activeDot={{ r: 4, strokeWidth: 0 }}
+                            activeDot={{
+                              r: 4,
+                              strokeWidth: 2,
+                              stroke: "var(--surface)",
+                            }}
                           />
                         )}
-                      </LineChart>
+                      </AreaChart>
                     </ResponsiveContainer>
                   ) : (
                     <div className="h-full rounded-[10px] bg-surface-muted" />
                   )}
                 </div>
-              </div>
+              </WorkspaceSection>
             </section>
 
             <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

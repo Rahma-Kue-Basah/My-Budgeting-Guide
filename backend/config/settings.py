@@ -117,6 +117,8 @@ REST_AUTH = {
     "JWT_AUTH_SECURE": not DEBUG,
     "JWT_AUTH_HTTPONLY": True,
     "JWT_AUTH_SAMESITE": "None" if not DEBUG else "Lax",
+    "USER_DETAILS_SERIALIZER": "expensave_auth.serializers.UserDetailsSerializer",
+    "REGISTER_SERIALIZER": "expensave_auth.serializers.RegisterSerializer",
 }
 
 SIMPLE_JWT = {
@@ -142,8 +144,14 @@ SIMPLE_JWT = {
 }
 
 ACCOUNT_EMAIL_VERIFICATION = "none"
-ACCOUNT_LOGIN_METHODS = {"username"}
-ACCOUNT_SIGNUP_FIELDS = ["username*", "password1*", "password2*"]
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
+AUTHENTICATION_BACKENDS = [
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",

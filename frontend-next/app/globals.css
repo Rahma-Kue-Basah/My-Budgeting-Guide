@@ -27,7 +27,7 @@ body::before {
 }
 
 @theme inline {
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-heading);
   --font-sans: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -470,6 +470,21 @@ body::before {
   }
 }
 
+@keyframes landing-testimonial-marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.landing-testimonial-marquee {
+  animation: landing-testimonial-marquee 36s linear infinite;
+  will-change: transform;
+}
+
 /* Blur app content when any overlay-driven surface is open */
 body[data-overlay-blur-count] #app-root {
   transition: none;
@@ -481,6 +496,10 @@ body[data-overlay-blur-count] #app-root {
 
 @media (prefers-reduced-motion: reduce) {
   .liquid-sidebar::before {
+    animation: none;
+  }
+
+  .landing-testimonial-marquee {
     animation: none;
   }
 }

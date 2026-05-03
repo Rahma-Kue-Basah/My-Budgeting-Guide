@@ -29,7 +29,8 @@ export type CupertinoIconName =
   | "tag"
   | "upload"
   | "users"
-  | "wallet";
+  | "wallet"
+  | "logout";
 
 const paths: Record<CupertinoIconName, ReactNode> = {
   alert: (
@@ -209,6 +210,13 @@ const paths: Record<CupertinoIconName, ReactNode> = {
       <rect x="3.5" y="6" width="17" height="12" rx="3" />
       <path d="M16 12h4.5v4H16a2 2 0 0 1 0-4Z" />
       <path d="M6.5 9h8" />
+    </>
+  ),
+  logout: (
+    <>
+      <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" />
+      <path d="m10 16 4-4-4-4" />
+      <path d="M14 12H4" />
     </>
   ),
 };
