@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { RotateCcw, Trash2 } from "lucide-react";
+import { useTheme } from "next-themes";
 import { toast } from "sonner";
 
 import { CupertinoActionButton } from "@/components/ui/cupertino-action-button";
@@ -89,6 +90,7 @@ function PreferenceRow({ label, value }: { label: string; value: string }) {
 
 export function SettingsWorkspace() {
   const { settings, isHydrated, updateSettings, resetSettings } = useAppSettings();
+  const { theme, setTheme } = useTheme();
   const { resetAll } = useFileWorkspace();
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
 
@@ -101,6 +103,7 @@ export function SettingsWorkspace() {
 
   function handleResetSettings() {
     resetSettings();
+    setTheme("system");
     toast("Settings direset", {
       description: "Preferensi kembali ke nilai default.",
     });
@@ -132,8 +135,8 @@ export function SettingsWorkspace() {
                     key={option.value}
                     label={option.label}
                     note={option.note}
-                    selected={settings.theme === option.value}
-                    onClick={() => updateSettings({ theme: option.value })}
+                    selected={theme === option.value}
+                    onClick={() => setTheme(option.value)}
                   />
                 ))}
               </div>
@@ -206,7 +209,7 @@ export function SettingsWorkspace() {
           <section className="rounded-[13px] bg-surface p-[18px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-none">
             <h2 className="mb-3 text-[13px] font-semibold text-primary">Current preferences</h2>
             <div className="rounded-[12px] bg-surface-muted px-4">
-              <PreferenceRow label="Theme" value={isHydrated ? settings.theme : "-"} />
+              <PreferenceRow label="Theme" value={theme ?? "-"} />
               <PreferenceRow label="Default bank" value={isHydrated ? getBankLabel(settings.defaultBank) : "-"} />
               <PreferenceRow label="Parser mode" value={isHydrated ? settings.parserMode : "-"} />
               <PreferenceRow label="Density" value={isHydrated ? settings.displayDensity : "-"} />

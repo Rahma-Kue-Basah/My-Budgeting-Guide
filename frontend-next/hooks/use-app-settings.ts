@@ -7,20 +7,17 @@ const APP_SETTINGS_EVENT = "nidhi-app-settings-updated";
 
 export type ParserMode = "balanced" | "strict";
 export type DisplayDensity = "comfortable" | "compact";
-export type AppTheme = "light" | "dark" | "system";
 
 export type AppSettings = {
   defaultBank: string;
   parserMode: ParserMode;
   displayDensity: DisplayDensity;
-  theme: AppTheme;
 };
 
 export const defaultAppSettings: AppSettings = {
   defaultBank: "bca",
   parserMode: "balanced",
   displayDensity: "comfortable",
-  theme: "system",
 };
 
 function normalizeAppSettings(value: unknown): AppSettings {
@@ -42,10 +39,6 @@ function normalizeAppSettings(value: unknown): AppSettings {
       input.displayDensity === "comfortable"
         ? input.displayDensity
         : "comfortable",
-    theme:
-      input.theme === "light" || input.theme === "dark" || input.theme === "system"
-        ? input.theme
-        : "system",
   };
 }
 

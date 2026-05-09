@@ -18,15 +18,55 @@ type ApiResult<T> = { data: T | null; error: string | null; status: number };
 
 // Tracks an in-flight refresh so concurrent 401s only trigger one refresh attempt.
 let refreshPromise: Promise<boolean> | null = null;
+let csrfPromise: Promise<string | null> | null = null;
+
+function getCsrfTokenFromCookie() {
+  if (typeof document === "undefined") return null;
+
+  const csrfCookie = document.cookie
+    .split("; ")
+    .find((cookie) => cookie.startsWith("csrftoken="));
+
+  return csrfCookie ? decodeURIComponent(csrfCookie.split("=")[1] ?? "") : null;
+}
+
+function isUnsafeMethod(method?: string) {
+  const normalizedMethod = method?.toUpperCase() ?? "GET";
+  return !["GET", "HEAD", "OPTIONS", "TRACE"].includes(normalizedMethod);
+}
+
+async function ensureCsrfToken() {
+  const existingToken = getCsrfTokenFromCookie();
+  if (existingToken) return existingToken;
+
+  if (csrfPromise) return csrfPromise;
+
+  csrfPromise = fetch(`${BASE_URL}/api/auth/csrf/`, {
+    method: "GET",
+    credentials: "include",
+  })
+    .then(() => getCsrfTokenFromCookie())
+    .finally(() => {
+      csrfPromise = null;
+    });
+
+  return csrfPromise;
+}
 
 async function attemptRefresh(): Promise<boolean> {
   if (refreshPromise) return refreshPromise;
 
-  refreshPromise = fetch(`${BASE_URL}/api/auth/token/refresh/`, {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-  })
+  refreshPromise = ensureCsrfToken()
+    .then((csrfToken) =>
+      fetch(`${BASE_URL}/api/auth/token/refresh/`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...(csrfToken ? { "X-CSRFToken": csrfToken } : {}),
+        },
+      }),
+    )
     .then((res) => res.ok)
     .catch(() => false)
     .finally(() => {
@@ -41,11 +81,13 @@ async function apiFetch<T>(
   options: RequestInit = {},
   retry = true
 ): Promise<ApiResult<T>> {
+  const csrfToken = isUnsafeMethod(options.method) ? await ensureCsrfToken() : null;
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      ...(csrfToken ? { "X-CSRFToken": csrfToken } : {}),
       ...options.headers,
     },
   });

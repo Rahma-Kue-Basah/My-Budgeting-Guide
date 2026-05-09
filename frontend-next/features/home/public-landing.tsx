@@ -6,12 +6,11 @@ import {
   Check,
   ChevronDown,
   CircleHelp,
-  CreditCard,
-  Globe,
-  Lock,
-  Smartphone,
+  Moon,
   Sparkles,
+  SunMedium,
 } from "lucide-react";
+import { useTheme } from "next-themes";
 import { defaultWallets } from "@/features/wallets/wallets";
 import { formatCurrency } from "@/lib/formatters";
 
@@ -19,13 +18,6 @@ const navItems = [
   { label: "Fitur", href: "/#fitur" },
   { label: "Harga", href: "/#harga" },
   { label: "FAQ", href: "/#faq" },
-];
-
-const trustPoints = [
-  { icon: Lock, text: "Data terenkripsi, data kamu aman" },
-  { icon: CreditCard, text: "Metode bayar yang lengkap" },
-  { icon: Smartphone, text: "Bisa diinstall di HP, tablet, dan laptop" },
-  { icon: Globe, text: "Dari Indonesia untuk Indonesia" },
 ];
 
 const painPoints = [
@@ -46,27 +38,6 @@ const painPoints = [
     title: "Menabung di akhir bulan adalah mitos.",
     description:
       "Tanpa alokasi otomatis sejak hari pertama gajian, uangmu akan selalu menemukan cara untuk habis.",
-  },
-];
-
-const steps = [
-  {
-    number: "1",
-    title: "Centralize",
-    description:
-      "Masukkan data dari Bank, E-Wallet, hingga PayLater. Tidak ada sinkronisasi otomatis ke akun bank demi keamanan privasi totalmu.",
-  },
-  {
-    number: "2",
-    title: "Allocate",
-    description:
-      "Masukkan angka pendapatan, lalu biarkan sistem membagi alokasi sesuai target hidupmu — investasi, cicilan, hingga jatah self-reward.",
-  },
-  {
-    number: "3",
-    title: "Optimize",
-    description:
-      "Lihat laporan harian yang jujur. Ketahui titik kebocoran dana dan perbaiki sebelum menjadi masalah besar di akhir bulan.",
   },
 ];
 
@@ -206,19 +177,6 @@ function CountUpAmount({ value }: { value: number }) {
   return <span className="tabular-nums">{formatCurrency(display)}</span>;
 }
 
-function SectionDecor({ side = "both" }: { side?: "left" | "right" | "both" }) {
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      {(side === "left" || side === "both") && (
-        <div className="absolute -left-48 top-1/2 h-[520px] w-[520px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgb(0_122_255/0.07),transparent_68%)]" />
-      )}
-      {(side === "right" || side === "both") && (
-        <div className="absolute -right-48 top-1/2 h-[520px] w-[520px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgb(99_102_241/0.07),transparent_68%)]" />
-      )}
-    </div>
-  );
-}
-
 function SectionTitle({
   eyebrow,
   title,
@@ -229,15 +187,15 @@ function SectionTitle({
   description?: string;
 }) {
   return (
-    <div className="max-w-3xl">
+    <div className="mx-auto max-w-3xl text-center">
       <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-tertiary">
         {eyebrow}
       </p>
-      <h2 className="mt-3 font-heading text-3xl font-semibold tracking-[-0.05em] text-primary sm:text-4xl">
+      <h2 className="landing-text-primary mt-3 font-heading text-4xl font-semibold tracking-[-0.06em] sm:text-5xl">
         {title}
       </h2>
       {description ? (
-        <p className="mt-3 text-sm leading-7 text-secondary sm:text-base">
+        <p className="landing-text-muted mt-3 text-sm leading-7 sm:text-base">
           {description}
         </p>
       ) : null}
@@ -265,7 +223,7 @@ function PricingCards() {
 
   return (
     <div className="mt-8">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
         <div className="inline-flex items-center rounded-full border border-subtle bg-surface-muted p-1">
           <button
             type="button"
@@ -290,27 +248,23 @@ function PricingCards() {
             Tahunan
           </button>
         </div>
-        {isYearly && (
-          <span className="rounded-full bg-success/10 px-2.5 py-1 text-[11px] font-semibold text-success">
-            Hemat hingga 25% 🎉
-          </span>
-        )}
+        
       </div>
 
-      <div className="mt-5 grid gap-4 lg:grid-cols-2">
-        <article className="rounded-[32px] border border-subtle bg-surface p-6 shadow-[0_20px_44px_rgba(15,23,42,0.05)]">
+      <div className="mx-auto mt-5 grid max-w-5xl gap-4 lg:grid-cols-2">
+        <article className="landing-panel-soft rounded-[32px] p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-tertiary">
                 INDIVIDU
               </p>
               <div className="mt-4 flex items-end gap-2">
-                <span className="font-heading text-4xl font-semibold tracking-[-0.06em] text-primary">
+                <span className="landing-text-primary font-heading text-4xl font-semibold tracking-[-0.06em]">
                   {isYearly ? individu.yearly : individu.monthly}
                 </span>
-                <span className="pb-1 text-sm text-secondary">/bulan</span>
+                <span className="landing-text-muted pb-1 text-sm">/bulan</span>
                 {isYearly && (
-                  <span className="mb-1 text-sm text-tertiary line-through">
+                  <span className="landing-text-soft mb-1 text-sm line-through">
                     {individu.monthly}
                   </span>
                 )}
@@ -320,11 +274,11 @@ function PricingCards() {
                   {individu.save} · ditagih {individu.yearlyTotal}/tahun
                 </p>
               ) : (
-                <p className="mt-1.5 text-xs text-tertiary">
+                <p className="landing-text-soft mt-1.5 text-xs">
                   atau {individu.yearly}/bln jika bayar tahunan
                 </p>
               )}
-              <p className="mt-2 text-sm text-secondary">
+              <p className="landing-text-muted mt-2 text-sm">
                 Untuk kamu yang ingin rapi secara mandiri
               </p>
             </div>
@@ -335,9 +289,9 @@ function PricingCards() {
 
           <div className="mt-6 space-y-3">
             {individualFeatures.map((feature) => (
-              <div key={feature} className="flex items-center gap-3 text-sm text-primary">
-                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-success/10 text-success">
-                  <Check className="size-3" />
+              <div key={feature} className="landing-text-primary flex items-center gap-3 text-sm">
+                <span className="landing-check flex size-4 shrink-0 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--landing-success)_12%,transparent)]">
+                  <Check className="size-3" strokeWidth={1.75} />
                 </span>
                 {feature}
               </div>
@@ -346,13 +300,14 @@ function PricingCards() {
 
           <Link
             href="/?auth=signup"
-            className="mt-7 inline-flex h-12 items-center justify-center rounded-[14px] border border-subtle px-5 text-sm font-medium text-primary transition-colors hover:bg-surface-muted"
+            scroll={false}
+            className="landing-text-primary mt-7 inline-flex h-12 items-center justify-center rounded-[14px] border border-subtle px-5 text-sm font-medium transition-colors hover:bg-surface-muted"
           >
             Mulai dengan Individu
           </Link>
         </article>
 
-        <article className="rounded-[32px] border border-[#1d4ed8] bg-[#0f3ea8] p-6 text-white shadow-[0_22px_50px_rgba(15,62,168,0.22)]">
+        <article className="landing-family-gradient rounded-[32px] border p-6 text-white">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/72">
@@ -392,8 +347,8 @@ function PricingCards() {
           <div className="mt-6 space-y-3">
             {familyFeatures.map((feature) => (
               <div key={feature} className="flex items-center gap-3 text-sm text-white">
-                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-white/12 text-white">
-                  <Check className="size-3" />
+                <span className="landing-check flex size-4 shrink-0 items-center justify-center rounded-full bg-white/12 text-white">
+                  <Check className="size-3" strokeWidth={1.75} />
                 </span>
                 {feature}
               </div>
@@ -402,6 +357,7 @@ function PricingCards() {
 
           <Link
             href="/?auth=signup"
+            scroll={false}
             className="mt-7 inline-flex h-12 items-center justify-center rounded-[14px] bg-white px-5 text-sm font-medium text-[#0f3ea8] transition-transform hover:-translate-y-0.5"
           >
             Mulai dengan Family
@@ -413,6 +369,7 @@ function PricingCards() {
 }
 
 export function PublicLanding() {
+  const { resolvedTheme, setTheme } = useTheme();
   const heroWallets = useMemo(() => defaultWallets.slice(0, 5), []);
   const testimonialItems = useMemo(
     () => [...testimonials, ...testimonials],
@@ -425,17 +382,20 @@ export function PublicLanding() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  return (
-    <main id="top" className="relative min-h-screen overflow-hidden bg-app">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute top-[-180px] left-[-100px] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgb(0_122_255/0.16),transparent_68%)]" />
-        <div className="absolute top-[12%] right-[-140px] h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgb(85_156_255/0.12),transparent_70%)]" />
-        <div className="absolute bottom-[-240px] left-[20%] h-[440px] w-[440px] rounded-full bg-[radial-gradient(circle,rgb(120_190_255/0.14),transparent_72%)]" />
-      </div>
+  const isDarkMode = resolvedTheme === "dark";
 
+  function handleThemeToggle() {
+    setTheme(isDarkMode ? "light" : "dark");
+  }
+
+  return (
+    <main
+      id="top"
+      className="relative min-h-screen overflow-hidden bg-[var(--landing-bg)]"
+    >
       <div className="relative z-10">
-        <header className="fixed top-0 right-0 left-0 z-30 border-b border-subtle bg-surface/82 backdrop-blur-xl">
-          <div className="mx-auto flex w-full max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
+        <header className="fixed top-0 right-0 left-0 z-30 border-b border-subtle bg-surface/90 backdrop-blur-xl">
+          <div className="mx-auto flex w-full max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
             <Link
               href="/"
               scroll={false}
@@ -462,36 +422,52 @@ export function PublicLanding() {
               ))}
             </nav>
 
-            <div className="ml-auto hidden items-center gap-2 sm:flex">
-              <span className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-medium text-secondary">
-                ID
-              </span>
-              <Link
-                href="/?auth=login"
-                className="inline-flex h-10 items-center justify-center rounded-[10px] border border-subtle px-4 text-sm font-medium text-primary transition-colors hover:bg-surface-muted"
+            <div className="ml-auto flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleThemeToggle}
+                aria-label={isDarkMode ? "Aktifkan mode terang" : "Aktifkan mode gelap"}
+                title={isDarkMode ? "Aktifkan mode terang" : "Aktifkan mode gelap"}
+                className="inline-flex size-10 items-center justify-center rounded-[10px] border border-subtle bg-surface text-secondary transition-colors hover:bg-surface-muted hover:text-primary"
               >
-                Masuk
-              </Link>
+                {isDarkMode ? (
+                  <SunMedium className="size-4" />
+                ) : (
+                  <Moon className="size-4" />
+                )}
+              </button>
+              <div className="hidden items-center gap-2 sm:flex">
+                <span className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-medium text-secondary">
+                  ID
+                </span>
+                <Link
+                  href="/?auth=login"
+                  scroll={false}
+                  className="inline-flex h-10 items-center justify-center rounded-[10px] border border-subtle px-4 text-sm font-medium text-primary transition-colors hover:bg-surface-muted"
+                >
+                  Masuk
+                </Link>
+              </div>
             </div>
           </div>
         </header>
 
-        <section className="mx-auto grid max-w-7xl gap-12 px-4 pb-14 pt-28 sm:px-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:px-8 lg:pt-34">
+        <section className="mx-auto grid max-w-7xl gap-12 px-4 pb-20 pt-28 sm:px-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:px-8 lg:pb-24 lg:pt-34">
           <div className="flex flex-col justify-center">
             <div className="inline-flex w-fit items-center gap-2 rounded-full border border-subtle bg-surface/78 px-3 py-1.5 text-xs font-medium text-secondary backdrop-blur-xl">
               <Sparkles className="size-3.5 text-accent" />
               Aman dan dibuat khusus untukmu
             </div>
 
-            <h1 className="mt-6 max-w-3xl font-heading text-[3.3rem] font-semibold leading-[0.92] tracking-[-0.02em] text-primary sm:text-[5.1rem]">
+            <h1 className="landing-text-primary mt-6 max-w-3xl font-heading text-[3.8rem] font-medium leading-[0.88] tracking-[-0.04em] sm:text-[5.7rem]">
               Akhiri Drama
               <br />
-              "Uang Habis
+              &quot;Uang Habis
               <br />
-              ke Mana"
+              ke Mana&quot;
             </h1>
 
-            <p className="mt-5 max-w-2xl text-base leading-8 text-secondary">
+            <p className="landing-text-muted mt-5 max-w-2xl text-base leading-8">
               Nidhi.id menggabungkan kecepatan import data dengan presisi
               budgeting profesional. Satu tempat untuk memantau semua rekening
               tanpa harus pusing dengan rumus spreadsheet.
@@ -500,6 +476,7 @@ export function PublicLanding() {
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <Link
                 href="/?auth=signup"
+                scroll={false}
                 className="inline-flex h-12 items-center justify-center rounded-[14px] bg-[var(--accent)] px-6 text-sm font-medium text-white shadow-[0_18px_36px_rgb(0_122_255/0.2)] transition-transform hover:-translate-y-0.5"
               >
                 Klaim Kendali Keuanganku
@@ -535,26 +512,26 @@ export function PublicLanding() {
                   </span>
                 ))}
               </div>
-              <p className="text-sm text-secondary">
+              <p className="landing-text-muted text-sm">
                 Bergabung dengan{" "}
-                <span className="font-semibold text-primary">1.000+</span>{" "}
+                <span className="landing-text-primary font-semibold">1.000+</span>{" "}
                 pengguna yang sudah beralih dari pencatatan manual.
               </p>
             </div>
           </div>
 
-          <div className="grid gap-4">
-            <div className="rounded-[32px] border border-subtle bg-surface/84 p-4 shadow-[0_30px_70px_rgba(15,23,42,0.08)] backdrop-blur-xl">
-              <div className="rounded-[26px] border border-subtle bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(244,247,251,0.9))] p-5">
+          <div className="grid items-center gap-4">
+            <div className="landing-panel mx-auto w-full max-w-[560px] rounded-[32px] p-4">
+              <div className="rounded-[26px] border border-[var(--landing-border)] bg-[var(--landing-hero-gradient)] p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-[11px] uppercase tracking-[0.18em] text-tertiary">
                       Nidhi.id app demo
                     </p>
-                    <p className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-primary">
+                    <p className="landing-text-primary mt-3 text-3xl font-semibold tracking-[-0.05em]">
                       <CountUpAmount value={28416000} />
                     </p>
-                    <p className="mt-1 text-sm text-secondary">
+                    <p className="landing-text-muted mt-1 text-sm">
                       Total saldo aktif dari semua dompet
                     </p>
                   </div>
@@ -564,7 +541,7 @@ export function PublicLanding() {
                 </div>
 
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-[20px] bg-[#0f3ea8] p-4 text-white shadow-[0_18px_36px_rgba(15,62,168,0.18)]">
+                  <div className="landing-family-gradient rounded-[20px] p-4 text-white">
                     <p className="text-[11px] uppercase tracking-[0.18em] text-white/70">
                       Budget status
                     </p>
@@ -576,7 +553,7 @@ export function PublicLanding() {
                     </p>
                   </div>
 
-                  <div className="rounded-[20px] border border-subtle bg-surface p-4">
+                  <div className="landing-panel-soft rounded-[20px] p-4">
                     <p className="text-[11px] uppercase tracking-[0.18em] text-tertiary">
                       Wallet aktif
                     </p>
@@ -591,33 +568,17 @@ export function PublicLanding() {
                         </span>
                       ))}
                     </div>
-                    <p className="mt-3 text-sm font-medium text-primary">
+                    <p className="landing-text-primary mt-3 text-sm font-medium">
                       5 dompet terhubung
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              {trustPoints.map((item) => (
-                <div
-                  key={item.text}
-                  className="rounded-[22px] border border-subtle bg-surface/84 p-4 shadow-[0_14px_34px_rgba(15,23,42,0.04)] backdrop-blur-xl"
-                >
-                  <div className="flex items-start gap-3">
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-[var(--accent)]/10 text-accent">
-                      <item.icon className="size-4" />
-                    </span>
-                    <p className="text-sm leading-6 text-primary">{item.text}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl scroll-mt-24 px-4 py-10 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-7xl scroll-mt-24 px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <SectionTitle
             eyebrow="Masalah yang Sering Terjadi"
             title="Mengapa Mengatur Uang Terasa Sangat Berat?"
@@ -627,13 +588,13 @@ export function PublicLanding() {
             {painPoints.map((item) => (
               <article
                 key={item.title}
-                className="rounded-[28px] border border-subtle bg-surface p-6 shadow-[0_18px_40px_rgba(15,23,42,0.04)]"
+                className="landing-panel-soft rounded-[28px] p-6"
               >
                 <p className="text-3xl">{item.emoji}</p>
-                <h3 className="mt-4 font-heading text-xl font-semibold tracking-[-0.04em] text-primary">
+                <h3 className="landing-text-primary mt-4 font-heading text-xl font-semibold tracking-[-0.04em]">
                   {item.title}
                 </h3>
-                <p className="mt-3 text-sm leading-7 text-secondary">
+                <p className="landing-text-muted mt-3 text-sm leading-7">
                   {item.description}
                 </p>
               </article>
@@ -641,33 +602,7 @@ export function PublicLanding() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl scroll-mt-24 px-4 py-10 sm:px-6 lg:px-8">
-          <SectionTitle
-            eyebrow="How It Works"
-            title="Sistem Finansial yang Bisa Kamu Jalankan Sambil Ngopi."
-          />
-
-          <div className="mt-8 grid gap-4 lg:grid-cols-3">
-            {steps.map((step) => (
-              <article
-                key={step.number}
-                className="rounded-[30px] border border-subtle bg-surface p-6 shadow-[0_18px_40px_rgba(15,23,42,0.04)]"
-              >
-                <span className="flex size-12 items-center justify-center rounded-full bg-[var(--accent)] text-lg font-semibold text-white">
-                  {step.number}
-                </span>
-                <h3 className="mt-5 font-heading text-2xl font-semibold tracking-[-0.05em] text-primary">
-                  {step.title}
-                </h3>
-                <p className="mt-3 text-sm leading-7 text-secondary">
-                  {step.description}
-                </p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section id="fitur" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-10 sm:px-6 lg:px-8">
+        <section id="fitur" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <SectionTitle
             eyebrow="Fitur"
             title="Minimalism Meets Power."
@@ -678,7 +613,7 @@ export function PublicLanding() {
             {featureCards.map((card) => (
               <article
                 key={card.title}
-                className="rounded-[28px] border border-subtle bg-surface p-5 shadow-[0_18px_40px_rgba(15,23,42,0.04)]"
+                className="landing-panel-soft rounded-[28px] p-5"
               >
                 <div className="flex items-start justify-between gap-3">
                   <span className="text-2xl">{card.emoji}</span>
@@ -688,10 +623,10 @@ export function PublicLanding() {
                     </span>
                   ) : null}
                 </div>
-                <h3 className="mt-4 font-heading text-xl font-semibold tracking-[-0.04em] text-primary">
+                <h3 className="landing-text-primary mt-4 font-heading text-xl font-semibold tracking-[-0.04em]">
                   {card.title}
                 </h3>
-                <p className="mt-3 text-sm leading-7 text-secondary">
+                <p className="landing-text-muted mt-3 text-sm leading-7">
                   {card.description}
                 </p>
               </article>
@@ -699,7 +634,7 @@ export function PublicLanding() {
           </div>
         </section>
 
-        <section id="harga" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-10 sm:px-6 lg:px-8">
+        <section id="harga" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <SectionTitle
             eyebrow="Harga"
             title="The Cost of Peace of Mind."
@@ -709,45 +644,47 @@ export function PublicLanding() {
           <PricingCards />
         </section>
 
-        <section className="mx-auto max-w-7xl scroll-mt-24 px-4 py-10 sm:px-6 lg:px-8">
-          <SectionTitle
-            eyebrow="Kata Mereka"
-            title="Ini kata mereka, bukan kata kita."
-          />
+        <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen scroll-mt-24 bg-[var(--landing-testimonial-bg)] py-20 lg:py-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <SectionTitle
+              eyebrow="Kata Mereka"
+              title="Ini kata mereka, bukan kata kita."
+            />
 
-          <div className="relative mt-8 overflow-hidden">
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-[linear-gradient(90deg,var(--bg-app),rgba(248,249,250,0))]" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-[linear-gradient(270deg,var(--bg-app),rgba(248,249,250,0))]" />
+            <div className="relative mt-8 overflow-hidden">
+              <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-[linear-gradient(90deg,var(--landing-testimonial-fade)_0%,rgba(0,0,0,0)_100%)]" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-[linear-gradient(270deg,var(--landing-testimonial-fade)_0%,rgba(0,0,0,0)_100%)]" />
 
-            <div className="landing-testimonial-marquee flex w-max gap-4 pr-4">
-              {testimonialItems.map((item, index) => (
-                <article
-                  key={`${item.name}-${index}`}
-                  className="w-[320px] shrink-0 rounded-[28px] border border-subtle bg-surface p-5 shadow-[0_18px_40px_rgba(15,23,42,0.04)] sm:w-[360px]"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="flex size-11 items-center justify-center rounded-full bg-[var(--accent)]/10 text-sm font-semibold text-accent">
-                      {item.name
-                        .split(" ")
-                        .map((part) => part[0])
-                        .join("")
-                        .slice(0, 2)}
-                    </span>
-                    <div>
-                      <p className="text-sm font-semibold text-primary">{item.name}</p>
-                      <p className="text-[11px] text-secondary">{item.handle}</p>
+              <div className="landing-testimonial-marquee flex w-max gap-4 pr-4">
+                {testimonialItems.map((item, index) => (
+                  <article
+                    key={`${item.name}-${index}`}
+                    className="landing-panel-soft w-[320px] shrink-0 rounded-[28px] p-5 sm:w-[360px]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="flex size-11 items-center justify-center rounded-full bg-[var(--accent)]/10 text-sm font-semibold text-accent">
+                        {item.name
+                          .split(" ")
+                          .map((part) => part[0])
+                          .join("")
+                          .slice(0, 2)}
+                      </span>
+                      <div>
+                        <p className="landing-text-primary text-sm font-semibold">{item.name}</p>
+                        <p className="landing-text-muted text-[11px]">{item.handle}</p>
+                      </div>
                     </div>
-                  </div>
-                  <p className="mt-4 text-sm leading-7 text-secondary">
-                    “{item.quote}”
-                  </p>
-                </article>
-              ))}
+                    <p className="landing-text-muted mt-4 text-sm leading-7">
+                      “{item.quote}”
+                    </p>
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
-        <section id="faq" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-10 sm:px-6 lg:px-8">
+        <section id="faq" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <SectionTitle
             eyebrow="FAQ"
             title="Pertanyaan yang sering ditanyakan"
@@ -757,18 +694,18 @@ export function PublicLanding() {
             {faqs.map((faq) => (
               <details
                 key={faq}
-                className="group rounded-[22px] border border-subtle bg-surface p-5 shadow-[0_14px_34px_rgba(15,23,42,0.04)]"
+                className="landing-panel-soft group rounded-[22px] p-5"
               >
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left">
                   <div className="flex items-center gap-3">
                     <span className="flex size-9 items-center justify-center rounded-[12px] bg-surface-muted text-tertiary">
                       <CircleHelp className="size-4" />
                     </span>
-                    <span className="text-sm font-semibold text-primary">{faq}</span>
+                    <span className="landing-text-primary text-sm font-semibold">{faq}</span>
                   </div>
                   <ChevronDown className="size-4 text-tertiary transition-transform group-open:rotate-180" />
                 </summary>
-                <p className="pt-4 pl-12 text-sm leading-7 text-secondary">
+                <p className="landing-text-muted pt-4 pl-12 text-sm leading-7">
                   Kami siapkan alur yang sederhana, aman, dan tetap fleksibel.
                   Jawaban detail bisa disesuaikan lebih lanjut saat dokumentasi
                   produk final sudah lengkap.
@@ -778,9 +715,9 @@ export function PublicLanding() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="rounded-[36px] border border-subtle bg-[#0f3ea8] px-6 py-10 text-white shadow-[0_24px_54px_rgba(15,62,168,0.22)] sm:px-8 sm:py-12">
-            <h2 className="mt-4 max-w-3xl font-heading text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">
+        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+          <div className="landing-family-gradient rounded-[36px] border px-6 py-10 text-white sm:px-8 sm:py-12">
+            <h2 className="mt-4 max-w-3xl font-heading text-4xl font-semibold tracking-[-0.06em] sm:text-5xl">
               Berikan Kado Terbaik untuk Dirimu di Masa Depan.
             </h2>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-white/82 sm:text-base">
@@ -790,6 +727,7 @@ export function PublicLanding() {
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <Link
                 href="/?auth=signup"
+                scroll={false}
                 className="inline-flex h-12 items-center justify-center rounded-[14px] bg-white px-6 text-sm font-medium text-[#0f3ea8] transition-transform hover:-translate-y-0.5"
               >
                 Ambil Kendali Sekarang
@@ -801,8 +739,8 @@ export function PublicLanding() {
           </div>
         </section>
 
-        <footer className="mt-6 bg-[#f1f3f5]">
-          <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8">
+        <footer className="mt-6 border-t border-subtle bg-surface/88 backdrop-blur-xl">
+          <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8">
             <div>
               <div className="flex items-center gap-[9px]">
                 <span className="flex size-[26px] items-center justify-center rounded-[7px] bg-[var(--text-primary)] text-[11px] font-semibold text-white">
@@ -836,7 +774,7 @@ export function PublicLanding() {
                   <Link href="/#faq" className="text-secondary transition-colors hover:text-primary">
                     FAQ
                   </Link>
-                  <Link href="/?auth=login" className="text-secondary transition-colors hover:text-primary">
+                  <Link href="/?auth=login" scroll={false} className="text-secondary transition-colors hover:text-primary">
                     Masuk
                   </Link>
                 </div>
@@ -847,7 +785,7 @@ export function PublicLanding() {
                   Sumber Daya
                 </p>
                 <div className="mt-4 flex flex-col gap-3 text-sm">
-                  <Link href="/?auth=signup" className="text-secondary transition-colors hover:text-primary">
+                  <Link href="/?auth=signup" scroll={false} className="text-secondary transition-colors hover:text-primary">
                     Install Aplikasi
                   </Link>
                   <Link href="/guide" className="text-secondary transition-colors hover:text-primary">
